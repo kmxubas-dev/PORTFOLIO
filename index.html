@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KmxOS // Kent Mark Xavier Ubas</title>
+  <meta
+    name="description"
+    content="Developer OS style portfolio by Kent Mark Xavier Ubas."
+  />
+  <style>
+    :root{
+      --bg:#06080d;
+      --bg2:#0b1118;
+      --panel:#101925;
+      --panel2:#162130;
+      --line:#223247;
+      --soft:#8ea6bf;
+      --text:#eef4fd;
+      --green:#53f5c0;
+      --cyan:#67dfff;
+      --blue:#6e8fff;
+      --amber:#ffd17d;
+      --red:#ff7a87;
+      --glow:rgba(103,223,255,.18);
+      --shadow:0 24px 60px rgba(0,0,0,.42);
+      --radius:22px;
+      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+      --sans:"Trebuchet MS","Segoe UI",sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html{
+      scroll-behavior:smooth;
+      scroll-padding-top:100px;
+    }
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(circle at 12% 18%, rgba(103,223,255,.12), transparent 20%),
+        radial-gradient(circle at 88% 12%, rgba(110,143,255,.12), transparent 18%),
+        radial-gradient(circle at 50% 100%, rgba(83,245,192,.07), transparent 26%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.02), transparent 32%),
+        radial-gradient(circle at 50% 0%, rgba(255,209,125,.08), transparent 25%);
+      mix-blend-mode:screen;
+      z-index:-1;
+    }
+
+    .noise,
+    .grid{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:-1;
+    }
+
+    .grid{
+      background-image:
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size:32px 32px;
+      mask-image:radial-gradient(circle at center, black 35%, transparent 100%);
+      opacity:.2;
+    }
+
+    .noise{
+      opacity:.05;
+      background-image:
+        radial-gradient(circle at 20% 20%, #fff 0 1px, transparent 1px),
+        radial-gradient(circle at 80% 30%, #fff 0 1px, transparent 1px),
+        radial-gradient(circle at 50% 60%, #fff 0 1px, transparent 1px),
+        radial-gradient(circle at 30% 80%, #fff 0 1px, transparent 1px);
+      background-size:240px 240px;
+    }
+
+    a{color:inherit;text-decoration:none}
+    button,input{font:inherit}
+
+    .shell{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      min-height:100vh;
+      max-width:1480px;
+      margin:0 auto;
+    }
+
+    .sidebar{
+      position:sticky;
+      top:0;
+      height:100vh;
+      display:flex;
+      flex-direction:column;
+      background:linear-gradient(180deg, rgba(13,20,30,.96), rgba(7,10,16,.96));
+      border-right:1px solid var(--line);
+      padding:22px 18px;
+      box-shadow:var(--shadow);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+      margin-bottom:18px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .brand::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(115deg, rgba(103,223,255,.08), transparent 38%, rgba(255,209,125,.05));
+      pointer-events:none;
+    }
+
+    .brand-badge{
+      width:48px;
+      height:48px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      font-family:var(--mono);
+      font-weight:700;
+      color:var(--bg);
+      background:linear-gradient(135deg, var(--green), var(--cyan));
+      box-shadow:0 14px 32px rgba(103,223,255,.24);
+    }
+
+    .brand h1{
+      margin:0;
+      font-size:1.02rem;
+      line-height:1.1;
+      letter-spacing:-.04em;
+    }
+
+    .brand p{
+      margin:4px 0 0;
+      color:var(--soft);
+      font-size:.86rem;
+    }
+
+    .status{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      margin-bottom:18px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .status-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:10px;
+      font-family:var(--mono);
+      font-size:.84rem;
+      color:var(--soft);
+    }
+
+    .ping{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:var(--green);
+    }
+
+    .dot{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--green);
+      box-shadow:0 0 12px var(--green);
+      animation:pulse 1.8s infinite;
+    }
+
+    @keyframes pulse{
+      0%{transform:scale(1);opacity:1}
+      70%{transform:scale(1.8);opacity:.2}
+      100%{transform:scale(1);opacity:1}
+    }
+
+    .meter{
+      height:8px;
+      background:#0a1018;
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.05);
+    }
+
+    .meter > span{
+      display:block;
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg, var(--green), var(--cyan), var(--blue));
+    }
+
+    .nav{
+      display:grid;
+      gap:10px;
+      margin-bottom:18px;
+    }
+
+    .nav a{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:13px 14px;
+      border-radius:14px;
+      border:1px solid transparent;
+      color:var(--soft);
+      background:rgba(255,255,255,.015);
+      transition:.22s ease;
+    }
+
+    .nav a:hover,
+    .nav a.active{
+      color:var(--text);
+      border-color:var(--line);
+      background:linear-gradient(90deg, rgba(103,223,255,.14), rgba(110,143,255,.08));
+      transform:translateX(4px);
+      box-shadow:0 0 0 1px rgba(103,223,255,.08) inset;
+    }
+
+    .nav a span:last-child{
+      font-family:var(--mono);
+      font-size:.78rem;
+      color:var(--cyan);
+      opacity:.9;
+    }
+
+    .sidebar-footer{
+      margin-top:auto;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+    }
+
+    .sidebar-footer p{
+      margin:0 0 10px;
+      color:var(--soft);
+      font-size:.9rem;
+      line-height:1.6;
+    }
+
+    .contact-mini{
+      display:grid;
+      gap:8px;
+      font-family:var(--mono);
+      font-size:.82rem;
+      color:var(--text);
+    }
+
+    .main{
+      padding:22px 24px 28px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:18px;
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:14px 18px;
+      background:rgba(12,18,28,.78);
+      backdrop-filter:blur(16px);
+      position:sticky;
+      top:12px;
+      z-index:20;
+      box-shadow:0 18px 40px rgba(0,0,0,.24);
+    }
+
+    .window-controls{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
+    .window-controls span{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      display:inline-block;
+    }
+
+    .window-controls span:nth-child(1){background:#ff5f57}
+    .window-controls span:nth-child(2){background:#febc2e}
+    .window-controls span:nth-child(3){background:#28c840}
+
+    .path{
+      font-family:var(--mono);
+      font-size:.9rem;
+      color:var(--soft);
+      white-space:nowrap;
+      overflow:auto hidden;
+      padding-left:8px;
+    }
+
+    .top-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .top-actions button,
+    .chip{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .top-actions button:hover,
+    .chip:hover{
+      transform:translateY(-2px);
+      border-color:rgba(79,216,255,.35);
+    }
+
+    .chip{
+      cursor:default;
+      color:var(--soft);
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:18px;
+      margin-bottom:18px;
+    }
+
+    .panel{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(17,25,37,.96), rgba(11,17,26,.95));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .panel::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(140deg, rgba(103,223,255,.05), transparent 35%, rgba(255,209,125,.03));
+      pointer-events:none;
+    }
+
+    .panel-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 16px;
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+
+    .panel-title{
+      font-family:var(--mono);
+      color:var(--soft);
+      font-size:.86rem;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+
+    .panel-body{
+      padding:22px;
+      position:relative;
+      z-index:1;
+    }
+
+    .hero-kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:7px 12px;
+      margin-bottom:14px;
+      border:1px solid rgba(103,223,255,.2);
+      border-radius:999px;
+      background:rgba(103,223,255,.07);
+      color:var(--cyan);
+      font-family:var(--mono);
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .hero-kicker::before{
+      content:"";
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--green);
+      box-shadow:0 0 10px var(--green);
+    }
+
+    .hero h2{
+      margin:0 0 12px;
+      font-size:clamp(1.85rem, 4.5vw, 3.95rem);
+      line-height:.94;
+      letter-spacing:-.06em;
+      max-width:11ch;
+    }
+
+    .accent{
+      color:var(--cyan);
+      text-shadow:0 0 18px rgba(79,216,255,.2);
+    }
+
+    .hero p{
+      margin:0 0 18px;
+      color:var(--soft);
+      line-height:1.8;
+      font-size:1.02rem;
+      max-width:60ch;
+    }
+
+    .hero-actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+
+    .btn-primary,
+    .btn-secondary{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:13px 16px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      transition:.2s ease;
+    }
+
+    .btn-primary{
+      background:linear-gradient(135deg, var(--green), var(--cyan));
+      color:#031017;
+      font-weight:800;
+      border:none;
+      box-shadow:0 14px 30px rgba(83,245,192,.18);
+    }
+
+    .btn-secondary{
+      background:rgba(255,255,255,.035);
+    }
+
+    .btn-primary:hover,
+    .btn-secondary:hover{
+      transform:translateY(-2px);
+    }
+
+    .signal-grid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:12px;
+    }
+
+    .mini-stat{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .mini-stat .label{
+      color:var(--soft);
+      font-size:.8rem;
+      font-family:var(--mono);
+      text-transform:uppercase;
+    }
+
+    .mini-stat .value{
+      margin-top:8px;
+      font-size:1.6rem;
+      font-weight:800;
+      letter-spacing:-.04em;
+    }
+
+    .profile-grid{
+      display:grid;
+      gap:12px;
+    }
+
+    .profile-block{
+      border:1px solid rgba(255,255,255,.04);
+      border-radius:16px;
+      padding:16px;
+      background:rgba(255,255,255,.02);
+    }
+
+    .badge-list,
+    .tag-list{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .badge,
+    .tag{
+      padding:9px 11px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.035);
+      font-size:.88rem;
+      color:var(--text);
+    }
+
+    .dashboard{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      margin-bottom:18px;
+    }
+
+    .subgrid{
+      display:grid;
+      gap:18px;
+    }
+
+    .terminal{
+      background:linear-gradient(180deg, #05080d, #09111a);
+      border-radius:16px;
+      border:1px solid #152131;
+      min-height:420px;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .terminal-bar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 14px;
+      border-bottom:1px solid #152131;
+      background:#0b1018;
+      font-family:var(--mono);
+      color:var(--soft);
+      font-size:.82rem;
+    }
+
+    .terminal-output{
+      flex:1;
+      padding:16px;
+      overflow:auto;
+      font-family:var(--mono);
+      font-size:.93rem;
+      line-height:1.7;
+      color:#d9e8f7;
+      background-image:linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size:100% 28px;
+    }
+
+    .terminal-line{
+      white-space:pre-wrap;
+      margin:0 0 8px;
+    }
+
+    .terminal-line.dim{color:#86a0ba}
+    .terminal-line.green{color:var(--green)}
+    .terminal-line.cyan{color:var(--cyan)}
+    .terminal-line.amber{color:var(--amber)}
+    .terminal-line.red{color:var(--red)}
+
+    .terminal-input-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px 16px;
+      border-top:1px solid #152131;
+      background:#081018;
+      font-family:var(--mono);
+    }
+
+    .prompt{
+      color:var(--green);
+      white-space:nowrap;
+    }
+
+    .terminal-input{
+      flex:1;
+      background:transparent;
+      border:none;
+      outline:none;
+      color:var(--text);
+      font-family:var(--mono);
+      font-size:.95rem;
+    }
+
+    .quick-commands{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:14px;
+    }
+
+    .quick-commands button{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--soft);
+      border-radius:10px;
+      padding:8px 10px;
+      cursor:pointer;
+      font-family:var(--mono);
+      font-size:.8rem;
+    }
+
+    .quick-commands button:hover{
+      color:var(--text);
+      border-color:rgba(79,216,255,.35);
+    }
+
+    .module-list{
+      display:grid;
+      gap:12px;
+    }
+
+    .module{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .module-top{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      margin-bottom:8px;
+    }
+
+    .module h3{
+      margin:0;
+      font-size:1rem;
+      letter-spacing:-.03em;
+    }
+
+    .module .state{
+      font-family:var(--mono);
+      font-size:.78rem;
+      color:var(--green);
+      border:1px solid rgba(66,245,185,.2);
+      background:rgba(66,245,185,.08);
+      padding:5px 8px;
+      border-radius:999px;
+    }
+
+    .module p{
+      margin:0;
+      color:var(--soft);
+      line-height:1.7;
+      font-size:.94rem;
+    }
+
+    .timeline{
+      display:grid;
+      gap:14px;
+    }
+
+    .event{
+      border-left:2px solid rgba(103,223,255,.35);
+      padding:2px 0 2px 16px;
+    }
+
+    .event .time{
+      font-family:var(--mono);
+      color:var(--cyan);
+      font-size:.82rem;
+      margin-bottom:6px;
+    }
+
+    .event h3{
+      margin:0 0 6px;
+      font-size:1rem;
+    }
+
+    .event p{
+      margin:0;
+      color:var(--soft);
+      line-height:1.7;
+      font-size:.94rem;
+    }
+
+    .section{
+      margin-bottom:18px;
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:18px;
+    }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+      transition:.2s ease;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .card:hover{
+      transform:translateY(-4px);
+      border-color:rgba(79,216,255,.3);
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      left:18px;
+      right:18px;
+      top:0;
+      height:2px;
+      background:linear-gradient(90deg, var(--cyan), transparent 70%);
+      opacity:.7;
+    }
+
+    .card small{
+      display:inline-block;
+      margin-bottom:10px;
+      font-family:var(--mono);
+      color:var(--cyan);
+    }
+
+    .card h3{
+      margin:0 0 10px;
+      font-size:1.08rem;
+      letter-spacing:-.03em;
+    }
+
+    .card p{
+      margin:0;
+      color:var(--soft);
+      line-height:1.7;
+      font-size:.95rem;
+    }
+
+    .footer{
+      color:var(--soft);
+      font-family:var(--mono);
+      font-size:.83rem;
+      text-align:center;
+      padding:18px 0 22px;
+      opacity:.9;
+    }
+
+    @media (max-width: 1180px){
+      .hero,
+      .dashboard,
+      .cards{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width: 920px){
+      .shell{
+        grid-template-columns:1fr;
+      }
+      .sidebar{
+        position:relative;
+        height:auto;
+      }
+    }
+
+    @media (max-width: 640px){
+      .main{padding:14px}
+      .sidebar{padding:14px}
+      .signal-grid{grid-template-columns:1fr}
+      .topbar{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+      .window-controls{
+        width:100%;
+        flex-wrap:wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="noise"></div>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">KU</div>
+        <div>
+          <h1>KmxOS v1.0</h1>
+          <p>Developer Portfolio</p>
+        </div>
+      </div>
+
+      <div class="status">
+        <div class="status-top">
+          <span>system_status</span>
+          <span class="ping"><span class="dot"></span>online</span>
+        </div>
+        <div style="display:grid; gap:10px;">
+          <div>
+            <div class="status-top"><span>backend</span><span>94%</span></div>
+            <div class="meter"><span style="width:94%"></span></div>
+          </div>
+          <div>
+            <div class="status-top"><span>games</span><span>81%</span></div>
+            <div class="meter"><span style="width:81%"></span></div>
+          </div>
+          <div>
+            <div class="status-top"><span>systems</span><span>88%</span></div>
+            <div class="meter"><span style="width:88%"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="#overview" class="active"><span>Overview</span><span>00</span></a>
+        <a href="#terminal"><span>Command Console</span><span>01</span></a>
+        <a href="#experience"><span>Mission Log</span><span>02</span></a>
+        <a href="#stack"><span>Tech Stack</span><span>03</span></a>
+        <a href="#projects"><span>Work Modules</span><span>04</span></a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p>
+          Software Engineer with 6+ years of experience across backend systems, APIs,
+          desktop applications, 2D games, and Rust-based systems software.
+        </p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="window-controls">
+          <span></span><span></span><span></span>
+          <div class="path">/portfolio/kmxu/index.html</div>
+        </div>
+        <div class="top-actions">
+          <span class="chip">public_build: 2026</span>
+          <button id="themeBtn">toggle_theme()</button>
+        </div>
+      </div>
+
+      <section class="hero" id="overview">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">boot_sequence</div>
+            <div class="panel-title">ready</div>
+          </div>
+          <div class="panel-body">
+            <div class="hero-kicker">systems-ready profile</div>
+            <h2>
+              Kent Mark Xavier Ubas<br>
+              <span class="accent">developer operating system</span>
+            </h2>
+            <p>
+              I build software across multiple layers of the stack: backend platforms,
+              REST APIs, desktop tools, interactive 2D games, and Rust systems software.
+              My work blends product thinking, practical engineering, and clean implementation.
+            </p>
+
+            <div class="hero-actions">
+              <a href="#terminal" class="btn-primary">Open Console</a>
+              <a href="#experience" class="btn-secondary">Read Mission Log</a>
+            </div>
+
+            <div class="signal-grid">
+              <div class="mini-stat">
+                <div class="label">experience_years</div>
+                <div class="value">6+</div>
+              </div>
+              <div class="mini-stat">
+                <div class="label">primary_modes</div>
+                <div class="value">5</div>
+              </div>
+              <div class="mini-stat">
+                <div class="label">current_focus</div>
+                <div class="value" style="font-size:1.1rem; line-height:1.3;">Rust Systems</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">profile_modules</div>
+            <div class="panel-title">loaded</div>
+          </div>
+          <div class="panel-body profile-grid">
+            <div>
+              <div class="panel-title" style="margin-bottom:10px;">specializations</div>
+              <div class="profile-block">
+                <div class="badge-list">
+                  <span class="badge">Backend Development</span>
+                  <span class="badge">RESTful APIs</span>
+                  <span class="badge">Electron-Vue Apps</span>
+                  <span class="badge">Phaser Games</span>
+                  <span class="badge">Rust Systems</span>
+                  <span class="badge">API Integration</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="panel-title" style="margin-bottom:10px;">core_stack</div>
+              <div class="profile-block">
+                <div class="tag-list">
+                  <span class="tag">PHP</span>
+                  <span class="tag">Laravel</span>
+                  <span class="tag">JavaScript</span>
+                  <span class="tag">Electron-Vue</span>
+                  <span class="tag">Phaser</span>
+                  <span class="tag">Rust</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="panel-title" style="margin-bottom:10px;">summary</div>
+              <div class="profile-block">
+                <p style="margin:0;color:var(--soft);line-height:1.8;">
+                  Started with CRM and e-commerce systems, expanded into logistics platforms,
+                  built custom educational games and desktop productivity tools, then moved
+                  into systems software engineering for cluster coordination and node operations.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard">
+        <div class="panel" id="terminal">
+          <div class="panel-head">
+            <div class="panel-title">command_console</div>
+            <div class="panel-title">interactive</div>
+          </div>
+          <div class="panel-body">
+            <div class="terminal">
+              <div class="terminal-bar">
+                <span>kmx@developer-os:~</span>
+                <span>type "help"</span>
+              </div>
+              <div class="terminal-output" id="terminalOutput"></div>
+              <div class="terminal-input-row">
+                <span class="prompt">kmx@os:~$</span>
+                <input
+                  id="terminalInput"
+                  class="terminal-input"
+                  type="text"
+                  placeholder="Enter command..."
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+              </div>
+            </div>
+
+            <div class="quick-commands">
+              <button data-cmd="help">help</button>
+              <button data-cmd="about">about</button>
+              <button data-cmd="skills">skills</button>
+              <button data-cmd="experience">experience</button>
+              <button data-cmd="projects">projects</button>
+              <button data-cmd="clear">clear</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="subgrid">
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">active_modules</div>
+              <div class="panel-title">6 loaded</div>
+            </div>
+            <div class="panel-body">
+              <div class="module-list">
+                <div class="module">
+                  <div class="module-top">
+                    <h3>backend.api.core</h3>
+                    <span class="state">stable</span>
+                  </div>
+                  <p>Backend web development, RESTful APIs, business systems, e-commerce, and platform improvements.</p>
+                </div>
+                <div class="module">
+                  <div class="module-top">
+                    <h3>desktop.workflow.tools</h3>
+                    <span class="state">stable</span>
+                  </div>
+                  <p>Cross-platform application work using Electron-Vue for internal processes and productivity workflows.</p>
+                </div>
+                <div class="module">
+                  <div class="module-top">
+                    <h3>game.phaser.interactive</h3>
+                    <span class="state">stable</span>
+                  </div>
+                  <p>Custom eLearning games, proof-of-concept builds, and integration of educational content and assets.</p>
+                </div>
+                <div class="module">
+                  <div class="module-top">
+                    <h3>systems.rust.cluster</h3>
+                    <span class="state">active</span>
+                  </div>
+                  <p>Rust backend daemon work involving logging, metrics collection, blockserver management, and filesystem tasks.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel" id="experience">
+            <div class="panel-head">
+              <div class="panel-title">mission_log</div>
+              <div class="panel-title">2018-2026</div>
+            </div>
+            <div class="panel-body">
+              <div class="timeline">
+                <div class="event">
+                  <div class="time">2018.02 - 2018.03</div>
+                  <h3>WLCLIFE // OJT / Web Developer</h3>
+                  <p>Revamped the in-house CRM and helped resolve minor hardware issues.</p>
+                </div>
+                <div class="event">
+                  <div class="time">2018.03 - 2019.07</div>
+                  <h3>WLCLIFE // Backend Web Developer</h3>
+                  <p>Improved CRM stability and built an e-commerce platform for company expansion.</p>
+                </div>
+                <div class="event">
+                  <div class="time">2020.03 - 2021.07</div>
+                  <h3>Jogxpress // Backend Web Developer</h3>
+                  <p>Developed a logistics platform and maintained APIs for mobile applications.</p>
+                </div>
+                <div class="event">
+                  <div class="time">2021.08 - 2025.10</div>
+                  <h3>AGuyIKnow // Game + Software Developer</h3>
+                  <p>Built custom eLearning games and internal productivity software with API integrations.</p>
+                </div>
+                <div class="event">
+                  <div class="time">2025.10 - 2026.03</div>
+                  <h3>Tekkio // Systems Software Engineer</h3>
+                  <p>Contributed to Rust-based systems software for cluster coordination and node operations.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section panel" id="stack">
+        <div class="panel-head">
+          <div class="panel-title">stack_inventory</div>
+          <div class="panel-title">categorized</div>
+        </div>
+        <div class="panel-body">
+          <div class="cards">
+            <article class="card">
+              <small>languages</small>
+              <h3>Core Languages</h3>
+              <p>PHP, JavaScript, Rust, Python, C, and C++.</p>
+            </article>
+            <article class="card">
+              <small>frameworks</small>
+              <h3>Frameworks & Platforms</h3>
+              <p>Laravel, CodeIgniter, Electron-Vue, Phaser, Node.js, and Socket.IO.</p>
+            </article>
+            <article class="card">
+              <small>databases</small>
+              <h3>Storage</h3>
+              <p>MySQL and SQLite for application data, prototyping, and internal tooling.</p>
+            </article>
+            <article class="card">
+              <small>toolchain</small>
+              <h3>Developer Tools</h3>
+              <p>Git, Docker, and Postman for version control, containerized workflows, and API testing.</p>
+            </article>
+            <article class="card">
+              <small>backend</small>
+              <h3>Application Engineering</h3>
+              <p>Backend development, RESTful API development, web application development, and system integrations.</p>
+            </article>
+            <article class="card">
+              <small>interactive</small>
+              <h3>Creative + Systems Blend</h3>
+              <p>Cross-platform desktop applications, 2D game development, and systems programming.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section panel" id="projects">
+        <div class="panel-head">
+          <div class="panel-title">work_modules</div>
+          <div class="panel-title">highlighted</div>
+        </div>
+        <div class="panel-body">
+          <div class="cards">
+            <article class="card">
+              <small>module_01</small>
+              <h3>CRM & E-Commerce Systems</h3>
+              <p>Revamped internal CRM flows and helped build an e-commerce platform that supported new business ventures.</p>
+            </article>
+            <article class="card">
+              <small>module_02</small>
+              <h3>Logistics Platform Engineering</h3>
+              <p>Worked on delivery and logistics software, including backend services and API support for mobile clients.</p>
+            </article>
+            <article class="card">
+              <small>module_03</small>
+              <h3>Custom eLearning Games</h3>
+              <p>Built client-tailored Phaser games, integrated artwork, and created proof-of-concept interactive experiences.</p>
+            </article>
+            <article class="card">
+              <small>module_04</small>
+              <h3>Desktop Productivity Software</h3>
+              <p>Developed internal applications including an automated time tracker and Teamwork.com API integration.</p>
+            </article>
+            <article class="card">
+              <small>module_05</small>
+              <h3>Rust Cluster Systems</h3>
+              <p>Implemented structured logging, periodic system metrics, blockserver management, and filesystem-related tasks.</p>
+            </article>
+            <article class="card">
+              <small>module_06</small>
+              <h3>Engineering Style</h3>
+              <p>Practical, product-aware, and adaptable across web, desktop, game, and systems environments.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">
+        kmxos://portfolio initialized successfully
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const navLinks = document.querySelectorAll(".nav a");
+    const navTargets = Array.from(navLinks)
+      .map(link => {
+        const id = link.getAttribute("href");
+        return {
+          link,
+          target: id ? document.querySelector(id) : null
+        };
+      })
+      .filter(item => item.target)
+      .sort((a, b) => a.target.offsetTop - b.target.offsetTop);
+
+    const setActiveNav = () => {
+      const topbarHeight = document.querySelector(".topbar")?.offsetHeight || 0;
+      const scrollMark = window.scrollY + topbarHeight + 32;
+      const viewportBottom = window.scrollY + window.innerHeight;
+      const documentBottom = document.documentElement.scrollHeight;
+      const activeItem =
+        viewportBottom >= documentBottom - 8
+          ? navTargets.at(-1) || null
+          : [...navTargets].reverse().find(item => item.target.offsetTop <= scrollMark) || navTargets[0] || null;
+
+      navLinks.forEach(link => {
+        link.classList.toggle("active", activeItem?.link === link);
+      });
+    };
+
+    window.addEventListener("scroll", setActiveNav);
+    setActiveNav();
+
+    const themeBtn = document.getElementById("themeBtn");
+    let altTheme = false;
+    themeBtn.addEventListener("click", () => {
+      altTheme = !altTheme;
+      if (altTheme) {
+        document.documentElement.style.setProperty("--bg", "#061012");
+        document.documentElement.style.setProperty("--bg2", "#07161d");
+        document.documentElement.style.setProperty("--panel", "#0d1d20");
+        document.documentElement.style.setProperty("--panel2", "#11282b");
+        document.documentElement.style.setProperty("--line", "#1d3637");
+        document.documentElement.style.setProperty("--soft", "#92b6b0");
+        document.documentElement.style.setProperty("--text", "#effffd");
+        document.documentElement.style.setProperty("--green", "#6affc5");
+        document.documentElement.style.setProperty("--cyan", "#87f7ff");
+        document.documentElement.style.setProperty("--blue", "#70e0ff");
+      } else {
+        document.documentElement.style.setProperty("--bg", "#070a0f");
+        document.documentElement.style.setProperty("--bg2", "#0c1118");
+        document.documentElement.style.setProperty("--panel", "#0f1621");
+        document.documentElement.style.setProperty("--panel2", "#121c29");
+        document.documentElement.style.setProperty("--line", "#1d2a3b");
+        document.documentElement.style.setProperty("--soft", "#88a0b8");
+        document.documentElement.style.setProperty("--text", "#e8f0fb");
+        document.documentElement.style.setProperty("--green", "#42f5b9");
+        document.documentElement.style.setProperty("--cyan", "#4fd8ff");
+        document.documentElement.style.setProperty("--blue", "#5b8cff");
+      }
+    });
+
+    const terminalOutput = document.getElementById("terminalOutput");
+    const terminalInput = document.getElementById("terminalInput");
+
+    const printLine = (text = "", cls = "") => {
+      const line = document.createElement("div");
+      line.className = "terminal-line" + (cls ? " " + cls : "");
+      line.textContent = text;
+      terminalOutput.appendChild(line);
+      terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    };
+
+    const printLines = (lines) => {
+      lines.forEach(item => {
+        if (typeof item === "string") printLine(item);
+        else printLine(item.text, item.className || "");
+      });
+    };
+
+    const commands = {
+      help: () => [
+        { text: "Available commands:", className: "cyan" },
+        "  help        Show command list",
+        "  about       Show profile summary",
+        "  skills      Show tech stack",
+        "  experience  Show mission log",
+        "  projects    Show work modules",
+        "  clear       Clear terminal output"
+      ],
+      about: () => [
+        { text: "Kent Mark Xavier Ubas // Software Engineer", className: "green" },
+        "6+ years building backend systems, APIs, desktop applications, interactive games, and Rust-based systems software.",
+        "Core strengths: PHP, Laravel, JavaScript, Electron-Vue, Phaser, Rust."
+      ],
+      skills: () => [
+        { text: "stack_inventory", className: "cyan" },
+        "Languages: PHP, JavaScript, Rust, Python, C, C++",
+        "Frameworks: Laravel, CodeIgniter, Electron-Vue, Phaser, Node.js, Socket.IO",
+        "Databases: MySQL, SQLite",
+        "Tools: Git, Docker, Postman"
+      ],
+      experience: () => [
+        { text: "mission_log", className: "cyan" },
+        "2018  WLCLIFE  OJT/Web Developer",
+        "2018-2019  WLCLIFE  Backend Web Developer",
+        "2020-2021  Jogxpress  Backend Web Developer",
+        "2021-2025  AGuyIKnow  Game Developer / Software Developer",
+        "2025-2026  Tekkio  Systems Software Engineer"
+      ],
+      projects: () => [
+        { text: "work_modules", className: "cyan" },
+        "CRM systems and e-commerce platform development",
+        "Delivery and logistics backend platform work",
+        "Custom eLearning games with Phaser",
+        "Desktop workflow tools and automated time tracking",
+        "Rust systems software for cluster coordination"
+      ]
+    };
+
+    const runCommand = (raw) => {
+      const cmd = raw.trim().toLowerCase();
+      if (!cmd) return;
+
+      printLine("kmx@os:~$ " + raw, "amber");
+
+      if (cmd === "clear") {
+        terminalOutput.innerHTML = "";
+        bootTerminal();
+        return;
+      }
+
+      if (commands[cmd]) {
+        printLines(commands[cmd]());
+      } else {
+        printLine("command not found: " + cmd, "red");
+        printLine('type "help" to view available commands', "dim");
+      }
+    };
+
+    const bootTerminal = () => {
+      printLines([
+        { text: "KmxOS portfolio console initialized.", className: "green" },
+        { text: "Type a command to inspect the system.", className: "dim" },
+        { text: 'Suggested: about, skills, experience, projects', className: "dim" },
+        ""
+      ]);
+    };
+
+    terminalInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        runCommand(terminalInput.value);
+        terminalInput.value = "";
+      }
+    });
+
+    document.querySelectorAll(".quick-commands button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        runCommand(btn.dataset.cmd);
+        terminalInput.focus();
+      });
+    });
+
+    bootTerminal();
+  </script>
+</body>
+</html>
