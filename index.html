@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth [scroll-padding-top:100px]">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,950 +8,289 @@
     name="description"
     content="Developer OS style portfolio by Kent Mark Xavier Ubas."
   />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --font-sans: "Space Grotesk", "Segoe UI", sans-serif;
+      --font-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --shadow-panel: 0 24px 60px rgba(0, 0, 0, 0.42);
+    }
+  </style>
   <style>
-    :root{
-      --bg:#06080d;
-      --bg2:#0b1118;
-      --panel:#101925;
-      --panel2:#162130;
-      --line:#223247;
-      --soft:#8ea6bf;
-      --text:#eef4fd;
-      --green:#53f5c0;
-      --cyan:#67dfff;
-      --blue:#6e8fff;
-      --amber:#ffd17d;
-      --red:#ff7a87;
-      --glow:rgba(103,223,255,.18);
-      --shadow:0 24px 60px rgba(0,0,0,.42);
-      --radius:22px;
-      --mono:"IBM Plex Mono","SFMono-Regular",Menlo,Monaco,Consolas,"Liberation Mono",monospace;
-      --sans:"Trebuchet MS","Segoe UI",sans-serif;
+    :root {
+      --bg: #06080d;
+      --bg2: #0b1118;
+      --line: #223247;
+      --soft: #8ea6bf;
+      --text: #eef4fd;
+      --green: #53f5c0;
+      --cyan: #67dfff;
+      --blue: #6e8fff;
+      --amber: #ffd17d;
+      --red: #ff7a87;
     }
 
-    *{box-sizing:border-box}
-    html{
-      scroll-behavior:smooth;
-      scroll-padding-top:100px;
+    .theme-alt {
+      --bg: #061012;
+      --bg2: #07161d;
+      --line: #1d3637;
+      --soft: #92b6b0;
+      --text: #effffd;
+      --green: #6affc5;
+      --cyan: #87f7ff;
+      --blue: #70e0ff;
     }
-    body{
-      margin:0;
-      font-family:var(--sans);
-      color:var(--text);
+
+    body {
       background:
-        radial-gradient(circle at 12% 18%, rgba(103,223,255,.12), transparent 20%),
-        radial-gradient(circle at 88% 12%, rgba(110,143,255,.12), transparent 18%),
-        radial-gradient(circle at 50% 100%, rgba(83,245,192,.07), transparent 26%),
+        radial-gradient(circle at 12% 18%, rgba(103, 223, 255, 0.12), transparent 20%),
+        radial-gradient(circle at 88% 12%, rgba(110, 143, 255, 0.12), transparent 18%),
+        radial-gradient(circle at 50% 100%, rgba(83, 245, 192, 0.07), transparent 26%),
         linear-gradient(180deg, var(--bg), var(--bg2));
-      min-height:100vh;
-      overflow-x:hidden;
     }
 
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      mix-blend-mode: screen;
       background:
-        linear-gradient(135deg, rgba(255,255,255,.02), transparent 32%),
-        radial-gradient(circle at 50% 0%, rgba(255,209,125,.08), transparent 25%);
-      mix-blend-mode:screen;
-      z-index:-1;
+        linear-gradient(135deg, rgba(255, 255, 255, 0.02), transparent 32%),
+        radial-gradient(circle at 50% 0%, rgba(255, 209, 125, 0.08), transparent 25%);
     }
 
-    .noise,
-    .grid{
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      z-index:-1;
+    .grid-overlay,
+    .noise-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
     }
 
-    .grid{
+    .grid-overlay {
+      opacity: 0.2;
       background-image:
-        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
-      background-size:32px 32px;
-      mask-image:radial-gradient(circle at center, black 35%, transparent 100%);
-      opacity:.2;
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 100%);
     }
 
-    .noise{
-      opacity:.05;
+    .noise-overlay {
+      opacity: 0.05;
       background-image:
         radial-gradient(circle at 20% 20%, #fff 0 1px, transparent 1px),
         radial-gradient(circle at 80% 30%, #fff 0 1px, transparent 1px),
         radial-gradient(circle at 50% 60%, #fff 0 1px, transparent 1px),
         radial-gradient(circle at 30% 80%, #fff 0 1px, transparent 1px);
-      background-size:240px 240px;
+      background-size: 240px 240px;
     }
 
-    a{color:inherit;text-decoration:none}
-    button,input{font:inherit}
-
-    .shell{
-      display:grid;
-      grid-template-columns: 280px 1fr;
-      min-height:100vh;
-      max-width:1480px;
-      margin:0 auto;
-    }
-
-    .sidebar{
-      position:sticky;
-      top:0;
-      height:100vh;
-      display:flex;
-      flex-direction:column;
-      background:linear-gradient(180deg, rgba(13,20,30,.96), rgba(7,10,16,.96));
-      border-right:1px solid var(--line);
-      padding:22px 18px;
-      box-shadow:var(--shadow);
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      padding:14px;
-      border:1px solid var(--line);
-      border-radius:16px;
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
-      margin-bottom:18px;
-      position:relative;
-      overflow:hidden;
-    }
-
-    .brand::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:linear-gradient(115deg, rgba(103,223,255,.08), transparent 38%, rgba(255,209,125,.05));
-      pointer-events:none;
-    }
-
-    .brand-badge{
-      width:48px;
-      height:48px;
-      border-radius:14px;
-      display:grid;
-      place-items:center;
-      font-family:var(--mono);
-      font-weight:700;
-      color:var(--bg);
-      background:linear-gradient(135deg, var(--green), var(--cyan));
-      box-shadow:0 14px 32px rgba(103,223,255,.24);
-    }
-
-    .brand h1{
-      margin:0;
-      font-size:1.02rem;
-      line-height:1.1;
-      letter-spacing:-.04em;
-    }
-
-    .brand p{
-      margin:4px 0 0;
-      color:var(--soft);
-      font-size:.86rem;
-    }
-
-    .status{
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:14px;
-      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
-      margin-bottom:18px;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
-    }
-
-    .status-top{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      margin-bottom:10px;
-      font-family:var(--mono);
-      font-size:.84rem;
-      color:var(--soft);
-    }
-
-    .ping{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      color:var(--green);
-    }
-
-    .dot{
-      width:8px;
-      height:8px;
-      border-radius:50%;
-      background:var(--green);
-      box-shadow:0 0 12px var(--green);
-      animation:pulse 1.8s infinite;
-    }
-
-    @keyframes pulse{
-      0%{transform:scale(1);opacity:1}
-      70%{transform:scale(1.8);opacity:.2}
-      100%{transform:scale(1);opacity:1}
-    }
-
-    .meter{
-      height:8px;
-      background:#0a1018;
-      border-radius:999px;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.05);
-    }
-
-    .meter > span{
-      display:block;
-      height:100%;
-      border-radius:999px;
-      background:linear-gradient(90deg, var(--green), var(--cyan), var(--blue));
-    }
-
-    .nav{
-      display:grid;
-      gap:10px;
-      margin-bottom:18px;
-    }
-
-    .nav a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:13px 14px;
-      border-radius:14px;
-      border:1px solid transparent;
-      color:var(--soft);
-      background:rgba(255,255,255,.015);
-      transition:.22s ease;
-    }
-
-    .nav a:hover,
-    .nav a.active{
-      color:var(--text);
-      border-color:var(--line);
-      background:linear-gradient(90deg, rgba(103,223,255,.14), rgba(110,143,255,.08));
-      transform:translateX(4px);
-      box-shadow:0 0 0 1px rgba(103,223,255,.08) inset;
-    }
-
-    .nav a span:last-child{
-      font-family:var(--mono);
-      font-size:.78rem;
-      color:var(--cyan);
-      opacity:.9;
-    }
-
-    .sidebar-footer{
-      margin-top:auto;
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:14px;
-      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
-    }
-
-    .sidebar-footer p{
-      margin:0 0 10px;
-      color:var(--soft);
-      font-size:.9rem;
-      line-height:1.6;
-    }
-
-    .contact-mini{
-      display:grid;
-      gap:8px;
-      font-family:var(--mono);
-      font-size:.82rem;
-      color:var(--text);
-    }
-
-    .main{
-      padding:22px 24px 28px;
-    }
-
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      margin-bottom:18px;
-      border:1px solid var(--line);
-      border-radius:20px;
-      padding:14px 18px;
-      background:rgba(12,18,28,.78);
-      backdrop-filter:blur(16px);
-      position:sticky;
-      top:12px;
-      z-index:20;
-      box-shadow:0 18px 40px rgba(0,0,0,.24);
-    }
-
-    .window-controls{
-      display:flex;
-      gap:8px;
-      align-items:center;
-    }
-
-    .window-controls span{
-      width:12px;
-      height:12px;
-      border-radius:50%;
-      display:inline-block;
-    }
-
-    .window-controls span:nth-child(1){background:#ff5f57}
-    .window-controls span:nth-child(2){background:#febc2e}
-    .window-controls span:nth-child(3){background:#28c840}
-
-    .path{
-      font-family:var(--mono);
-      font-size:.9rem;
-      color:var(--soft);
-      white-space:nowrap;
-      overflow:auto hidden;
-      padding-left:8px;
-    }
-
-    .top-actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
-    .top-actions button,
-    .chip{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:12px;
-      cursor:pointer;
-      transition:.2s ease;
-    }
-
-    .top-actions button:hover,
-    .chip:hover{
-      transform:translateY(-2px);
-      border-color:rgba(79,216,255,.35);
-    }
-
-    .chip{
-      cursor:default;
-      color:var(--soft);
-    }
-
-    .hero{
-      display:grid;
-      grid-template-columns:1.15fr .85fr;
-      gap:18px;
-      margin-bottom:18px;
-    }
-
-    .panel{
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      background:linear-gradient(180deg, rgba(17,25,37,.96), rgba(11,17,26,.95));
-      box-shadow:var(--shadow);
-      overflow:hidden;
-      position:relative;
-    }
-
-    .panel::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:linear-gradient(140deg, rgba(103,223,255,.05), transparent 35%, rgba(255,209,125,.03));
-      pointer-events:none;
-    }
-
-    .panel-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:12px 16px;
-      border-bottom:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-    }
-
-    .panel-title{
-      font-family:var(--mono);
-      color:var(--soft);
-      font-size:.86rem;
-      letter-spacing:.04em;
-      text-transform:uppercase;
-    }
-
-    .panel-body{
-      padding:22px;
-      position:relative;
-      z-index:1;
-    }
-
-    .hero-kicker{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:7px 12px;
-      margin-bottom:14px;
-      border:1px solid rgba(103,223,255,.2);
-      border-radius:999px;
-      background:rgba(103,223,255,.07);
-      color:var(--cyan);
-      font-family:var(--mono);
-      font-size:.8rem;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-    }
-
-    .hero-kicker::before{
-      content:"";
-      width:8px;
-      height:8px;
-      border-radius:50%;
-      background:var(--green);
-      box-shadow:0 0 10px var(--green);
-    }
-
-    .hero h2{
-      margin:0 0 12px;
-      font-size:clamp(1.85rem, 4.5vw, 3.95rem);
-      line-height:.94;
-      letter-spacing:-.06em;
-      max-width:11ch;
-    }
-
-    .accent{
-      color:var(--cyan);
-      text-shadow:0 0 18px rgba(79,216,255,.2);
-    }
-
-    .hero p{
-      margin:0 0 18px;
-      color:var(--soft);
-      line-height:1.8;
-      font-size:1.02rem;
-      max-width:60ch;
-    }
-
-    .hero-actions{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom:18px;
-    }
-
-    .btn-primary,
-    .btn-secondary{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:13px 16px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      transition:.2s ease;
-    }
-
-    .btn-primary{
-      background:linear-gradient(135deg, var(--green), var(--cyan));
-      color:#031017;
-      font-weight:800;
-      border:none;
-      box-shadow:0 14px 30px rgba(83,245,192,.18);
-    }
-
-    .btn-secondary{
-      background:rgba(255,255,255,.035);
-    }
-
-    .btn-primary:hover,
-    .btn-secondary:hover{
-      transform:translateY(-2px);
-    }
-
-    .signal-grid{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:12px;
-    }
-
-    .mini-stat{
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:14px;
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
-    }
-
-    .mini-stat .label{
-      color:var(--soft);
-      font-size:.8rem;
-      font-family:var(--mono);
-      text-transform:uppercase;
-    }
-
-    .mini-stat .value{
-      margin-top:8px;
-      font-size:1.6rem;
-      font-weight:800;
-      letter-spacing:-.04em;
-    }
-
-    .profile-grid{
-      display:grid;
-      gap:12px;
-    }
-
-    .profile-block{
-      border:1px solid rgba(255,255,255,.04);
-      border-radius:16px;
-      padding:16px;
-      background:rgba(255,255,255,.02);
-    }
-
-    .badge-list,
-    .tag-list{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-
-    .badge,
-    .tag{
-      padding:9px 11px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.035);
-      font-size:.88rem;
-      color:var(--text);
-    }
-
-    .dashboard{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:18px;
-      margin-bottom:18px;
-    }
-
-    .subgrid{
-      display:grid;
-      gap:18px;
-    }
-
-    .terminal{
-      background:linear-gradient(180deg, #05080d, #09111a);
-      border-radius:16px;
-      border:1px solid #152131;
-      min-height:420px;
-      display:flex;
-      flex-direction:column;
-      overflow:hidden;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
-    }
-
-    .terminal-bar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:10px 14px;
-      border-bottom:1px solid #152131;
-      background:#0b1018;
-      font-family:var(--mono);
-      color:var(--soft);
-      font-size:.82rem;
-    }
-
-    .terminal-output{
-      flex:1;
-      padding:16px;
-      overflow:auto;
-      font-family:var(--mono);
-      font-size:.93rem;
-      line-height:1.7;
-      color:#d9e8f7;
-      background-image:linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px);
-      background-size:100% 28px;
-    }
-
-    .terminal-line{
-      white-space:pre-wrap;
-      margin:0 0 8px;
-    }
-
-    .terminal-line.dim{color:#86a0ba}
-    .terminal-line.green{color:var(--green)}
-    .terminal-line.cyan{color:var(--cyan)}
-    .terminal-line.amber{color:var(--amber)}
-    .terminal-line.red{color:var(--red)}
-
-    .terminal-input-row{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      padding:14px 16px;
-      border-top:1px solid #152131;
-      background:#081018;
-      font-family:var(--mono);
-    }
-
-    .prompt{
-      color:var(--green);
-      white-space:nowrap;
-    }
-
-    .terminal-input{
-      flex:1;
-      background:transparent;
-      border:none;
-      outline:none;
-      color:var(--text);
-      font-family:var(--mono);
-      font-size:.95rem;
-    }
-
-    .quick-commands{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-top:14px;
-    }
-
-    .quick-commands button{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-      color:var(--soft);
-      border-radius:10px;
-      padding:8px 10px;
-      cursor:pointer;
-      font-family:var(--mono);
-      font-size:.8rem;
-    }
-
-    .quick-commands button:hover{
-      color:var(--text);
-      border-color:rgba(79,216,255,.35);
-    }
-
-    .module-list{
-      display:grid;
-      gap:12px;
-    }
-
-    .module{
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:14px;
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
-    }
-
-    .module-top{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-      margin-bottom:8px;
-    }
-
-    .module h3{
-      margin:0;
-      font-size:1rem;
-      letter-spacing:-.03em;
-    }
-
-    .module .state{
-      font-family:var(--mono);
-      font-size:.78rem;
-      color:var(--green);
-      border:1px solid rgba(66,245,185,.2);
-      background:rgba(66,245,185,.08);
-      padding:5px 8px;
-      border-radius:999px;
-    }
-
-    .module p{
-      margin:0;
-      color:var(--soft);
-      line-height:1.7;
-      font-size:.94rem;
-    }
-
-    .timeline{
-      display:grid;
-      gap:14px;
-    }
-
-    .event{
-      border-left:2px solid rgba(103,223,255,.35);
-      padding:2px 0 2px 16px;
-    }
-
-    .event .time{
-      font-family:var(--mono);
-      color:var(--cyan);
-      font-size:.82rem;
-      margin-bottom:6px;
-    }
-
-    .event h3{
-      margin:0 0 6px;
-      font-size:1rem;
-    }
-
-    .event p{
-      margin:0;
-      color:var(--soft);
-      line-height:1.7;
-      font-size:.94rem;
-    }
-
-    .section{
-      margin-bottom:18px;
-    }
-
-    .cards{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:18px;
-    }
-
-    .card{
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:18px;
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
-      transition:.2s ease;
-      position:relative;
-      overflow:hidden;
-    }
-
-    .card:hover{
-      transform:translateY(-4px);
-      border-color:rgba(79,216,255,.3);
-    }
-
-    .card::before{
-      content:"";
-      position:absolute;
-      left:18px;
-      right:18px;
-      top:0;
-      height:2px;
-      background:linear-gradient(90deg, var(--cyan), transparent 70%);
-      opacity:.7;
-    }
-
-    .card small{
-      display:inline-block;
-      margin-bottom:10px;
-      font-family:var(--mono);
-      color:var(--cyan);
-    }
-
-    .card h3{
-      margin:0 0 10px;
-      font-size:1.08rem;
-      letter-spacing:-.03em;
-    }
-
-    .card p{
-      margin:0;
-      color:var(--soft);
-      line-height:1.7;
-      font-size:.95rem;
-    }
-
-    .footer{
-      color:var(--soft);
-      font-family:var(--mono);
-      font-size:.83rem;
-      text-align:center;
-      padding:18px 0 22px;
-      opacity:.9;
-    }
-
-    @media (max-width: 1180px){
-      .hero,
-      .dashboard,
-      .cards{
-        grid-template-columns:1fr;
-      }
-    }
-
-    @media (max-width: 920px){
-      .shell{
-        grid-template-columns:1fr;
-      }
-      .sidebar{
-        position:relative;
-        height:auto;
-      }
+    .panel-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(140deg, rgba(103, 223, 255, 0.05), transparent 35%, rgba(255, 209, 125, 0.03));
     }
 
-    @media (max-width: 640px){
-      .main{padding:14px}
-      .sidebar{padding:14px}
-      .signal-grid{grid-template-columns:1fr}
-      .topbar{
-        align-items:flex-start;
-        flex-direction:column;
-      }
-      .window-controls{
-        width:100%;
-        flex-wrap:wrap;
-      }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      70% { transform: scale(1.8); opacity: 0.2; }
+      100% { transform: scale(1); opacity: 1; }
     }
   </style>
 </head>
-<body>
-  <div class="grid"></div>
-  <div class="noise"></div>
+<body class="relative min-h-screen overflow-x-hidden font-sans font-normal text-[color:var(--text)] antialiased">
+  <div class="grid-overlay"></div>
+  <div class="noise-overlay"></div>
 
-  <div class="shell">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-badge">KU</div>
-        <div>
-          <h1>KmxOS v1.0</h1>
-          <p>Developer Portfolio</p>
+  <div class="mx-auto grid min-h-screen max-w-[1480px] grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)]">
+    <aside class="flex h-auto flex-col border-b border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(13,20,30,.96),rgba(7,10,16,.96))] p-[14px] shadow-panel md:p-[18px] lg:sticky lg:top-0 lg:h-screen lg:border-b-0 lg:border-r lg:p-[22px]">
+      <div class="relative mb-[18px] flex items-center gap-[14px] overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015))] p-[14px]">
+        <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(103,223,255,.08),transparent_38%,rgba(255,209,125,.05))]"></div>
+        <div class="grid h-12 w-12 place-items-center rounded-[14px] bg-[linear-gradient(135deg,var(--green),var(--cyan))] font-mono text-lg font-bold text-[#061017] shadow-[0_14px_32px_rgba(103,223,255,.24)]">KU</div>
+        <div class="relative z-[1]">
+          <h1 class="m-0 text-[1.02rem] font-bold leading-[1.1] tracking-[-0.04em]">KmxOS v1.0</h1>
+          <p class="mt-1 text-[0.86rem] text-[color:var(--soft)]">Developer Portfolio</p>
         </div>
       </div>
 
-      <div class="status">
-        <div class="status-top">
+      <div class="mb-[18px] rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+        <div class="mb-[10px] flex items-center justify-between gap-3 font-mono text-[0.84rem] text-[color:var(--soft)]">
           <span>system_status</span>
-          <span class="ping"><span class="dot"></span>online</span>
+          <span class="flex items-center gap-2 text-[color:var(--green)]">
+            <span class="h-2 w-2 rounded-full bg-[color:var(--green)] shadow-[0_0_12px_var(--green)] [animation:pulse_1.8s_infinite]"></span>
+            online
+          </span>
         </div>
-        <div style="display:grid; gap:10px;">
+        <div class="grid gap-[10px]">
           <div>
-            <div class="status-top"><span>backend</span><span>94%</span></div>
-            <div class="meter"><span style="width:94%"></span></div>
+            <div class="mb-[10px] flex items-center justify-between gap-3 font-mono text-[0.84rem] text-[color:var(--soft)]">
+              <span>backend</span>
+              <span>94%</span>
+            </div>
+            <div class="h-2 overflow-hidden rounded-full border border-white/5 bg-[#0a1018]">
+              <span class="block h-full w-[94%] rounded-full bg-[linear-gradient(90deg,var(--green),var(--cyan),var(--blue))]"></span>
+            </div>
           </div>
           <div>
-            <div class="status-top"><span>games</span><span>81%</span></div>
-            <div class="meter"><span style="width:81%"></span></div>
+            <div class="mb-[10px] flex items-center justify-between gap-3 font-mono text-[0.84rem] text-[color:var(--soft)]">
+              <span>games</span>
+              <span>81%</span>
+            </div>
+            <div class="h-2 overflow-hidden rounded-full border border-white/5 bg-[#0a1018]">
+              <span class="block h-full w-[81%] rounded-full bg-[linear-gradient(90deg,var(--green),var(--cyan),var(--blue))]"></span>
+            </div>
           </div>
           <div>
-            <div class="status-top"><span>systems</span><span>88%</span></div>
-            <div class="meter"><span style="width:88%"></span></div>
+            <div class="mb-[10px] flex items-center justify-between gap-3 font-mono text-[0.84rem] text-[color:var(--soft)]">
+              <span>systems</span>
+              <span>88%</span>
+            </div>
+            <div class="h-2 overflow-hidden rounded-full border border-white/5 bg-[#0a1018]">
+              <span class="block h-full w-[88%] rounded-full bg-[linear-gradient(90deg,var(--green),var(--cyan),var(--blue))]"></span>
+            </div>
           </div>
         </div>
       </div>
 
-      <nav class="nav">
-        <a href="#overview" class="active"><span>Overview</span><span>00</span></a>
-        <a href="#terminal"><span>Command Console</span><span>01</span></a>
-        <a href="#experience"><span>Mission Log</span><span>02</span></a>
-        <a href="#stack"><span>Tech Stack</span><span>03</span></a>
-        <a href="#projects"><span>Work Modules</span><span>04</span></a>
+      <nav class="nav mb-[18px] grid gap-[10px]">
+        <a href="#overview" class="nav-link flex translate-x-1 items-center justify-between gap-3 rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] px-[14px] py-[13px] text-[color:var(--text)] shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
+          <span>Overview</span>
+          <span class="font-mono text-[0.78rem] text-[color:var(--cyan)] opacity-90">00</span>
+        </a>
+        <a href="#terminal" class="nav-link flex translate-x-0 items-center justify-between gap-3 rounded-[14px] border border-transparent bg-white/[0.015] px-[14px] py-[13px] text-[color:var(--soft)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
+          <span>Command Console</span>
+          <span class="font-mono text-[0.78rem] text-[color:var(--cyan)] opacity-90">01</span>
+        </a>
+        <a href="#experience" class="nav-link flex translate-x-0 items-center justify-between gap-3 rounded-[14px] border border-transparent bg-white/[0.015] px-[14px] py-[13px] text-[color:var(--soft)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
+          <span>Mission Log</span>
+          <span class="font-mono text-[0.78rem] text-[color:var(--cyan)] opacity-90">02</span>
+        </a>
+        <a href="#stack" class="nav-link flex translate-x-0 items-center justify-between gap-3 rounded-[14px] border border-transparent bg-white/[0.015] px-[14px] py-[13px] text-[color:var(--soft)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
+          <span>Tech Stack</span>
+          <span class="font-mono text-[0.78rem] text-[color:var(--cyan)] opacity-90">03</span>
+        </a>
+        <a href="#projects" class="nav-link flex translate-x-0 items-center justify-between gap-3 rounded-[14px] border border-transparent bg-white/[0.015] px-[14px] py-[13px] text-[color:var(--soft)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
+          <span>Work Modules</span>
+          <span class="font-mono text-[0.78rem] text-[color:var(--cyan)] opacity-90">04</span>
+        </a>
       </nav>
 
-      <div class="sidebar-footer">
-        <p>
+      <div class="mt-auto rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] p-[14px]">
+        <p class="m-0 text-[0.9rem] leading-[1.6] text-[color:var(--soft)]">
           Software Engineer with 6+ years of experience across backend systems, APIs,
           desktop applications, 2D games, and Rust-based systems software.
         </p>
       </div>
     </aside>
 
-    <main class="main">
-      <div class="topbar">
-        <div class="window-controls">
-          <span></span><span></span><span></span>
-          <div class="path">/portfolio/kmxu/index.html</div>
+    <main class="p-[14px] md:p-[22px_24px_28px]">
+      <div class="topbar sticky top-3 z-20 mb-[18px] flex flex-col items-start justify-between gap-4 rounded-[20px] border border-[color:var(--line)] bg-[rgba(12,18,28,.78)] px-[18px] py-[14px] shadow-[0_18px_40px_rgba(0,0,0,.24)] backdrop-blur-[16px] sm:flex-row sm:items-center">
+        <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:flex-nowrap">
+          <div class="flex items-center gap-2">
+            <span class="inline-block h-3 w-3 rounded-full bg-[#ff5f57]"></span>
+            <span class="inline-block h-3 w-3 rounded-full bg-[#febc2e]"></span>
+            <span class="inline-block h-3 w-3 rounded-full bg-[#28c840]"></span>
+          </div>
+          <div class="overflow-x-auto pl-2 font-mono text-[0.9rem] whitespace-nowrap text-[color:var(--soft)]">/portfolio/kmxu/index.html</div>
         </div>
-        <div class="top-actions">
-          <span class="chip">public_build: 2026</span>
-          <button id="themeBtn">toggle_theme()</button>
+        <div class="flex flex-wrap items-center gap-[10px]">
+          <span class="cursor-default rounded-xl border border-[color:var(--line)] bg-white/[0.03] px-3 py-2.5 font-medium text-[color:var(--soft)] transition duration-200 hover:-translate-y-0.5 hover:border-cyan-300/35">public_build: 2026</span>
+          <button id="themeBtn" class="rounded-xl border border-[color:var(--line)] bg-white/[0.03] px-3 py-2.5 font-medium text-[color:var(--text)] transition duration-200 hover:-translate-y-0.5 hover:border-cyan-300/35">toggle_theme()</button>
         </div>
       </div>
 
-      <section class="hero" id="overview">
-        <div class="panel">
-          <div class="panel-head">
-            <div class="panel-title">boot_sequence</div>
-            <div class="panel-title">ready</div>
+      <section id="overview" class="mb-[18px] grid grid-cols-1 gap-[18px] xl:grid-cols-[minmax(0,1.15fr)_minmax(0,.85fr)]">
+        <div class="panel-shell relative overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
+          <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
+            <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">boot_sequence</div>
+            <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">ready</div>
           </div>
-          <div class="panel-body">
-            <div class="hero-kicker">systems-ready profile</div>
-            <h2>
-              Kent Mark Xavier Ubas<br>
-              <span class="accent">developer operating system</span>
+          <div class="relative z-[1] p-[22px]">
+            <div class="mb-[14px] inline-flex items-center gap-2.5 rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-3 py-[7px] font-mono text-[0.8rem] uppercase tracking-[0.08em] text-[color:var(--cyan)]">
+              <span class="h-2 w-2 rounded-full bg-[color:var(--green)] shadow-[0_0_10px_var(--green)]"></span>
+              systems-ready profile
+            </div>
+            <h2 class="mb-3 max-w-[11ch] text-[clamp(1.85rem,4.5vw,3.95rem)] font-bold leading-[0.94] tracking-[-0.06em]">
+              Kent Mark Xavier Ubas<br />
+              <span class="text-[color:var(--cyan)] [text-shadow:0_0_18px_rgba(79,216,255,.2)]">developer operating system</span>
             </h2>
-            <p>
+            <p class="mb-[18px] max-w-[60ch] text-[1.02rem] leading-[1.8] text-[color:var(--soft)]">
               I build software across multiple layers of the stack: backend platforms,
               REST APIs, desktop tools, interactive 2D games, and Rust systems software.
               My work blends product thinking, practical engineering, and clean implementation.
             </p>
 
-            <div class="hero-actions">
-              <a href="#terminal" class="btn-primary">Open Console</a>
-              <a href="#experience" class="btn-secondary">Read Mission Log</a>
+            <div class="mb-[18px] flex flex-wrap gap-3">
+              <a href="#terminal" class="inline-flex items-center gap-2.5 rounded-[14px] bg-[linear-gradient(135deg,var(--green),var(--cyan))] px-4 py-[13px] font-bold text-[#031017] shadow-[0_14px_30px_rgba(83,245,192,.18)] transition duration-200 hover:-translate-y-0.5">Open Console</a>
+              <a href="#experience" class="inline-flex items-center gap-2.5 rounded-[14px] border border-[color:var(--line)] bg-white/[0.035] px-4 py-[13px] font-medium transition duration-200 hover:-translate-y-0.5">Read Mission Log</a>
             </div>
 
-            <div class="signal-grid">
-              <div class="mini-stat">
-                <div class="label">experience_years</div>
-                <div class="value">6+</div>
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                <div class="font-mono text-[0.8rem] uppercase text-[color:var(--soft)]">experience_years</div>
+                <div class="mt-2 text-[1.6rem] font-bold tracking-[-0.04em]">6+</div>
               </div>
-              <div class="mini-stat">
-                <div class="label">primary_modes</div>
-                <div class="value">5</div>
+              <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                <div class="font-mono text-[0.8rem] uppercase text-[color:var(--soft)]">primary_modes</div>
+                <div class="mt-2 text-[1.6rem] font-bold tracking-[-0.04em]">5</div>
               </div>
-              <div class="mini-stat">
-                <div class="label">current_focus</div>
-                <div class="value" style="font-size:1.1rem; line-height:1.3;">Rust Systems</div>
+              <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                <div class="font-mono text-[0.8rem] uppercase text-[color:var(--soft)]">current_focus</div>
+                <div class="mt-2 text-[1.1rem] leading-[1.3] font-bold tracking-[-0.04em]">Rust Systems</div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="panel">
-          <div class="panel-head">
-            <div class="panel-title">profile_modules</div>
-            <div class="panel-title">loaded</div>
+        <div class="panel-shell relative overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
+          <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
+            <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">profile_modules</div>
+            <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">loaded</div>
           </div>
-          <div class="panel-body profile-grid">
+          <div class="relative z-[1] grid gap-3 p-[22px]">
             <div>
-              <div class="panel-title" style="margin-bottom:10px;">specializations</div>
-              <div class="profile-block">
-                <div class="badge-list">
-                  <span class="badge">Backend Development</span>
-                  <span class="badge">RESTful APIs</span>
-                  <span class="badge">Electron-Vue Apps</span>
-                  <span class="badge">Phaser Games</span>
-                  <span class="badge">Rust Systems</span>
-                  <span class="badge">API Integration</span>
+              <div class="mb-2.5 font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">specializations</div>
+              <div class="rounded-2xl border border-white/[0.04] bg-white/[0.02] p-4">
+                <div class="flex flex-wrap gap-[10px]">
+                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Backend Development</span>
+                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">RESTful APIs</span>
+                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Electron-Vue Apps</span>
+                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Phaser Games</span>
+                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Rust Systems</span>
+                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">API Integration</span>
                 </div>
               </div>
             </div>
 
             <div>
-              <div class="panel-title" style="margin-bottom:10px;">core_stack</div>
-              <div class="profile-block">
-                <div class="tag-list">
-                  <span class="tag">PHP</span>
-                  <span class="tag">Laravel</span>
-                  <span class="tag">JavaScript</span>
-                  <span class="tag">Electron-Vue</span>
-                  <span class="tag">Phaser</span>
-                  <span class="tag">Rust</span>
+              <div class="mb-2.5 font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">core_stack</div>
+              <div class="rounded-2xl border border-white/[0.04] bg-white/[0.02] p-4">
+                <div class="flex flex-wrap gap-[10px]">
+                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">PHP</span>
+                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Laravel</span>
+                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">JavaScript</span>
+                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Electron-Vue</span>
+                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Phaser</span>
+                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Rust</span>
                 </div>
               </div>
             </div>
 
             <div>
-              <div class="panel-title" style="margin-bottom:10px;">summary</div>
-              <div class="profile-block">
-                <p style="margin:0;color:var(--soft);line-height:1.8;">
+              <div class="mb-2.5 font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">summary</div>
+              <div class="rounded-2xl border border-white/[0.04] bg-white/[0.02] p-4">
+                <p class="m-0 leading-[1.8] text-[color:var(--soft)]">
                   Started with CRM and e-commerce systems, expanded into logistics platforms,
                   built custom educational games and desktop productivity tools, then moved
                   into systems software engineering for cluster coordination and node operations.
@@ -962,24 +301,24 @@
         </div>
       </section>
 
-      <section class="dashboard">
-        <div class="panel" id="terminal">
-          <div class="panel-head">
-            <div class="panel-title">command_console</div>
-            <div class="panel-title">interactive</div>
+      <section class="mb-[18px] grid grid-cols-1 gap-[18px] xl:grid-cols-2">
+        <div id="terminal" class="panel-shell relative overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
+          <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
+            <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">command_console</div>
+            <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">interactive</div>
           </div>
-          <div class="panel-body">
-            <div class="terminal">
-              <div class="terminal-bar">
+          <div class="relative z-[1] p-[22px]">
+            <div class="flex min-h-[420px] flex-col overflow-hidden rounded-2xl border border-[#152131] bg-[linear-gradient(180deg,#05080d,#09111a)] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+              <div class="flex items-center justify-between gap-3 border-b border-[#152131] bg-[#0b1018] px-[14px] py-[10px] font-mono text-[0.82rem] text-[color:var(--soft)]">
                 <span>kmx@developer-os:~</span>
                 <span>type "help"</span>
               </div>
-              <div class="terminal-output" id="terminalOutput"></div>
-              <div class="terminal-input-row">
-                <span class="prompt">kmx@os:~$</span>
+              <div id="terminalOutput" class="flex-1 overflow-auto bg-[linear-gradient] bg-[length:100%_28px] p-4 font-mono text-[0.93rem] leading-[1.7] text-[#d9e8f7]"></div>
+              <div class="flex items-center gap-3 border-t border-[#152131] bg-[#081018] px-4 py-[14px] font-mono">
+                <span class="shrink-0 whitespace-nowrap text-[color:var(--green)]">kmx@os:~$</span>
                 <input
                   id="terminalInput"
-                  class="terminal-input"
+                  class="min-w-0 flex-1 border-none bg-transparent font-mono text-[0.95rem] text-[color:var(--text)] outline-none placeholder:text-[color:var(--soft)]"
                   type="text"
                   placeholder="Enter command..."
                   autocomplete="off"
@@ -988,88 +327,88 @@
               </div>
             </div>
 
-            <div class="quick-commands">
-              <button data-cmd="help">help</button>
-              <button data-cmd="about">about</button>
-              <button data-cmd="skills">skills</button>
-              <button data-cmd="experience">experience</button>
-              <button data-cmd="projects">projects</button>
-              <button data-cmd="clear">clear</button>
+            <div class="quick-commands mt-[14px] flex flex-wrap gap-2">
+              <button data-cmd="help" class="rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]">help</button>
+              <button data-cmd="about" class="rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]">about</button>
+              <button data-cmd="skills" class="rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]">skills</button>
+              <button data-cmd="experience" class="rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]">experience</button>
+              <button data-cmd="projects" class="rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]">projects</button>
+              <button data-cmd="clear" class="rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]">clear</button>
             </div>
           </div>
         </div>
 
-        <div class="subgrid">
-          <div class="panel">
-            <div class="panel-head">
-              <div class="panel-title">active_modules</div>
-              <div class="panel-title">6 loaded</div>
+        <div class="grid gap-[18px]">
+          <div class="panel-shell relative overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
+            <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
+              <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">active_modules</div>
+              <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">6 loaded</div>
             </div>
-            <div class="panel-body">
-              <div class="module-list">
-                <div class="module">
-                  <div class="module-top">
-                    <h3>backend.api.core</h3>
-                    <span class="state">stable</span>
+            <div class="relative z-[1] p-[22px]">
+              <div class="grid gap-3">
+                <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                  <div class="mb-2 flex items-center justify-between gap-[10px]">
+                    <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">backend.api.core</h3>
+                    <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
                   </div>
-                  <p>Backend web development, RESTful APIs, business systems, e-commerce, and platform improvements.</p>
+                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Backend web development, RESTful APIs, business systems, e-commerce, and platform improvements.</p>
                 </div>
-                <div class="module">
-                  <div class="module-top">
-                    <h3>desktop.workflow.tools</h3>
-                    <span class="state">stable</span>
+                <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                  <div class="mb-2 flex items-center justify-between gap-[10px]">
+                    <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">desktop.workflow.tools</h3>
+                    <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
                   </div>
-                  <p>Cross-platform application work using Electron-Vue for internal processes and productivity workflows.</p>
+                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Cross-platform application work using Electron-Vue for internal processes and productivity workflows.</p>
                 </div>
-                <div class="module">
-                  <div class="module-top">
-                    <h3>game.phaser.interactive</h3>
-                    <span class="state">stable</span>
+                <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                  <div class="mb-2 flex items-center justify-between gap-[10px]">
+                    <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">game.phaser.interactive</h3>
+                    <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
                   </div>
-                  <p>Custom eLearning games, proof-of-concept builds, and integration of educational content and assets.</p>
+                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Custom eLearning games, proof-of-concept builds, and integration of educational content and assets.</p>
                 </div>
-                <div class="module">
-                  <div class="module-top">
-                    <h3>systems.rust.cluster</h3>
-                    <span class="state">active</span>
+                <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                  <div class="mb-2 flex items-center justify-between gap-[10px]">
+                    <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">systems.rust.cluster</h3>
+                    <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">active</span>
                   </div>
-                  <p>Rust backend daemon work involving logging, metrics collection, blockserver management, and filesystem tasks.</p>
+                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Rust backend daemon work involving logging, metrics collection, blockserver management, and filesystem tasks.</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="panel" id="experience">
-            <div class="panel-head">
-              <div class="panel-title">mission_log</div>
-              <div class="panel-title">2018-2026</div>
+          <div id="experience" class="panel-shell relative overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
+            <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
+              <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">mission_log</div>
+              <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">2018-2026</div>
             </div>
-            <div class="panel-body">
-              <div class="timeline">
-                <div class="event">
-                  <div class="time">2018.02 - 2018.03</div>
-                  <h3>WLCLIFE // OJT / Web Developer</h3>
-                  <p>Revamped the in-house CRM and helped resolve minor hardware issues.</p>
+            <div class="relative z-[1] p-[22px]">
+              <div class="grid gap-[14px]">
+                <div class="border-l-2 border-cyan-300/35 pl-4">
+                  <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2018.02 - 2018.03</div>
+                  <h3 class="m-0 mb-1.5 text-base font-semibold">WLCLIFE // OJT / Web Developer</h3>
+                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Revamped the in-house CRM and helped resolve minor hardware issues.</p>
                 </div>
-                <div class="event">
-                  <div class="time">2018.03 - 2019.07</div>
-                  <h3>WLCLIFE // Backend Web Developer</h3>
-                  <p>Improved CRM stability and built an e-commerce platform for company expansion.</p>
+                <div class="border-l-2 border-cyan-300/35 pl-4">
+                  <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2018.03 - 2019.07</div>
+                  <h3 class="m-0 mb-1.5 text-base font-semibold">WLCLIFE // Backend Web Developer</h3>
+                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Improved CRM stability and built an e-commerce platform for company expansion.</p>
                 </div>
-                <div class="event">
-                  <div class="time">2020.03 - 2021.07</div>
-                  <h3>Jogxpress // Backend Web Developer</h3>
-                  <p>Developed a logistics platform and maintained APIs for mobile applications.</p>
+                <div class="border-l-2 border-cyan-300/35 pl-4">
+                  <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2020.03 - 2021.07</div>
+                  <h3 class="m-0 mb-1.5 text-base font-semibold">Jogxpress // Backend Web Developer</h3>
+                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Developed a logistics platform and maintained APIs for mobile applications.</p>
                 </div>
-                <div class="event">
-                  <div class="time">2021.08 - 2025.10</div>
-                  <h3>AGuyIKnow // Game + Software Developer</h3>
-                  <p>Built custom eLearning games and internal productivity software with API integrations.</p>
+                <div class="border-l-2 border-cyan-300/35 pl-4">
+                  <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2021.08 - 2025.10</div>
+                  <h3 class="m-0 mb-1.5 text-base font-semibold">AGuyIKnow // Game + Software Developer</h3>
+                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Built custom eLearning games and internal productivity software with API integrations.</p>
                 </div>
-                <div class="event">
-                  <div class="time">2025.10 - 2026.03</div>
-                  <h3>Tekkio // Systems Software Engineer</h3>
-                  <p>Contributed to Rust-based systems software for cluster coordination and node operations.</p>
+                <div class="border-l-2 border-cyan-300/35 pl-4">
+                  <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2025.10 - 2026.03</div>
+                  <h3 class="m-0 mb-1.5 text-base font-semibold">Tekkio // Systems Software Engineer</h3>
+                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Contributed to Rust-based systems software for cluster coordination and node operations.</p>
                 </div>
               </div>
             </div>
@@ -1077,96 +416,108 @@
         </div>
       </section>
 
-      <section class="section panel" id="stack">
-        <div class="panel-head">
-          <div class="panel-title">stack_inventory</div>
-          <div class="panel-title">categorized</div>
+      <section id="stack" class="panel-shell relative mb-[18px] overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
+        <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
+          <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">stack_inventory</div>
+          <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">categorized</div>
         </div>
-        <div class="panel-body">
-          <div class="cards">
-            <article class="card">
-              <small>languages</small>
-              <h3>Core Languages</h3>
-              <p>PHP, JavaScript, Rust, Python, C, and C++.</p>
+        <div class="relative z-[1] p-[22px]">
+          <div class="grid grid-cols-1 gap-[18px] xl:grid-cols-3">
+            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">languages</small>
+              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Core Languages</h3>
+              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">PHP, JavaScript, Rust, Python, C, and C++.</p>
             </article>
-            <article class="card">
-              <small>frameworks</small>
-              <h3>Frameworks & Platforms</h3>
-              <p>Laravel, CodeIgniter, Electron-Vue, Phaser, Node.js, and Socket.IO.</p>
+            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">frameworks</small>
+              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Frameworks & Platforms</h3>
+              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Laravel, CodeIgniter, Electron-Vue, Phaser, Node.js, and Socket.IO.</p>
             </article>
-            <article class="card">
-              <small>databases</small>
-              <h3>Storage</h3>
-              <p>MySQL and SQLite for application data, prototyping, and internal tooling.</p>
+            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">databases</small>
+              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Storage</h3>
+              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">MySQL and SQLite for application data, prototyping, and internal tooling.</p>
             </article>
-            <article class="card">
-              <small>toolchain</small>
-              <h3>Developer Tools</h3>
-              <p>Git, Docker, and Postman for version control, containerized workflows, and API testing.</p>
+            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">toolchain</small>
+              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Developer Tools</h3>
+              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Git, Docker, and Postman for version control, containerized workflows, and API testing.</p>
             </article>
-            <article class="card">
-              <small>backend</small>
-              <h3>Application Engineering</h3>
-              <p>Backend development, RESTful API development, web application development, and system integrations.</p>
+            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">backend</small>
+              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Application Engineering</h3>
+              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Backend development, RESTful API development, web application development, and system integrations.</p>
             </article>
-            <article class="card">
-              <small>interactive</small>
-              <h3>Creative + Systems Blend</h3>
-              <p>Cross-platform desktop applications, 2D game development, and systems programming.</p>
+            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">interactive</small>
+              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Creative + Systems Blend</h3>
+              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Cross-platform desktop applications, 2D game development, and systems programming.</p>
             </article>
           </div>
         </div>
       </section>
 
-      <section class="section panel" id="projects">
-        <div class="panel-head">
-          <div class="panel-title">work_modules</div>
-          <div class="panel-title">highlighted</div>
+      <section id="projects" class="panel-shell relative mb-[18px] overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
+        <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
+          <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">work_modules</div>
+          <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">highlighted</div>
         </div>
-        <div class="panel-body">
-          <div class="cards">
-            <article class="card">
-              <small>module_01</small>
-              <h3>CRM & E-Commerce Systems</h3>
-              <p>Revamped internal CRM flows and helped build an e-commerce platform that supported new business ventures.</p>
+        <div class="relative z-[1] p-[22px]">
+          <div class="grid grid-cols-1 gap-[18px] xl:grid-cols-3">
+            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_01</small>
+              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">CRM & E-Commerce Systems</h3>
+              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Revamped internal CRM flows and helped build an e-commerce platform that supported new business ventures.</p>
             </article>
-            <article class="card">
-              <small>module_02</small>
-              <h3>Logistics Platform Engineering</h3>
-              <p>Worked on delivery and logistics software, including backend services and API support for mobile clients.</p>
+            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_02</small>
+              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Logistics Platform Engineering</h3>
+              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Worked on delivery and logistics software, including backend services and API support for mobile clients.</p>
             </article>
-            <article class="card">
-              <small>module_03</small>
-              <h3>Custom eLearning Games</h3>
-              <p>Built client-tailored Phaser games, integrated artwork, and created proof-of-concept interactive experiences.</p>
+            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_03</small>
+              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Custom eLearning Games</h3>
+              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Built client-tailored Phaser games, integrated artwork, and created proof-of-concept interactive experiences.</p>
             </article>
-            <article class="card">
-              <small>module_04</small>
-              <h3>Desktop Productivity Software</h3>
-              <p>Developed internal applications including an automated time tracker and Teamwork.com API integration.</p>
+            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_04</small>
+              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Desktop Productivity Software</h3>
+              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Developed internal applications including an automated time tracker and Teamwork.com API integration.</p>
             </article>
-            <article class="card">
-              <small>module_05</small>
-              <h3>Rust Cluster Systems</h3>
-              <p>Implemented structured logging, periodic system metrics, blockserver management, and filesystem-related tasks.</p>
+            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_05</small>
+              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Rust Cluster Systems</h3>
+              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Implemented structured logging, periodic system metrics, blockserver management, and filesystem-related tasks.</p>
             </article>
-            <article class="card">
-              <small>module_06</small>
-              <h3>Engineering Style</h3>
-              <p>Practical, product-aware, and adaptable across web, desktop, game, and systems environments.</p>
+            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_06</small>
+              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Engineering Style</h3>
+              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Practical, product-aware, and adaptable across web, desktop, game, and systems environments.</p>
             </article>
           </div>
         </div>
       </section>
 
-      <div class="footer">
+      <div class="px-0 py-[18px] pb-[22px] text-center font-mono text-[0.83rem] font-medium text-[color:var(--soft)] opacity-90">
         kmxos://portfolio initialized successfully
       </div>
     </main>
   </div>
 
   <script>
-    const navLinks = document.querySelectorAll(".nav a");
+    const navLinks = document.querySelectorAll(".nav-link");
     const navTargets = Array.from(navLinks)
       .map(link => {
         const id = link.getAttribute("href");
@@ -1177,6 +528,21 @@
       })
       .filter(item => item.target)
       .sort((a, b) => a.target.offsetTop - b.target.offsetTop);
+
+    const activeNavClasses = [
+      "text-[color:var(--text)]",
+      "border-[color:var(--line)]",
+      "bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))]",
+      "translate-x-1",
+      "shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]"
+    ];
+
+    const inactiveNavClasses = [
+      "text-[color:var(--soft)]",
+      "border-transparent",
+      "bg-white/[0.015]",
+      "translate-x-0"
+    ];
 
     const setActiveNav = () => {
       const topbarHeight = document.querySelector(".topbar")?.offsetHeight || 0;
@@ -1189,7 +555,9 @@
           : [...navTargets].reverse().find(item => item.target.offsetTop <= scrollMark) || navTargets[0] || null;
 
       navLinks.forEach(link => {
-        link.classList.toggle("active", activeItem?.link === link);
+        const isActive = activeItem?.link === link;
+        link.classList.remove(...(isActive ? inactiveNavClasses : activeNavClasses));
+        link.classList.add(...(isActive ? activeNavClasses : inactiveNavClasses));
       });
     };
 
@@ -1197,46 +565,33 @@
     setActiveNav();
 
     const themeBtn = document.getElementById("themeBtn");
-    let altTheme = false;
     themeBtn.addEventListener("click", () => {
-      altTheme = !altTheme;
-      if (altTheme) {
-        document.documentElement.style.setProperty("--bg", "#061012");
-        document.documentElement.style.setProperty("--bg2", "#07161d");
-        document.documentElement.style.setProperty("--panel", "#0d1d20");
-        document.documentElement.style.setProperty("--panel2", "#11282b");
-        document.documentElement.style.setProperty("--line", "#1d3637");
-        document.documentElement.style.setProperty("--soft", "#92b6b0");
-        document.documentElement.style.setProperty("--text", "#effffd");
-        document.documentElement.style.setProperty("--green", "#6affc5");
-        document.documentElement.style.setProperty("--cyan", "#87f7ff");
-        document.documentElement.style.setProperty("--blue", "#70e0ff");
-      } else {
-        document.documentElement.style.setProperty("--bg", "#070a0f");
-        document.documentElement.style.setProperty("--bg2", "#0c1118");
-        document.documentElement.style.setProperty("--panel", "#0f1621");
-        document.documentElement.style.setProperty("--panel2", "#121c29");
-        document.documentElement.style.setProperty("--line", "#1d2a3b");
-        document.documentElement.style.setProperty("--soft", "#88a0b8");
-        document.documentElement.style.setProperty("--text", "#e8f0fb");
-        document.documentElement.style.setProperty("--green", "#42f5b9");
-        document.documentElement.style.setProperty("--cyan", "#4fd8ff");
-        document.documentElement.style.setProperty("--blue", "#5b8cff");
-      }
+      document.documentElement.classList.toggle("theme-alt");
     });
 
     const terminalOutput = document.getElementById("terminalOutput");
     const terminalInput = document.getElementById("terminalInput");
 
+    const terminalLineClasses = {
+      dim: "text-[#86a0ba]",
+      green: "text-[color:var(--green)]",
+      cyan: "text-[color:var(--cyan)]",
+      amber: "text-[color:var(--amber)]",
+      red: "text-[color:var(--red)]"
+    };
+
     const printLine = (text = "", cls = "") => {
       const line = document.createElement("div");
-      line.className = "terminal-line" + (cls ? " " + cls : "");
+      line.className = "mb-2 whitespace-pre-wrap";
+      if (cls && terminalLineClasses[cls]) {
+        line.classList.add(terminalLineClasses[cls]);
+      }
       line.textContent = text;
       terminalOutput.appendChild(line);
       terminalOutput.scrollTop = terminalOutput.scrollHeight;
     };
 
-    const printLines = (lines) => {
+    const printLines = lines => {
       lines.forEach(item => {
         if (typeof item === "string") printLine(item);
         else printLine(item.text, item.className || "");
@@ -1283,7 +638,7 @@
       ]
     };
 
-    const runCommand = (raw) => {
+    const runCommand = raw => {
       const cmd = raw.trim().toLowerCase();
       if (!cmd) return;
 
@@ -1312,7 +667,7 @@
       ]);
     };
 
-    terminalInput.addEventListener("keydown", (e) => {
+    terminalInput.addEventListener("keydown", e => {
       if (e.key === "Enter") {
         runCommand(terminalInput.value);
         terminalInput.value = "";
