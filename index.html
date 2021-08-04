@@ -15,6 +15,7 @@
     rel="stylesheet"
   />
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style type="text/tailwindcss">
     @theme {
       --font-sans: "Space Grotesk", "Segoe UI", sans-serif;
@@ -107,6 +108,10 @@
       70% { transform: scale(1.8); opacity: 0.2; }
       100% { transform: scale(1); opacity: 1; }
     }
+
+    .lucide {
+      stroke-width: 1.9;
+    }
   </style>
 </head>
 <body class="relative min-h-screen overflow-x-hidden font-sans font-normal text-[color:var(--text)] antialiased">
@@ -165,23 +170,38 @@
 
       <nav class="nav mb-[18px] grid gap-[10px]">
         <a href="#overview" class="nav-link flex translate-x-1 items-center justify-between gap-3 rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] px-[14px] py-[13px] text-[color:var(--text)] shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
-          <span>Overview</span>
+          <span class="flex items-center gap-3">
+            <i data-lucide="layout-dashboard" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+            <span>Overview</span>
+          </span>
           <span class="font-mono text-[0.78rem] text-[color:var(--cyan)] opacity-90">00</span>
         </a>
         <a href="#terminal" class="nav-link flex translate-x-0 items-center justify-between gap-3 rounded-[14px] border border-transparent bg-white/[0.015] px-[14px] py-[13px] text-[color:var(--soft)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
-          <span>Command Console</span>
+          <span class="flex items-center gap-3">
+            <i data-lucide="terminal" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+            <span>Command Console</span>
+          </span>
           <span class="font-mono text-[0.78rem] text-[color:var(--cyan)] opacity-90">01</span>
         </a>
         <a href="#experience" class="nav-link flex translate-x-0 items-center justify-between gap-3 rounded-[14px] border border-transparent bg-white/[0.015] px-[14px] py-[13px] text-[color:var(--soft)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
-          <span>Mission Log</span>
+          <span class="flex items-center gap-3">
+            <i data-lucide="scroll-text" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+            <span>Mission Log</span>
+          </span>
           <span class="font-mono text-[0.78rem] text-[color:var(--cyan)] opacity-90">02</span>
         </a>
         <a href="#stack" class="nav-link flex translate-x-0 items-center justify-between gap-3 rounded-[14px] border border-transparent bg-white/[0.015] px-[14px] py-[13px] text-[color:var(--soft)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
-          <span>Tech Stack</span>
+          <span class="flex items-center gap-3">
+            <i data-lucide="cpu" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+            <span>Tech Stack</span>
+          </span>
           <span class="font-mono text-[0.78rem] text-[color:var(--cyan)] opacity-90">03</span>
         </a>
         <a href="#projects" class="nav-link flex translate-x-0 items-center justify-between gap-3 rounded-[14px] border border-transparent bg-white/[0.015] px-[14px] py-[13px] text-[color:var(--soft)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
-          <span>Work Modules</span>
+          <span class="flex items-center gap-3">
+            <i data-lucide="folder-open" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+            <span>Work Modules</span>
+          </span>
           <span class="font-mono text-[0.78rem] text-[color:var(--cyan)] opacity-90">04</span>
         </a>
       </nav>
@@ -205,8 +225,10 @@
           <div class="overflow-x-auto pl-2 font-mono text-[0.9rem] whitespace-nowrap text-[color:var(--soft)]">/portfolio/kmxu/index.html</div>
         </div>
         <div class="flex flex-wrap items-center gap-[10px]">
-          <span class="cursor-default rounded-xl border border-[color:var(--line)] bg-white/[0.03] px-3 py-2.5 font-medium text-[color:var(--soft)] transition duration-200 hover:-translate-y-0.5 hover:border-cyan-300/35">public_build: 2026</span>
-          <button id="themeBtn" class="rounded-xl border border-[color:var(--line)] bg-white/[0.03] px-3 py-2.5 font-medium text-[color:var(--text)] transition duration-200 hover:-translate-y-0.5 hover:border-cyan-300/35">toggle_theme()</button>
+          <button id="themeBtn" class="inline-flex items-center gap-2 rounded-xl border border-[color:var(--line)] bg-white/[0.03] px-3 py-2.5 font-medium text-[color:var(--text)] transition duration-200 hover:-translate-y-0.5 hover:border-cyan-300/35">
+            <i data-lucide="sun-moon" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+            <span>toggle_theme()</span>
+          </button>
         </div>
       </div>
 
@@ -232,8 +254,14 @@
             </p>
 
             <div class="mb-[18px] flex flex-wrap gap-3">
-              <a href="#terminal" class="inline-flex items-center gap-2.5 rounded-[14px] bg-[linear-gradient(135deg,var(--green),var(--cyan))] px-4 py-[13px] font-bold text-[#031017] shadow-[0_14px_30px_rgba(83,245,192,.18)] transition duration-200 hover:-translate-y-0.5">Open Console</a>
-              <a href="#experience" class="inline-flex items-center gap-2.5 rounded-[14px] border border-[color:var(--line)] bg-white/[0.035] px-4 py-[13px] font-medium transition duration-200 hover:-translate-y-0.5">Read Mission Log</a>
+              <a href="#terminal" class="inline-flex items-center gap-2.5 rounded-[14px] bg-[linear-gradient(135deg,var(--green),var(--cyan))] px-4 py-[13px] font-bold text-[#031017] shadow-[0_14px_30px_rgba(83,245,192,.18)] transition duration-200 hover:-translate-y-0.5">
+                <i data-lucide="terminal" class="h-4 w-4"></i>
+                <span>Open Console</span>
+              </a>
+              <a href="#experience" class="inline-flex items-center gap-2.5 rounded-[14px] border border-[color:var(--line)] bg-white/[0.035] px-4 py-[13px] font-medium transition duration-200 hover:-translate-y-0.5">
+                <i data-lucide="arrow-right" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+                <span>Read Mission Log</span>
+              </a>
             </div>
 
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -328,12 +356,12 @@
             </div>
 
             <div class="quick-commands mt-[14px] flex flex-wrap gap-2">
-              <button data-cmd="help" class="rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]">help</button>
-              <button data-cmd="about" class="rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]">about</button>
-              <button data-cmd="skills" class="rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]">skills</button>
-              <button data-cmd="experience" class="rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]">experience</button>
-              <button data-cmd="projects" class="rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]">projects</button>
-              <button data-cmd="clear" class="rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]">clear</button>
+              <button data-cmd="help" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="sparkles" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>help</span></button>
+              <button data-cmd="about" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="user" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>about</span></button>
+              <button data-cmd="skills" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="code-xml" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>skills</span></button>
+              <button data-cmd="experience" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="briefcase" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>experience</span></button>
+              <button data-cmd="projects" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="folder-open" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>projects</span></button>
+              <button data-cmd="clear" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="eraser" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>clear</span></button>
             </div>
           </div>
         </div>
@@ -517,6 +545,8 @@
   </div>
 
   <script>
+    lucide.createIcons();
+
     const navLinks = document.querySelectorAll(".nav-link");
     const navTargets = Array.from(navLinks)
       .map(link => {
