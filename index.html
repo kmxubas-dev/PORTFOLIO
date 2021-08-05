@@ -115,11 +115,15 @@
   </style>
 </head>
 <body class="relative min-h-screen overflow-x-hidden font-sans font-normal text-[color:var(--text)] antialiased">
+  <!-- Background Overlays -->
   <div class="grid-overlay"></div>
   <div class="noise-overlay"></div>
 
+  <!-- App Layout -->
   <div class="mx-auto grid min-h-screen max-w-[1480px] grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)]">
+    <!-- Sidebar -->
     <aside class="flex h-auto flex-col border-b border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(13,20,30,.96),rgba(7,10,16,.96))] p-[14px] shadow-panel md:p-[18px] lg:sticky lg:top-0 lg:h-screen lg:border-b-0 lg:border-r lg:p-[22px]">
+      <!-- Brand Card -->
       <div class="relative mb-[18px] flex items-center gap-[14px] overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015))] p-[14px]">
         <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(103,223,255,.08),transparent_38%,rgba(255,209,125,.05))]"></div>
         <div class="grid h-12 w-12 place-items-center rounded-[14px] bg-[linear-gradient(135deg,var(--green),var(--cyan))] font-mono text-lg font-bold text-[#061017] shadow-[0_14px_32px_rgba(103,223,255,.24)]">KU</div>
@@ -129,6 +133,7 @@
         </div>
       </div>
 
+      <!-- System Status Panel -->
       <div class="mb-[18px] rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
         <div class="mb-[10px] flex items-center justify-between gap-3 font-mono text-[0.84rem] text-[color:var(--soft)]">
           <span>system_status</span>
@@ -168,6 +173,7 @@
         </div>
       </div>
 
+      <!-- Sidebar Navigation -->
       <nav class="nav mb-[18px] grid gap-[10px]">
         <a href="#overview" class="nav-link flex translate-x-1 items-center justify-between gap-3 rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] px-[14px] py-[13px] text-[color:var(--text)] shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
           <span class="flex items-center gap-3">
@@ -206,6 +212,7 @@
         </a>
       </nav>
 
+      <!-- Sidebar Summary -->
       <div class="mt-auto rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] p-[14px]">
         <p class="m-0 text-[0.9rem] leading-[1.6] text-[color:var(--soft)]">
           Software Engineer with 6+ years of experience across backend systems, APIs,
@@ -214,7 +221,9 @@
       </div>
     </aside>
 
+    <!-- Main Content -->
     <main class="p-[14px] md:p-[22px_24px_28px]">
+      <!-- Top Bar -->
       <div class="topbar sticky top-3 z-20 mb-[18px] flex flex-col items-start justify-between gap-4 rounded-[20px] border border-[color:var(--line)] bg-[rgba(12,18,28,.78)] px-[18px] py-[14px] shadow-[0_18px_40px_rgba(0,0,0,.24)] backdrop-blur-[16px] sm:flex-row sm:items-center">
         <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:flex-nowrap">
           <div class="flex items-center gap-2">
@@ -232,7 +241,9 @@
         </div>
       </div>
 
+      <!-- Overview Section -->
       <section id="overview" class="mb-[18px] grid grid-cols-1 gap-[18px] xl:grid-cols-[minmax(0,1.15fr)_minmax(0,.85fr)]">
+        <!-- Hero Panel -->
         <div class="panel-shell relative overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
           <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
             <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">boot_sequence</div>
@@ -281,6 +292,7 @@
           </div>
         </div>
 
+        <!-- Profile Modules Panel -->
         <div class="panel-shell relative overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
           <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
             <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">profile_modules</div>
@@ -329,7 +341,9 @@
         </div>
       </section>
 
+      <!-- Console And Experience Row -->
       <section class="mb-[18px] grid grid-cols-1 gap-[18px] xl:grid-cols-2">
+        <!-- Terminal Section -->
         <div id="terminal" class="panel-shell relative overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
           <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
             <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">command_console</div>
@@ -404,9 +418,10 @@
                 </div>
               </div>
             </div>
-          </div>
+        </div>
 
-          <div id="experience" class="panel-shell relative overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
+        <!-- Experience Section -->
+        <div id="experience" class="panel-shell relative overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
             <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
               <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">mission_log</div>
               <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">2018-2026</div>
@@ -444,6 +459,7 @@
         </div>
       </section>
 
+      <!-- Tech Stack Section -->
       <section id="stack" class="panel-shell relative mb-[18px] overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
         <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
           <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">stack_inventory</div>
@@ -491,6 +507,7 @@
         </div>
       </section>
 
+      <!-- Projects Section -->
       <section id="projects" class="panel-shell relative mb-[18px] overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
         <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
           <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">work_modules</div>
@@ -538,6 +555,7 @@
         </div>
       </section>
 
+      <!-- Footer Status -->
       <div class="px-0 py-[18px] pb-[22px] text-center font-mono text-[0.83rem] font-medium text-[color:var(--soft)] opacity-90">
         kmxos://portfolio initialized successfully
       </div>
