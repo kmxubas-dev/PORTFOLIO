@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth [scroll-padding-top:100px]">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,9 +21,16 @@
       --font-sans: "Space Grotesk", "Segoe UI", sans-serif;
       --font-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       --shadow-panel: 0 24px 60px rgba(0, 0, 0, 0.42);
+      --shadow-window: 0 32px 80px rgba(0, 0, 0, 0.46);
     }
   </style>
   <style>
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
     :root {
       --bg: #06080d;
       --bg2: #0b1118;
@@ -61,7 +68,7 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      z-index: -1;
+      z-index: -2;
       mix-blend-mode: screen;
       background:
         linear-gradient(135deg, rgba(255, 255, 255, 0.02), transparent 32%),
@@ -95,12 +102,411 @@
       background-size: 240px 240px;
     }
 
-    .panel-shell::before {
+    .panel-shell::before,
+    .window-shell::before {
       content: "";
       position: absolute;
       inset: 0;
       pointer-events: none;
       background: linear-gradient(140deg, rgba(103, 223, 255, 0.05), transparent 35%, rgba(255, 209, 125, 0.03));
+    }
+
+    .boot-overlay {
+      transition: opacity 420ms ease, visibility 420ms ease;
+    }
+
+    .boot-overlay[data-hidden="true"] {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .boot-sequence-line {
+      opacity: 0;
+      transform: translateY(8px);
+      animation: bootLineIn 420ms ease forwards;
+    }
+
+    .boot-caret {
+      animation: pulse 1s steps(1, end) infinite;
+    }
+
+    .desktop-root {
+      transition: opacity 360ms ease, filter 360ms ease, transform 360ms ease;
+    }
+
+    .window-shell {
+      max-height: calc(100vh - 150px);
+      overflow: hidden;
+      border-radius: 26px;
+      isolation: isolate;
+      transform-origin: top center;
+      transition:
+        left 260ms cubic-bezier(0.22, 1, 0.36, 1),
+        top 260ms cubic-bezier(0.22, 1, 0.36, 1),
+        width 260ms cubic-bezier(0.22, 1, 0.36, 1),
+        height 260ms cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 220ms ease,
+        border-color 220ms ease;
+    }
+
+    .window-shell[data-dragging="true"] {
+      transition: none;
+    }
+
+    .window-frame {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-height: inherit;
+      overflow: hidden;
+      border-radius: inherit;
+    }
+
+    .window-content {
+      min-height: 0;
+      overflow: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(103, 223, 255, 0.3) rgba(255, 255, 255, 0.04);
+    }
+
+    .window-content::-webkit-scrollbar,
+    .explorer-panel::-webkit-scrollbar,
+    #terminalOutput::-webkit-scrollbar,
+    .desktop-window-area::-webkit-scrollbar {
+      width: 12px;
+      height: 12px;
+    }
+
+    .window-content::-webkit-scrollbar-track,
+    .explorer-panel::-webkit-scrollbar-track,
+    #terminalOutput::-webkit-scrollbar-track,
+    .desktop-window-area::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 999px;
+    }
+
+    .window-content::-webkit-scrollbar-thumb,
+    .explorer-panel::-webkit-scrollbar-thumb,
+    #terminalOutput::-webkit-scrollbar-thumb,
+    .desktop-window-area::-webkit-scrollbar-thumb {
+      border: 3px solid transparent;
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(103, 223, 255, 0.55), rgba(110, 143, 255, 0.45)) padding-box;
+    }
+
+    .window-content::-webkit-scrollbar-thumb:hover,
+    .explorer-panel::-webkit-scrollbar-thumb:hover,
+    #terminalOutput::-webkit-scrollbar-thumb:hover,
+    .desktop-window-area::-webkit-scrollbar-thumb:hover {
+      background:
+        linear-gradient(180deg, rgba(103, 223, 255, 0.75), rgba(110, 143, 255, 0.6)) padding-box;
+    }
+
+    .explorer-panel,
+    #terminalOutput,
+    .desktop-window-area {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(103, 223, 255, 0.3) rgba(255, 255, 255, 0.04);
+    }
+
+    .desktop-root[data-booted="false"] {
+      opacity: 0.15;
+      filter: blur(10px);
+      transform: scale(0.99);
+      pointer-events: none;
+    }
+
+    .window-shell[data-state="closed"] {
+      display: none;
+    }
+
+    .window-shell[data-state="minimized"] {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.98);
+    }
+
+    .window-shell[data-focused="true"] {
+      box-shadow: 0 36px 90px rgba(0, 0, 0, 0.52);
+    }
+
+    .window-shell[data-focused="true"] .window-frame {
+      border-color: rgba(103, 223, 255, 0.3);
+    }
+
+    .dragging {
+      cursor: grabbing !important;
+      user-select: none;
+    }
+
+    .window-drag-handle {
+      cursor: grab;
+    }
+
+    .window-drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .window-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .window-control {
+      position: relative;
+      display: inline-flex;
+      height: 12px;
+      width: 12px;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 999px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: transform 160ms ease, filter 160ms ease, box-shadow 160ms ease;
+    }
+
+    .window-control::after {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: 999px;
+    }
+
+    .window-control:hover,
+    .window-control:focus-visible {
+      transform: scale(1.12);
+      filter: brightness(1.08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 0 0 1px rgba(0, 0, 0, 0.28), 0 0 0 4px rgba(255, 255, 255, 0.05);
+      outline: none;
+    }
+
+    .window-control:active {
+      transform: scale(0.96);
+    }
+
+    .window-control-close {
+      background: linear-gradient(180deg, #ff7b72, #ff5f57);
+    }
+
+    .window-control-minimize {
+      background: linear-gradient(180deg, #ffd36d, #febc2e);
+    }
+
+    .window-control-maximize {
+      background: linear-gradient(180deg, #5ee68b, #28c840);
+    }
+
+    .window-shell[data-maximized="true"] {
+      max-height: none;
+    }
+
+    .explorer-panel[data-open="false"] {
+      transform: translateX(-120%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .explorer-panel[data-open="true"] {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .taskbar-app[data-active="true"] {
+      border-color: rgba(103, 223, 255, 0.32);
+      background: linear-gradient(180deg, rgba(103, 223, 255, 0.16), rgba(110, 143, 255, 0.08));
+      color: var(--text);
+    }
+
+    .taskbar-app[data-open="false"] .taskbar-indicator {
+      opacity: 0;
+      transform: scaleX(0.35);
+    }
+
+    .taskbar-app[data-minimized="true"] {
+      opacity: 0.72;
+    }
+
+    .taskbar-app .taskbar-label {
+      display: none;
+    }
+
+    .clock-separator {
+      animation: pulse 1s steps(1, end) infinite;
+    }
+
+    .taskbar-shell {
+      background:
+        linear-gradient(180deg, rgba(18, 26, 39, 0.96), rgba(10, 16, 26, 0.97)),
+        linear-gradient(90deg, rgba(103, 223, 255, 0.04), rgba(110, 143, 255, 0.04));
+    }
+
+    .start-button {
+      background:
+        linear-gradient(135deg, rgba(103, 223, 255, 0.2), rgba(110, 143, 255, 0.12)),
+        rgba(255, 255, 255, 0.04);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    .start-button:hover {
+      border-color: rgba(103, 223, 255, 0.35);
+      background:
+        linear-gradient(135deg, rgba(103, 223, 255, 0.26), rgba(110, 143, 255, 0.16)),
+        rgba(255, 255, 255, 0.06);
+    }
+
+    .tray-button {
+      background: rgba(255, 255, 255, 0.025);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .tray-button:hover {
+      border-color: rgba(103, 223, 255, 0.28);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .app-launcher[data-active="true"] {
+      border-color: rgba(103, 223, 255, 0.35);
+      background: linear-gradient(180deg, rgba(103, 223, 255, 0.14), rgba(110, 143, 255, 0.08));
+      transform: translateY(-4px);
+    }
+
+    .wallpaper-layer {
+      pointer-events: none;
+    }
+
+    .desktop-shortcuts {
+      position: absolute;
+      top: clamp(16px, 2vw, 24px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(96px, 120px));
+      gap: 12px 16px;
+      justify-content: center;
+    }
+
+    .desktop-shortcut {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 8px;
+      border: 1px solid transparent;
+      border-radius: 18px;
+      background: transparent;
+      text-align: center;
+      transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+    }
+
+    .desktop-shortcut:hover,
+    .desktop-shortcut:focus-visible {
+      border-color: rgba(103, 223, 255, 0.28);
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-3px);
+      outline: none;
+    }
+
+    .desktop-shortcut[data-active="true"] {
+      border-color: rgba(103, 223, 255, 0.32);
+      background: rgba(103, 223, 255, 0.1);
+    }
+
+    .desktop-shortcut-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 12px 28px rgba(0,0,0,.18);
+    }
+
+    .desktop-shortcut-label {
+      font-size: 0.8rem;
+      line-height: 1.35;
+      color: var(--text);
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+    }
+
+    .wallpaper-stats-mobile {
+      pointer-events: none;
+    }
+
+    .desktop-window-area {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    @media (min-width: 768px) {
+      .window-shell {
+        touch-action: none;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .desktop-window-area {
+        min-height: 0;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 1439px) {
+      .desktop-shortcuts {
+        top: 16px;
+        gap: 10px 14px;
+      }
+
+      .desktop-shortcut {
+        padding: 8px 6px;
+      }
+
+      .desktop-shortcut-icon {
+        width: 52px;
+        height: 52px;
+      }
+
+      .desktop-shortcut-label {
+        font-size: 0.76rem;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .desktop-shortcuts {
+        position: static;
+        transform: none;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin-bottom: 12px;
+      }
+
+      .window-shell {
+        position: relative !important;
+        inset: auto !important;
+        left: auto !important;
+        top: auto !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-height: none !important;
+        transform: none !important;
+      }
+
+      .window-shell[data-state="open"],
+      .window-shell[data-state="minimized"] {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .desktop-window-area {
+        position: relative;
+        inset: auto;
+        overflow: auto;
+      }
     }
 
     @keyframes pulse {
@@ -109,512 +515,1119 @@
       100% { transform: scale(1); opacity: 1; }
     }
 
+    @keyframes bootLineIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .lucide {
       stroke-width: 1.9;
     }
   </style>
 </head>
-<body class="relative min-h-screen overflow-x-hidden font-sans font-normal text-[color:var(--text)] antialiased">
-  <!-- Background Overlays -->
+<body class="relative h-screen overflow-hidden font-sans font-normal text-[color:var(--text)] antialiased">
   <div class="grid-overlay"></div>
   <div class="noise-overlay"></div>
 
-  <!-- App Layout -->
-  <div class="mx-auto grid min-h-screen max-w-[1480px] grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)]">
-    <!-- Sidebar -->
-    <aside class="flex h-auto flex-col border-b border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(13,20,30,.96),rgba(7,10,16,.96))] p-[14px] shadow-panel md:p-[18px] lg:sticky lg:top-0 lg:h-screen lg:border-b-0 lg:border-r lg:p-[22px]">
-      <!-- Brand Card -->
-      <div class="relative mb-[18px] flex items-center gap-[14px] overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015))] p-[14px]">
-        <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(103,223,255,.08),transparent_38%,rgba(255,209,125,.05))]"></div>
-        <div class="grid h-12 w-12 place-items-center rounded-[14px] bg-[linear-gradient(135deg,var(--green),var(--cyan))] font-mono text-lg font-bold text-[#061017] shadow-[0_14px_32px_rgba(103,223,255,.24)]">KU</div>
-        <div class="relative z-[1]">
-          <h1 class="m-0 text-[1.02rem] font-bold leading-[1.1] tracking-[-0.04em]">KmxOS v1.0</h1>
-          <p class="mt-1 text-[0.86rem] text-[color:var(--soft)]">Developer Portfolio</p>
+  <div
+    id="bootOverlay"
+    data-hidden="false"
+    class="boot-overlay fixed inset-0 z-[120] flex items-center justify-center bg-[radial-gradient(circle_at_top,rgba(103,223,255,.06),transparent_24%),linear-gradient(180deg,#03060a,#07111a)] px-4"
+  >
+    <div class="w-full max-w-[920px] overflow-hidden rounded-[28px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(7,12,18,.98),rgba(4,7,12,.99))] shadow-[0_35px_100px_rgba(0,0,0,.56)]">
+      <div class="flex items-center justify-between gap-3 border-b border-[#152131] bg-[#0a1017] px-5 py-3 font-mono text-[0.8rem] text-[color:var(--soft)]">
+        <div class="flex items-center gap-2">
+          <span class="inline-block h-3 w-3 rounded-full bg-[#ff5f57]"></span>
+          <span class="inline-block h-3 w-3 rounded-full bg-[#febc2e]"></span>
+          <span class="inline-block h-3 w-3 rounded-full bg-[#28c840]"></span>
+        </div>
+        <span>kmx@boot://init</span>
+      </div>
+      <div class="min-h-[340px] bg-[linear-gradient(180deg,#03070c,#07111b)] p-5 font-mono text-[0.95rem] leading-[1.8] text-[#d9e8f7] md:min-h-[380px] md:p-7">
+        <div id="bootSequence" class="space-y-1"></div>
+        <div class="mt-4 flex items-center gap-2 text-[color:var(--green)]">
+          <span>kmx@os:~$</span>
+          <span id="bootPrompt">boot portfolio.desktop</span>
+          <span class="boot-caret inline-block h-5 w-2 rounded-[2px] bg-[color:var(--green)]"></span>
         </div>
       </div>
+    </div>
+  </div>
 
-      <!-- System Status Panel -->
-      <div class="mb-[18px] rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-        <div class="mb-[10px] flex items-center justify-between gap-3 font-mono text-[0.84rem] text-[color:var(--soft)]">
-          <span>system_status</span>
-          <span class="flex items-center gap-2 text-[color:var(--green)]">
-            <span class="h-2 w-2 rounded-full bg-[color:var(--green)] shadow-[0_0_12px_var(--green)] [animation:pulse_1.8s_infinite]"></span>
-            online
-          </span>
-        </div>
-        <div class="grid gap-[10px]">
-          <div>
-            <div class="mb-[10px] flex items-center justify-between gap-3 font-mono text-[0.84rem] text-[color:var(--soft)]">
-              <span>backend</span>
-              <span>94%</span>
-            </div>
-            <div class="h-2 overflow-hidden rounded-full border border-white/5 bg-[#0a1018]">
-              <span class="block h-full w-[94%] rounded-full bg-[linear-gradient(90deg,var(--green),var(--cyan),var(--blue))]"></span>
-            </div>
-          </div>
-          <div>
-            <div class="mb-[10px] flex items-center justify-between gap-3 font-mono text-[0.84rem] text-[color:var(--soft)]">
-              <span>games</span>
-              <span>81%</span>
-            </div>
-            <div class="h-2 overflow-hidden rounded-full border border-white/5 bg-[#0a1018]">
-              <span class="block h-full w-[81%] rounded-full bg-[linear-gradient(90deg,var(--green),var(--cyan),var(--blue))]"></span>
-            </div>
-          </div>
-          <div>
-            <div class="mb-[10px] flex items-center justify-between gap-3 font-mono text-[0.84rem] text-[color:var(--soft)]">
-              <span>systems</span>
-              <span>88%</span>
-            </div>
-            <div class="h-2 overflow-hidden rounded-full border border-white/5 bg-[#0a1018]">
-              <span class="block h-full w-[88%] rounded-full bg-[linear-gradient(90deg,var(--green),var(--cyan),var(--blue))]"></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sidebar Navigation -->
-      <nav class="nav mb-[18px] grid gap-[10px]">
-        <a href="#overview" class="nav-link flex translate-x-1 items-center justify-between gap-3 rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] px-[14px] py-[13px] text-[color:var(--text)] shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
-          <span class="flex items-center gap-3">
-            <i data-lucide="layout-dashboard" class="h-4 w-4 text-[color:var(--cyan)]"></i>
-            <span>Overview</span>
-          </span>
-          <span class="font-mono text-[0.78rem] text-[color:var(--cyan)] opacity-90">00</span>
-        </a>
-        <a href="#terminal" class="nav-link flex translate-x-0 items-center justify-between gap-3 rounded-[14px] border border-transparent bg-white/[0.015] px-[14px] py-[13px] text-[color:var(--soft)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
-          <span class="flex items-center gap-3">
-            <i data-lucide="terminal" class="h-4 w-4 text-[color:var(--cyan)]"></i>
-            <span>Command Console</span>
-          </span>
-          <span class="font-mono text-[0.78rem] text-[color:var(--cyan)] opacity-90">01</span>
-        </a>
-        <a href="#experience" class="nav-link flex translate-x-0 items-center justify-between gap-3 rounded-[14px] border border-transparent bg-white/[0.015] px-[14px] py-[13px] text-[color:var(--soft)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
-          <span class="flex items-center gap-3">
-            <i data-lucide="scroll-text" class="h-4 w-4 text-[color:var(--cyan)]"></i>
-            <span>Mission Log</span>
-          </span>
-          <span class="font-mono text-[0.78rem] text-[color:var(--cyan)] opacity-90">02</span>
-        </a>
-        <a href="#stack" class="nav-link flex translate-x-0 items-center justify-between gap-3 rounded-[14px] border border-transparent bg-white/[0.015] px-[14px] py-[13px] text-[color:var(--soft)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
-          <span class="flex items-center gap-3">
-            <i data-lucide="cpu" class="h-4 w-4 text-[color:var(--cyan)]"></i>
-            <span>Tech Stack</span>
-          </span>
-          <span class="font-mono text-[0.78rem] text-[color:var(--cyan)] opacity-90">03</span>
-        </a>
-        <a href="#projects" class="nav-link flex translate-x-0 items-center justify-between gap-3 rounded-[14px] border border-transparent bg-white/[0.015] px-[14px] py-[13px] text-[color:var(--soft)] transition duration-200 ease-out hover:translate-x-1 hover:border-[color:var(--line)] hover:bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))] hover:text-[color:var(--text)] hover:shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]">
-          <span class="flex items-center gap-3">
-            <i data-lucide="folder-open" class="h-4 w-4 text-[color:var(--cyan)]"></i>
-            <span>Work Modules</span>
-          </span>
-          <span class="font-mono text-[0.78rem] text-[color:var(--cyan)] opacity-90">04</span>
-        </a>
-      </nav>
-
-      <!-- Sidebar Summary -->
-      <div class="mt-auto rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] p-[14px]">
-        <p class="m-0 text-[0.9rem] leading-[1.6] text-[color:var(--soft)]">
-          Software Engineer with 6+ years of experience across backend systems, APIs,
-          desktop applications, 2D games, and Rust-based systems software.
-        </p>
-      </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="p-[14px] md:p-[22px_24px_28px]">
-      <!-- Top Bar -->
-      <div class="topbar sticky top-3 z-20 mb-[18px] flex flex-col items-start justify-between gap-4 rounded-[20px] border border-[color:var(--line)] bg-[rgba(12,18,28,.78)] px-[18px] py-[14px] shadow-[0_18px_40px_rgba(0,0,0,.24)] backdrop-blur-[16px] sm:flex-row sm:items-center">
-        <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:flex-nowrap">
-          <div class="flex items-center gap-2">
-            <span class="inline-block h-3 w-3 rounded-full bg-[#ff5f57]"></span>
-            <span class="inline-block h-3 w-3 rounded-full bg-[#febc2e]"></span>
-            <span class="inline-block h-3 w-3 rounded-full bg-[#28c840]"></span>
-          </div>
-          <div class="overflow-x-auto pl-2 font-mono text-[0.9rem] whitespace-nowrap text-[color:var(--soft)]">/portfolio/kmxu/index.html</div>
-        </div>
-        <div class="flex flex-wrap items-center gap-[10px]">
-          <button id="themeBtn" class="inline-flex items-center gap-2 rounded-xl border border-[color:var(--line)] bg-white/[0.03] px-3 py-2.5 font-medium text-[color:var(--text)] transition duration-200 hover:-translate-y-0.5 hover:border-cyan-300/35">
-            <i data-lucide="sun-moon" class="h-4 w-4 text-[color:var(--cyan)]"></i>
-            <span>toggle_theme()</span>
+  <div id="desktopRoot" data-booted="false" class="desktop-root flex h-screen flex-col overflow-hidden">
+    <header class="topbar taskbar-shell z-50 w-full border-b border-[color:var(--line)] px-2 py-2 shadow-[0_18px_38px_rgba(0,0,0,.2)] backdrop-blur-[18px] md:px-4">
+      <div class="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            id="panelToggle"
+            class="start-button inline-flex h-11 items-center gap-2 rounded-2xl border border-[color:var(--line)] px-3.5 py-2 font-medium transition duration-200"
+            aria-expanded="false"
+            aria-controls="explorerPanel"
+          >
+            <i data-lucide="menu" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+            <span class="font-mono text-[0.82rem] uppercase tracking-[0.08em]">start</span>
           </button>
         </div>
-      </div>
 
-      <!-- Overview Section -->
-      <section id="overview" class="mb-[18px] grid grid-cols-1 gap-[18px] xl:grid-cols-[minmax(0,1.15fr)_minmax(0,.85fr)]">
-        <!-- Hero Panel -->
-        <div class="panel-shell relative overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
-          <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
-            <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">boot_sequence</div>
-            <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">ready</div>
+        <div id="taskbarApps" class="flex min-w-0 flex-1 flex-wrap items-center gap-2 lg:justify-center"></div>
+
+        <div class="flex flex-wrap items-center justify-end gap-1.5">
+          <button id="showDesktopBtn" class="tray-button inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--line)] transition duration-200" aria-label="Show desktop" title="Show desktop">
+            <i data-lucide="monitor-up" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+          </button>
+          <button id="themeBtn" class="tray-button inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--line)] transition duration-200" aria-label="Toggle theme" title="Toggle theme">
+            <i data-lucide="sun-moon" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+          </button>
+          <div class="rounded-2xl border border-[color:var(--line)] bg-white/[0.03] px-3 py-2 text-right shadow-[inset_0_1px_0_rgba(255,255,255,.04)]">
+            <div id="clockTime" class="font-mono text-[0.95rem] font-semibold tracking-[0.08em]"></div>
+            <div id="clockDate" class="font-mono text-[0.72rem] text-[color:var(--soft)]"></div>
           </div>
-          <div class="relative z-[1] p-[22px]">
-            <div class="mb-[14px] inline-flex items-center gap-2.5 rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-3 py-[7px] font-mono text-[0.8rem] uppercase tracking-[0.08em] text-[color:var(--cyan)]">
+        </div>
+      </div>
+    </header>
+
+    <div class="relative flex min-h-0 flex-1 overflow-hidden">
+      <aside
+        id="explorerPanel"
+        data-open="false"
+        class="explorer-panel fixed bottom-3 left-3 top-[84px] z-40 w-[320px] max-w-[calc(100vw-24px)] overflow-auto rounded-[24px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(13,20,30,.995),rgba(7,10,16,.99))] p-3 shadow-[0_30px_70px_rgba(0,0,0,.45)] backdrop-blur-[18px] transition duration-300 md:bottom-5 md:left-5 md:top-[88px] md:p-4"
+      >
+        <div class="relative mb-4 flex items-center gap-4 overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015))] p-4">
+          <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(103,223,255,.08),transparent_38%,rgba(255,209,125,.05))]"></div>
+          <div class="grid h-12 w-12 place-items-center rounded-[14px] bg-[linear-gradient(135deg,var(--green),var(--cyan))] font-mono text-lg font-bold text-[#061017] shadow-[0_14px_32px_rgba(103,223,255,.24)]">KU</div>
+          <div class="relative z-[1]">
+            <h1 class="m-0 text-[1.02rem] font-bold leading-[1.1] tracking-[-0.04em]">KmxOS v1.0</h1>
+            <p class="mt-1 text-[0.86rem] text-[color:var(--soft)]">Developer Portfolio</p>
+          </div>
+        </div>
+
+        <div class="mb-4 rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+          <div class="mb-3 flex items-center justify-between gap-3 font-mono text-[0.84rem] text-[color:var(--soft)]">
+            <span>system_status</span>
+            <span class="flex items-center gap-2 text-[color:var(--green)]">
+              <span class="h-2 w-2 rounded-full bg-[color:var(--green)] shadow-[0_0_12px_var(--green)] [animation:pulse_1.8s_infinite]"></span>
+              online
+            </span>
+          </div>
+          <div class="grid gap-3">
+            <div>
+              <div class="mb-2 flex items-center justify-between gap-3 font-mono text-[0.78rem] text-[color:var(--soft)]">
+                <span>backend</span>
+                <span>94%</span>
+              </div>
+              <div class="h-2 overflow-hidden rounded-full border border-white/5 bg-[#0a1018]">
+                <span class="block h-full w-[94%] rounded-full bg-[linear-gradient(90deg,var(--green),var(--cyan),var(--blue))]"></span>
+              </div>
+            </div>
+            <div>
+              <div class="mb-2 flex items-center justify-between gap-3 font-mono text-[0.78rem] text-[color:var(--soft)]">
+                <span>games</span>
+                <span>81%</span>
+              </div>
+              <div class="h-2 overflow-hidden rounded-full border border-white/5 bg-[#0a1018]">
+                <span class="block h-full w-[81%] rounded-full bg-[linear-gradient(90deg,var(--green),var(--cyan),var(--blue))]"></span>
+              </div>
+            </div>
+            <div>
+              <div class="mb-2 flex items-center justify-between gap-3 font-mono text-[0.78rem] text-[color:var(--soft)]">
+                <span>systems</span>
+                <span>88%</span>
+              </div>
+              <div class="h-2 overflow-hidden rounded-full border border-white/5 bg-[#0a1018]">
+                <span class="block h-full w-[88%] rounded-full bg-[linear-gradient(90deg,var(--green),var(--cyan),var(--blue))]"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="mb-2 font-mono text-[0.78rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">explorer</div>
+          <nav class="grid gap-2" id="panelLaunchers">
+            <button data-app-target="profile" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[16px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+              <span class="flex items-center gap-3"><i data-lucide="layout-dashboard" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Profile Overview</span></span>
+              <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">00</span>
+            </button>
+            <button data-app-target="terminal" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[16px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+              <span class="flex items-center gap-3"><i data-lucide="terminal" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Command Console</span></span>
+              <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">01</span>
+            </button>
+            <button data-app-target="modules" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[16px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+              <span class="flex items-center gap-3"><i data-lucide="layers-3" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Active Modules</span></span>
+              <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">02</span>
+            </button>
+            <button data-app-target="experience" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[16px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+              <span class="flex items-center gap-3"><i data-lucide="scroll-text" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Mission Log</span></span>
+              <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">03</span>
+            </button>
+            <button data-app-target="stack" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[16px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+              <span class="flex items-center gap-3"><i data-lucide="cpu" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Tech Stack</span></span>
+              <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">04</span>
+            </button>
+            <button data-app-target="projects" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[16px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+              <span class="flex items-center gap-3"><i data-lucide="folder-open" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Work Modules</span></span>
+              <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">05</span>
+            </button>
+          </nav>
+        </div>
+
+        <div class="rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] p-4">
+          <div class="mb-2 font-mono text-[0.78rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">readme</div>
+          <p class="m-0 text-[0.9rem] leading-[1.7] text-[color:var(--soft)]">
+            Software Engineer with 6+ years of experience across backend systems, APIs,
+            desktop applications, 2D games, and Rust-based systems software.
+          </p>
+        </div>
+      </aside>
+
+      <main class="desktop-surface relative flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-4 pt-5 md:px-6 md:pb-5 md:pt-6">
+        <section id="desktopHero" class="wallpaper-layer pointer-events-none absolute inset-4 z-0 overflow-hidden rounded-[28px] px-6 py-7 md:hidden">
+          <div class="max-w-[780px]">
+            <div class="mb-4 inline-flex items-center gap-2.5 rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-3 py-[7px] font-mono text-[0.8rem] uppercase tracking-[0.08em] text-[color:var(--cyan)]">
               <span class="h-2 w-2 rounded-full bg-[color:var(--green)] shadow-[0_0_10px_var(--green)]"></span>
               systems-ready profile
             </div>
-            <h2 class="mb-3 max-w-[11ch] text-[clamp(1.85rem,4.5vw,3.95rem)] font-bold leading-[0.94] tracking-[-0.06em]">
+            <h2 class="mb-3 max-w-[12ch] text-[clamp(2rem,5vw,4.6rem)] font-bold leading-[0.94] tracking-[-0.06em] text-[color:var(--text)] [text-shadow:0_18px_36px_rgba(0,0,0,.45)]">
               Kent Mark Xavier Ubas<br />
-              <span class="text-[color:var(--cyan)] [text-shadow:0_0_18px_rgba(79,216,255,.2)]">developer operating system</span>
+              <span class="text-[color:var(--cyan)]">developer operating system</span>
             </h2>
-            <p class="mb-[18px] max-w-[60ch] text-[1.02rem] leading-[1.8] text-[color:var(--soft)]">
+            <p class="max-w-[64ch] text-[1rem] leading-[1.9] text-[color:var(--soft)] [text-shadow:0_12px_24px_rgba(0,0,0,.45)]">
               I build software across multiple layers of the stack: backend platforms,
               REST APIs, desktop tools, interactive 2D games, and Rust systems software.
               My work blends product thinking, practical engineering, and clean implementation.
             </p>
+          </div>
 
-            <div class="mb-[18px] flex flex-wrap gap-3">
-              <a href="#terminal" class="inline-flex items-center gap-2.5 rounded-[14px] bg-[linear-gradient(135deg,var(--green),var(--cyan))] px-4 py-[13px] font-bold text-[#031017] shadow-[0_14px_30px_rgba(83,245,192,.18)] transition duration-200 hover:-translate-y-0.5">
-                <i data-lucide="terminal" class="h-4 w-4"></i>
-                <span>Open Console</span>
-              </a>
-              <a href="#experience" class="inline-flex items-center gap-2.5 rounded-[14px] border border-[color:var(--line)] bg-white/[0.035] px-4 py-[13px] font-medium transition duration-200 hover:-translate-y-0.5">
-                <i data-lucide="arrow-right" class="h-4 w-4 text-[color:var(--cyan)]"></i>
-                <span>Read Mission Log</span>
-              </a>
+          <div class="pointer-events-none absolute bottom-6 right-6 hidden max-w-[320px] rounded-[24px] border border-white/8 bg-black/15 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.03)] xl:block">
+            <div class="mb-3 flex items-center justify-between gap-3 font-mono text-[0.8rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">
+              <span>desktop_state</span>
+              <span class="text-[color:var(--green)]">ready</span>
             </div>
-
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-                <div class="font-mono text-[0.8rem] uppercase text-[color:var(--soft)]">experience_years</div>
-                <div class="mt-2 text-[1.6rem] font-bold tracking-[-0.04em]">6+</div>
+            <div class="grid gap-3">
+              <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3">
+                <div class="font-mono text-[0.76rem] uppercase text-[color:var(--soft)]">experience_years</div>
+                <div class="mt-2 text-[1.5rem] font-bold tracking-[-0.04em]">6+</div>
               </div>
-              <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-                <div class="font-mono text-[0.8rem] uppercase text-[color:var(--soft)]">primary_modes</div>
-                <div class="mt-2 text-[1.6rem] font-bold tracking-[-0.04em]">5</div>
+              <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3">
+                <div class="font-mono text-[0.76rem] uppercase text-[color:var(--soft)]">primary_modes</div>
+                <div class="mt-2 text-[1.5rem] font-bold tracking-[-0.04em]">5</div>
               </div>
-              <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-                <div class="font-mono text-[0.8rem] uppercase text-[color:var(--soft)]">current_focus</div>
-                <div class="mt-2 text-[1.1rem] leading-[1.3] font-bold tracking-[-0.04em]">Rust Systems</div>
+              <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3">
+                <div class="font-mono text-[0.76rem] uppercase text-[color:var(--soft)]">current_focus</div>
+                <div class="mt-2 text-[1.05rem] font-bold tracking-[-0.04em]">Rust Systems</div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Profile Modules Panel -->
-        <div class="panel-shell relative overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
-          <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
-            <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">profile_modules</div>
-            <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">loaded</div>
-          </div>
-          <div class="relative z-[1] grid gap-3 p-[22px]">
-            <div>
-              <div class="mb-2.5 font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">specializations</div>
-              <div class="rounded-2xl border border-white/[0.04] bg-white/[0.02] p-4">
-                <div class="flex flex-wrap gap-[10px]">
-                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Backend Development</span>
-                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">RESTful APIs</span>
-                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Electron-Vue Apps</span>
-                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Phaser Games</span>
-                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Rust Systems</span>
-                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">API Integration</span>
-                </div>
-              </div>
+          <div class="wallpaper-stats-mobile absolute bottom-6 left-6 right-6 grid grid-cols-3 gap-3 xl:hidden">
+            <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+              <div class="font-mono text-[0.72rem] uppercase text-[color:var(--soft)]">experience_years</div>
+              <div class="mt-2 text-[1.25rem] font-bold tracking-[-0.04em]">6+</div>
             </div>
-
-            <div>
-              <div class="mb-2.5 font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">core_stack</div>
-              <div class="rounded-2xl border border-white/[0.04] bg-white/[0.02] p-4">
-                <div class="flex flex-wrap gap-[10px]">
-                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">PHP</span>
-                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Laravel</span>
-                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">JavaScript</span>
-                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Electron-Vue</span>
-                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Phaser</span>
-                  <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Rust</span>
-                </div>
-              </div>
+            <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+              <div class="font-mono text-[0.72rem] uppercase text-[color:var(--soft)]">primary_modes</div>
+              <div class="mt-2 text-[1.25rem] font-bold tracking-[-0.04em]">5</div>
             </div>
-
-            <div>
-              <div class="mb-2.5 font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">summary</div>
-              <div class="rounded-2xl border border-white/[0.04] bg-white/[0.02] p-4">
-                <p class="m-0 leading-[1.8] text-[color:var(--soft)]">
-                  Started with CRM and e-commerce systems, expanded into logistics platforms,
-                  built custom educational games and desktop productivity tools, then moved
-                  into systems software engineering for cluster coordination and node operations.
-                </p>
-              </div>
+            <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+              <div class="font-mono text-[0.72rem] uppercase text-[color:var(--soft)]">current_focus</div>
+              <div class="mt-2 text-[0.95rem] font-bold tracking-[-0.04em]">Rust Systems</div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- Console And Experience Row -->
-      <section class="mb-[18px] grid grid-cols-1 gap-[18px] xl:grid-cols-2">
-        <!-- Terminal Section -->
-        <div id="terminal" class="panel-shell relative overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
-          <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
-            <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">command_console</div>
-            <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">interactive</div>
+        <section id="desktopWindows" class="desktop-window-area relative z-10 flex flex-1 flex-col gap-5 md:block">
+          <div class="desktop-shortcuts">
+            <button data-app-target="profile" class="desktop-shortcut app-launcher">
+              <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="layout-dashboard" class="h-6 w-6"></i></span>
+              <span class="desktop-shortcut-label">Profile Overview</span>
+            </button>
+            <button data-app-target="terminal" class="desktop-shortcut app-launcher">
+              <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="terminal" class="h-6 w-6"></i></span>
+              <span class="desktop-shortcut-label">Command Console</span>
+            </button>
+            <button data-app-target="modules" class="desktop-shortcut app-launcher">
+              <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="layers-3" class="h-6 w-6"></i></span>
+              <span class="desktop-shortcut-label">Active Modules</span>
+            </button>
+            <button data-app-target="experience" class="desktop-shortcut app-launcher">
+              <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="scroll-text" class="h-6 w-6"></i></span>
+              <span class="desktop-shortcut-label">Mission Log</span>
+            </button>
+            <button data-app-target="stack" class="desktop-shortcut app-launcher">
+              <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="cpu" class="h-6 w-6"></i></span>
+              <span class="desktop-shortcut-label">Tech Stack</span>
+            </button>
+            <button data-app-target="projects" class="desktop-shortcut app-launcher">
+              <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="folder-open" class="h-6 w-6"></i></span>
+              <span class="desktop-shortcut-label">Work Modules</span>
+            </button>
           </div>
-          <div class="relative z-[1] p-[22px]">
-            <div class="flex min-h-[420px] flex-col overflow-hidden rounded-2xl border border-[#152131] bg-[linear-gradient(180deg,#05080d,#09111a)] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-              <div class="flex items-center justify-between gap-3 border-b border-[#152131] bg-[#0b1018] px-[14px] py-[10px] font-mono text-[0.82rem] text-[color:var(--soft)]">
-                <span>kmx@developer-os:~</span>
-                <span>type "help"</span>
-              </div>
-              <div id="terminalOutput" class="flex-1 overflow-auto bg-[linear-gradient] bg-[length:100%_28px] p-4 font-mono text-[0.93rem] leading-[1.7] text-[#d9e8f7]"></div>
-              <div class="flex items-center gap-3 border-t border-[#152131] bg-[#081018] px-4 py-[14px] font-mono">
-                <span class="shrink-0 whitespace-nowrap text-[color:var(--green)]">kmx@os:~$</span>
-                <input
-                  id="terminalInput"
-                  class="min-w-0 flex-1 border-none bg-transparent font-mono text-[0.95rem] text-[color:var(--text)] outline-none placeholder:text-[color:var(--soft)]"
-                  type="text"
-                  placeholder="Enter command..."
-                  autocomplete="off"
-                  spellcheck="false"
-                />
-              </div>
-            </div>
-
-            <div class="quick-commands mt-[14px] flex flex-wrap gap-2">
-              <button data-cmd="help" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="sparkles" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>help</span></button>
-              <button data-cmd="about" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="user" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>about</span></button>
-              <button data-cmd="skills" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="code-xml" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>skills</span></button>
-              <button data-cmd="experience" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="briefcase" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>experience</span></button>
-              <button data-cmd="projects" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="folder-open" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>projects</span></button>
-              <button data-cmd="clear" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="eraser" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>clear</span></button>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid gap-[18px]">
-          <div class="panel-shell relative overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
-            <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
-              <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">active_modules</div>
-              <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">6 loaded</div>
-            </div>
-            <div class="relative z-[1] p-[22px]">
-              <div class="grid gap-3">
-                <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-                  <div class="mb-2 flex items-center justify-between gap-[10px]">
-                    <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">backend.api.core</h3>
-                    <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
+          <article
+            id="app-profile"
+            data-app-window
+            data-app-id="profile"
+            data-app-title="Profile Overview"
+            data-state="closed"
+            data-focused="false"
+            class="window-shell md:absolute md:left-[3%] md:top-[2%] md:w-[min(920px,72vw)]"
+            style="z-index: 20;"
+          >
+            <div class="window-frame panel-shell relative overflow-hidden rounded-[26px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
+              <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
+                <div class="flex items-center gap-3">
+                  <div class="window-controls">
+                    <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Profile Overview" title="Close"></button>
+                    <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Profile Overview" title="Minimize"></button>
+                    <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Profile Overview" title="Expand"></button>
                   </div>
-                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Backend web development, RESTful APIs, business systems, e-commerce, and platform improvements.</p>
-                </div>
-                <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-                  <div class="mb-2 flex items-center justify-between gap-[10px]">
-                    <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">desktop.workflow.tools</h3>
-                    <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
+                  <div>
+                    <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">profile_overview</div>
+                    <div class="text-[0.92rem] font-semibold">Hero + Specializations + Core Stack</div>
                   </div>
-                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Cross-platform application work using Electron-Vue for internal processes and productivity workflows.</p>
                 </div>
-                <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-                  <div class="mb-2 flex items-center justify-between gap-[10px]">
-                    <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">game.phaser.interactive</h3>
-                    <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
+              </div>
+              <div class="window-content relative z-[1] grid gap-4 p-5">
+                <div class="hidden gap-5 rounded-[24px] border border-white/[0.05] bg-[linear-gradient(135deg,rgba(103,223,255,.06),rgba(255,255,255,.015)_38%,rgba(255,209,125,.03))] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.04)] md:grid lg:grid-cols-[minmax(0,1.6fr)_250px]">
+                  <div>
+                    <div class="mb-4 inline-flex items-center gap-2.5 rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-3 py-[7px] font-mono text-[0.8rem] uppercase tracking-[0.08em] text-[color:var(--cyan)]">
+                      <span class="h-2 w-2 rounded-full bg-[color:var(--green)] shadow-[0_0_10px_var(--green)]"></span>
+                      systems-ready profile
+                    </div>
+                    <h2 class="mb-3 max-w-[12ch] text-[clamp(2rem,4vw,4rem)] font-bold leading-[0.94] tracking-[-0.06em] text-[color:var(--text)]">
+                      Kent Mark Xavier Ubas<br />
+                      <span class="text-[color:var(--cyan)]">developer operating system</span>
+                    </h2>
+                    <p class="max-w-[62ch] text-[0.98rem] leading-[1.9] text-[color:var(--soft)]">
+                      I build software across multiple layers of the stack: backend platforms,
+                      REST APIs, desktop tools, interactive 2D games, and Rust systems software.
+                      My work blends product thinking, practical engineering, and clean implementation.
+                    </p>
                   </div>
-                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Custom eLearning games, proof-of-concept builds, and integration of educational content and assets.</p>
+                  <div class="grid gap-3">
+                    <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3">
+                      <div class="font-mono text-[0.76rem] uppercase text-[color:var(--soft)]">experience_years</div>
+                      <div class="mt-2 text-[1.5rem] font-bold tracking-[-0.04em]">6+</div>
+                    </div>
+                    <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3">
+                      <div class="font-mono text-[0.76rem] uppercase text-[color:var(--soft)]">primary_modes</div>
+                      <div class="mt-2 text-[1.5rem] font-bold tracking-[-0.04em]">5</div>
+                    </div>
+                    <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3">
+                      <div class="font-mono text-[0.76rem] uppercase text-[color:var(--soft)]">current_focus</div>
+                      <div class="mt-2 text-[1.05rem] font-bold tracking-[-0.04em]">Rust Systems</div>
+                    </div>
+                  </div>
                 </div>
-                <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-                  <div class="mb-2 flex items-center justify-between gap-[10px]">
-                    <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">systems.rust.cluster</h3>
-                    <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">active</span>
+                <div class="grid gap-4 xl:grid-cols-2">
+                  <div>
+                    <div class="mb-2.5 font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">specializations</div>
+                    <div class="rounded-2xl border border-white/[0.04] bg-white/[0.02] p-4">
+                      <div class="flex flex-wrap gap-[10px]">
+                        <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Backend Development</span>
+                        <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">RESTful APIs</span>
+                        <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Electron-Vue Apps</span>
+                        <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Phaser Games</span>
+                        <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Rust Systems</span>
+                        <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">API Integration</span>
+                      </div>
+                    </div>
                   </div>
-                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Rust backend daemon work involving logging, metrics collection, blockserver management, and filesystem tasks.</p>
+                  <div>
+                    <div class="mb-2.5 font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">core_stack</div>
+                    <div class="rounded-2xl border border-white/[0.04] bg-white/[0.02] p-4">
+                      <div class="flex flex-wrap gap-[10px]">
+                        <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">PHP</span>
+                        <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Laravel</span>
+                        <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">JavaScript</span>
+                        <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Electron-Vue</span>
+                        <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Phaser</span>
+                        <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Rust</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="xl:col-span-2">
+                    <div class="mb-2.5 font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">summary</div>
+                    <div class="rounded-2xl border border-white/[0.04] bg-white/[0.02] p-4">
+                      <p class="m-0 leading-[1.8] text-[color:var(--soft)]">
+                        Started with CRM and e-commerce systems, expanded into logistics platforms,
+                        built custom educational games and desktop productivity tools, then moved
+                        into systems software engineering for cluster coordination and node operations.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-        </div>
+          </article>
 
-        <!-- Experience Section -->
-        <div id="experience" class="panel-shell relative overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
-            <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
-              <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">mission_log</div>
-              <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">2018-2026</div>
-            </div>
-            <div class="relative z-[1] p-[22px]">
-              <div class="grid gap-[14px]">
-                <div class="border-l-2 border-cyan-300/35 pl-4">
-                  <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2018.02 - 2018.03</div>
-                  <h3 class="m-0 mb-1.5 text-base font-semibold">WLCLIFE // OJT / Web Developer</h3>
-                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Revamped the in-house CRM and helped resolve minor hardware issues.</p>
+          <article
+            id="app-terminal"
+            data-app-window
+            data-app-id="terminal"
+            data-app-title="Command Console"
+            data-state="closed"
+            data-focused="false"
+            class="window-shell md:absolute md:left-[12%] md:top-[8%] md:w-[min(760px,62vw)]"
+            style="z-index: 60;"
+          >
+            <div class="window-frame panel-shell relative overflow-hidden rounded-[26px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.992))] shadow-window">
+              <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
+                <div class="flex items-center gap-3">
+                  <div class="window-controls">
+                    <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Command Console" title="Close"></button>
+                    <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Command Console" title="Minimize"></button>
+                    <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Command Console" title="Expand"></button>
+                  </div>
+                  <div>
+                    <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">command_console</div>
+                    <div class="text-[0.92rem] font-semibold">Interactive Terminal</div>
+                  </div>
                 </div>
-                <div class="border-l-2 border-cyan-300/35 pl-4">
-                  <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2018.03 - 2019.07</div>
-                  <h3 class="m-0 mb-1.5 text-base font-semibold">WLCLIFE // Backend Web Developer</h3>
-                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Improved CRM stability and built an e-commerce platform for company expansion.</p>
+              </div>
+              <div class="window-content relative z-[1] p-5">
+                <div class="flex min-h-[420px] flex-col overflow-hidden rounded-2xl border border-[#152131] bg-[linear-gradient(180deg,#05080d,#09111a)] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                  <div class="flex items-center justify-between gap-3 border-b border-[#152131] bg-[#0b1018] px-[14px] py-[10px] font-mono text-[0.82rem] text-[color:var(--soft)]">
+                    <span>kmx@developer-os:~</span>
+                    <span>type "help"</span>
+                  </div>
+                  <div id="terminalOutput" class="flex-1 overflow-auto bg-[length:100%_28px] p-4 font-mono text-[0.93rem] leading-[1.7] text-[#d9e8f7]"></div>
+                  <div class="flex items-center gap-3 border-t border-[#152131] bg-[#081018] px-4 py-[14px] font-mono">
+                    <span class="shrink-0 whitespace-nowrap text-[color:var(--green)]">kmx@os:~$</span>
+                    <input
+                      id="terminalInput"
+                      class="min-w-0 flex-1 border-none bg-transparent font-mono text-[0.95rem] text-[color:var(--text)] outline-none placeholder:text-[color:var(--soft)]"
+                      type="text"
+                      placeholder="Enter command..."
+                      autocomplete="off"
+                      spellcheck="false"
+                    />
+                  </div>
                 </div>
-                <div class="border-l-2 border-cyan-300/35 pl-4">
-                  <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2020.03 - 2021.07</div>
-                  <h3 class="m-0 mb-1.5 text-base font-semibold">Jogxpress // Backend Web Developer</h3>
-                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Developed a logistics platform and maintained APIs for mobile applications.</p>
-                </div>
-                <div class="border-l-2 border-cyan-300/35 pl-4">
-                  <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2021.08 - 2025.10</div>
-                  <h3 class="m-0 mb-1.5 text-base font-semibold">AGuyIKnow // Game + Software Developer</h3>
-                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Built custom eLearning games and internal productivity software with API integrations.</p>
-                </div>
-                <div class="border-l-2 border-cyan-300/35 pl-4">
-                  <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2025.10 - 2026.03</div>
-                  <h3 class="m-0 mb-1.5 text-base font-semibold">Tekkio // Systems Software Engineer</h3>
-                  <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Contributed to Rust-based systems software for cluster coordination and node operations.</p>
+
+                <div class="quick-commands mt-4 flex flex-wrap gap-2">
+                  <button data-cmd="help" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="sparkles" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>help</span></button>
+                  <button data-cmd="about" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="user" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>about</span></button>
+                  <button data-cmd="skills" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="code-xml" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>skills</span></button>
+                  <button data-cmd="experience" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="briefcase" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>experience</span></button>
+                  <button data-cmd="projects" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="folder-open" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>projects</span></button>
+                  <button data-cmd="clear" class="inline-flex items-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-white/[0.03] px-[10px] py-2 font-mono text-[0.8rem] font-medium text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"><i data-lucide="eraser" class="h-3.5 w-3.5 text-[color:var(--cyan)]"></i><span>clear</span></button>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </article>
 
-      <!-- Tech Stack Section -->
-      <section id="stack" class="panel-shell relative mb-[18px] overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
-        <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
-          <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">stack_inventory</div>
-          <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">categorized</div>
-        </div>
-        <div class="relative z-[1] p-[22px]">
-          <div class="grid grid-cols-1 gap-[18px] xl:grid-cols-3">
-            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">languages</small>
-              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Core Languages</h3>
-              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">PHP, JavaScript, Rust, Python, C, and C++.</p>
-            </article>
-            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">frameworks</small>
-              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Frameworks & Platforms</h3>
-              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Laravel, CodeIgniter, Electron-Vue, Phaser, Node.js, and Socket.IO.</p>
-            </article>
-            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">databases</small>
-              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Storage</h3>
-              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">MySQL and SQLite for application data, prototyping, and internal tooling.</p>
-            </article>
-            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">toolchain</small>
-              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Developer Tools</h3>
-              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Git, Docker, and Postman for version control, containerized workflows, and API testing.</p>
-            </article>
-            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">backend</small>
-              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Application Engineering</h3>
-              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Backend development, RESTful API development, web application development, and system integrations.</p>
-            </article>
-            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">interactive</small>
-              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Creative + Systems Blend</h3>
-              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Cross-platform desktop applications, 2D game development, and systems programming.</p>
-            </article>
-          </div>
-        </div>
-      </section>
+          <article
+            id="app-modules"
+            data-app-window
+            data-app-id="modules"
+            data-app-title="Active Modules"
+            data-state="closed"
+            data-focused="false"
+            class="window-shell md:absolute md:left-[58%] md:top-[5%] md:w-[min(520px,34vw)]"
+            style="z-index: 30;"
+          >
+            <div class="window-frame panel-shell relative overflow-hidden rounded-[26px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
+              <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
+                <div class="flex items-center gap-3">
+                  <div class="window-controls">
+                    <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Active Modules" title="Close"></button>
+                    <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Active Modules" title="Minimize"></button>
+                    <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Active Modules" title="Expand"></button>
+                  </div>
+                  <div>
+                    <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">active_modules</div>
+                    <div class="text-[0.92rem] font-semibold">6 loaded</div>
+                  </div>
+                </div>
+              </div>
+              <div class="window-content relative z-[1] p-5">
+                <div class="grid gap-3">
+                  <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                    <div class="mb-2 flex items-center justify-between gap-[10px]">
+                      <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">backend.api.core</h3>
+                      <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
+                    </div>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Backend web development, RESTful APIs, business systems, e-commerce, and platform improvements.</p>
+                  </div>
+                  <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                    <div class="mb-2 flex items-center justify-between gap-[10px]">
+                      <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">desktop.workflow.tools</h3>
+                      <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
+                    </div>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Cross-platform application work using Electron-Vue for internal processes and productivity workflows.</p>
+                  </div>
+                  <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                    <div class="mb-2 flex items-center justify-between gap-[10px]">
+                      <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">game.phaser.interactive</h3>
+                      <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
+                    </div>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Custom eLearning games, proof-of-concept builds, and integration of educational content and assets.</p>
+                  </div>
+                  <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                    <div class="mb-2 flex items-center justify-between gap-[10px]">
+                      <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">systems.rust.cluster</h3>
+                      <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">active</span>
+                    </div>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Rust backend daemon work involving logging, metrics collection, blockserver management, and filesystem tasks.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
 
-      <!-- Projects Section -->
-      <section id="projects" class="panel-shell relative mb-[18px] overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.96),rgba(11,17,26,.95))] shadow-panel">
-        <div class="flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
-          <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">work_modules</div>
-          <div class="font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">highlighted</div>
-        </div>
-        <div class="relative z-[1] p-[22px]">
-          <div class="grid grid-cols-1 gap-[18px] xl:grid-cols-3">
-            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_01</small>
-              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">CRM & E-Commerce Systems</h3>
-              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Revamped internal CRM flows and helped build an e-commerce platform that supported new business ventures.</p>
-            </article>
-            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_02</small>
-              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Logistics Platform Engineering</h3>
-              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Worked on delivery and logistics software, including backend services and API support for mobile clients.</p>
-            </article>
-            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_03</small>
-              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Custom eLearning Games</h3>
-              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Built client-tailored Phaser games, integrated artwork, and created proof-of-concept interactive experiences.</p>
-            </article>
-            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_04</small>
-              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Desktop Productivity Software</h3>
-              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Developed internal applications including an automated time tracker and Teamwork.com API integration.</p>
-            </article>
-            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_05</small>
-              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Rust Cluster Systems</h3>
-              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Implemented structured logging, periodic system metrics, blockserver management, and filesystem-related tasks.</p>
-            </article>
-            <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-              <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-              <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_06</small>
-              <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Engineering Style</h3>
-              <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Practical, product-aware, and adaptable across web, desktop, game, and systems environments.</p>
-            </article>
-          </div>
-        </div>
-      </section>
+          <article
+            id="app-experience"
+            data-app-window
+            data-app-id="experience"
+            data-app-title="Mission Log"
+            data-state="closed"
+            data-focused="false"
+            class="window-shell md:absolute md:left-[18%] md:top-[44%] md:w-[min(620px,48vw)]"
+            style="z-index: 25;"
+          >
+            <div class="window-frame panel-shell relative overflow-hidden rounded-[26px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
+              <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
+                <div class="flex items-center gap-3">
+                  <div class="window-controls">
+                    <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Mission Log" title="Close"></button>
+                    <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Mission Log" title="Minimize"></button>
+                    <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Mission Log" title="Expand"></button>
+                  </div>
+                  <div>
+                    <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">mission_log</div>
+                    <div class="text-[0.92rem] font-semibold">2018-2026</div>
+                  </div>
+                </div>
+              </div>
+              <div class="window-content relative z-[1] p-5">
+                <div class="grid gap-[14px]">
+                  <div class="border-l-2 border-cyan-300/35 pl-4">
+                    <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2018.02 - 2018.03</div>
+                    <h3 class="m-0 mb-1.5 text-base font-semibold">WLCLIFE // OJT / Web Developer</h3>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Revamped the in-house CRM and helped resolve minor hardware issues.</p>
+                  </div>
+                  <div class="border-l-2 border-cyan-300/35 pl-4">
+                    <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2018.03 - 2019.07</div>
+                    <h3 class="m-0 mb-1.5 text-base font-semibold">WLCLIFE // Backend Web Developer</h3>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Improved CRM stability and built an e-commerce platform for company expansion.</p>
+                  </div>
+                  <div class="border-l-2 border-cyan-300/35 pl-4">
+                    <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2020.03 - 2021.07</div>
+                    <h3 class="m-0 mb-1.5 text-base font-semibold">Jogxpress // Backend Web Developer</h3>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Developed a logistics platform and maintained APIs for mobile applications.</p>
+                  </div>
+                  <div class="border-l-2 border-cyan-300/35 pl-4">
+                    <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2021.08 - 2025.10</div>
+                    <h3 class="m-0 mb-1.5 text-base font-semibold">AGuyIKnow // Game + Software Developer</h3>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Built custom eLearning games and internal productivity software with API integrations.</p>
+                  </div>
+                  <div class="border-l-2 border-cyan-300/35 pl-4">
+                    <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2025.10 - 2026.03</div>
+                    <h3 class="m-0 mb-1.5 text-base font-semibold">Tekkio // Systems Software Engineer</h3>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Contributed to Rust-based systems software for cluster coordination and node operations.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
 
-      <!-- Footer Status -->
-      <div class="px-0 py-[18px] pb-[22px] text-center font-mono text-[0.83rem] font-medium text-[color:var(--soft)] opacity-90">
-        kmxos://portfolio initialized successfully
-      </div>
-    </main>
+          <article
+            id="app-stack"
+            data-app-window
+            data-app-id="stack"
+            data-app-title="Tech Stack"
+            data-state="closed"
+            data-focused="false"
+            class="window-shell md:absolute md:left-[45%] md:top-[35%] md:w-[min(760px,52vw)]"
+            style="z-index: 22;"
+          >
+            <div class="window-frame panel-shell relative overflow-hidden rounded-[26px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
+              <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
+                <div class="flex items-center gap-3">
+                  <div class="window-controls">
+                    <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Tech Stack" title="Close"></button>
+                    <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Tech Stack" title="Minimize"></button>
+                    <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Tech Stack" title="Expand"></button>
+                  </div>
+                  <div>
+                    <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">stack_inventory</div>
+                    <div class="text-[0.92rem] font-semibold">Categorized</div>
+                  </div>
+                </div>
+              </div>
+              <div class="window-content relative z-[1] p-5">
+                <div class="grid grid-cols-1 gap-[18px] xl:grid-cols-3">
+                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">languages</small>
+                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Core Languages</h3>
+                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">PHP, JavaScript, Rust, Python, C, and C++.</p>
+                  </article>
+                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">frameworks</small>
+                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Frameworks & Platforms</h3>
+                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Laravel, CodeIgniter, Electron-Vue, Phaser, Node.js, and Socket.IO.</p>
+                  </article>
+                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">databases</small>
+                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Storage</h3>
+                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">MySQL and SQLite for application data, prototyping, and internal tooling.</p>
+                  </article>
+                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">toolchain</small>
+                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Developer Tools</h3>
+                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Git, Docker, and Postman for version control, containerized workflows, and API testing.</p>
+                  </article>
+                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">backend</small>
+                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Application Engineering</h3>
+                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Backend development, RESTful API development, web application development, and system integrations.</p>
+                  </article>
+                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">interactive</small>
+                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Creative + Systems Blend</h3>
+                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Cross-platform desktop applications, 2D game development, and systems programming.</p>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article
+            id="app-projects"
+            data-app-window
+            data-app-id="projects"
+            data-app-title="Work Modules"
+            data-state="closed"
+            data-focused="false"
+            class="window-shell md:absolute md:left-[35%] md:top-[16%] md:w-[min(840px,58vw)]"
+            style="z-index: 24;"
+          >
+            <div class="window-frame panel-shell relative overflow-hidden rounded-[26px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
+              <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
+                <div class="flex items-center gap-3">
+                  <div class="window-controls">
+                    <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Work Modules" title="Close"></button>
+                    <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Work Modules" title="Minimize"></button>
+                    <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Work Modules" title="Expand"></button>
+                  </div>
+                  <div>
+                    <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">work_modules</div>
+                    <div class="text-[0.92rem] font-semibold">Highlighted</div>
+                  </div>
+                </div>
+              </div>
+              <div class="window-content relative z-[1] p-5">
+                <div class="grid grid-cols-1 gap-[18px] xl:grid-cols-3">
+                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_01</small>
+                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">CRM & E-Commerce Systems</h3>
+                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Revamped internal CRM flows and helped build an e-commerce platform that supported new business ventures.</p>
+                  </article>
+                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_02</small>
+                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Logistics Platform Engineering</h3>
+                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Worked on delivery and logistics software, including backend services and API support for mobile clients.</p>
+                  </article>
+                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_03</small>
+                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Custom eLearning Games</h3>
+                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Built client-tailored Phaser games, integrated artwork, and created proof-of-concept interactive experiences.</p>
+                  </article>
+                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_04</small>
+                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Desktop Productivity Software</h3>
+                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Developed internal applications including an automated time tracker and Teamwork.com API integration.</p>
+                  </article>
+                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_05</small>
+                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Rust Cluster Systems</h3>
+                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Implemented structured logging, periodic system metrics, blockserver management, and filesystem-related tasks.</p>
+                  </article>
+                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
+                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_06</small>
+                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Engineering Style</h3>
+                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Practical, product-aware, and adaptable across web, desktop, game, and systems environments.</p>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <footer class="pointer-events-none relative mt-auto flex-none pt-3 text-center font-mono text-[0.8rem] font-medium text-[color:var(--soft)] opacity-85 [text-shadow:0_8px_20px_rgba(0,0,0,.45)]">
+          KmxOS v1.0
+        </footer>
+      </main>
+    </div>
   </div>
 
   <script>
     lucide.createIcons();
 
-    const navLinks = document.querySelectorAll(".nav-link");
-    const navTargets = Array.from(navLinks)
-      .map(link => {
-        const id = link.getAttribute("href");
-        return {
-          link,
-          target: id ? document.querySelector(id) : null
-        };
-      })
-      .filter(item => item.target)
-      .sort((a, b) => a.target.offsetTop - b.target.offsetTop);
+    const themeBtn = document.getElementById("themeBtn");
+    const panelToggle = document.getElementById("panelToggle");
+    const explorerPanel = document.getElementById("explorerPanel");
+    const showDesktopBtn = document.getElementById("showDesktopBtn");
+    const taskbarApps = document.getElementById("taskbarApps");
+    const clockTime = document.getElementById("clockTime");
+    const clockDate = document.getElementById("clockDate");
+    const bootOverlay = document.getElementById("bootOverlay");
+    const desktopRoot = document.getElementById("desktopRoot");
+    const bootSequence = document.getElementById("bootSequence");
+    const bootPrompt = document.getElementById("bootPrompt");
 
-    const activeNavClasses = [
-      "text-[color:var(--text)]",
-      "border-[color:var(--line)]",
-      "bg-[linear-gradient(90deg,rgba(103,223,255,.14),rgba(110,143,255,.08))]",
-      "translate-x-1",
-      "shadow-[inset_0_0_0_1px_rgba(103,223,255,.08)]"
-    ];
+    const windows = Array.from(document.querySelectorAll("[data-app-window]"));
+    const windowMap = new Map(windows.map(win => [win.dataset.appId, win]));
+    const launchers = Array.from(document.querySelectorAll("[data-app-target]"));
+    const desktopWindowLayout = {
+      profile: { left: 24, top: 18, width: "min(860px, 50vw)", z: 80 },
+      terminal: { left: "calc(50% + 11vw)", top: 30, width: "clamp(400px, 36vw, 580px)", z: 74 },
+      modules: { left: "calc(50% + 9.8vw)", top: 54, width: "clamp(380px, 33vw, 540px)", z: 70 },
+      experience: { left: "calc(50% + 8.8vw)", top: 78, width: "clamp(372px, 31vw, 516px)", z: 66 },
+      stack: { left: "calc(50% + 7.8vw)", top: 102, width: "clamp(388px, 34vw, 548px)", z: 62 },
+      projects: { left: "calc(50% + 6.8vw)", top: 126, width: "clamp(404px, 36vw, 584px)", z: 58 }
+    };
+    const desktopStartupOrder = ["projects", "stack", "experience", "modules", "terminal", "profile"];
+    const taskbarIcons = {
+      profile: "layout-dashboard",
+      terminal: "terminal",
+      modules: "layers-3",
+      experience: "scroll-text",
+      stack: "cpu",
+      projects: "folder-open"
+    };
 
-    const inactiveNavClasses = [
-      "text-[color:var(--soft)]",
-      "border-transparent",
-      "bg-white/[0.015]",
-      "translate-x-0"
-    ];
+    let zCounter = 100;
+    let dragState = null;
+    let bootCompleted = false;
+    const motionDuration = 280;
 
-    const setActiveNav = () => {
-      const topbarHeight = document.querySelector(".topbar")?.offsetHeight || 0;
-      const scrollMark = window.scrollY + topbarHeight + 32;
-      const viewportBottom = window.scrollY + window.innerHeight;
-      const documentBottom = document.documentElement.scrollHeight;
-      const activeItem =
-        viewportBottom >= documentBottom - 8
-          ? navTargets.at(-1) || null
-          : [...navTargets].reverse().find(item => item.target.offsetTop <= scrollMark) || navTargets[0] || null;
-
-      navLinks.forEach(link => {
-        const isActive = activeItem?.link === link;
-        link.classList.remove(...(isActive ? inactiveNavClasses : activeNavClasses));
-        link.classList.add(...(isActive ? activeNavClasses : inactiveNavClasses));
+    const animateWindow = (win, keyframes, options = {}) => {
+      if (typeof win.animate !== "function") return null;
+      return win.animate(keyframes, {
+        duration: motionDuration,
+        easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+        fill: "both",
+        ...options
       });
     };
 
-    window.addEventListener("scroll", setActiveNav);
-    setActiveNav();
+    const placeDesktopWindow = appId => {
+      const win = windowMap.get(appId);
+      const layout = desktopWindowLayout[appId];
+      if (!win || !layout || window.innerWidth < 768) return;
+      if (win.dataset.maximized === "true") return;
 
-    const themeBtn = document.getElementById("themeBtn");
+      win.style.left = typeof layout.left === "number" ? layout.left + "px" : layout.left;
+      win.style.top = typeof layout.top === "number" ? layout.top + "px" : layout.top;
+      if (layout.width) win.style.width = layout.width;
+      if (layout.height) win.style.height = layout.height;
+      if (layout.z) win.style.zIndex = String(layout.z);
+    };
+
+    const syncPanelState = () => {
+      const isOpen = explorerPanel.dataset.open !== "false";
+      panelToggle.setAttribute("aria-expanded", String(isOpen));
+    };
+
+    const togglePanel = force => {
+      const nextState = typeof force === "boolean" ? force : explorerPanel.dataset.open === "false";
+      explorerPanel.dataset.open = String(nextState);
+      syncPanelState();
+    };
+
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const bootLines = [
+      { text: "[init] KmxOS bootstrap sequence initiated", className: "text-[color:var(--green)]" },
+      { text: "[scan] loading profile modules... OK", className: "text-[color:var(--cyan)]" },
+      { text: "[scan] loading mission logs, stack inventory, work modules... OK", className: "text-[#86a0ba]" },
+      { text: "[tty0] interactive console ready", className: "text-[color:var(--cyan)]" },
+      { text: "[launch] mounting desktop shell for Kent Mark Xavier Ubas", className: "text-[color:var(--amber)]" }
+    ];
+
+    const appendBootLine = (text, className = "") => {
+      const line = document.createElement("div");
+      line.className = "boot-sequence-line whitespace-pre-wrap";
+      if (className) line.classList.add(className);
+      line.textContent = text;
+      bootSequence.appendChild(line);
+    };
+
+    const finishBoot = () => {
+      if (bootCompleted) return;
+      bootCompleted = true;
+      bootPrompt.textContent = "session ready";
+      desktopRoot.dataset.booted = "true";
+      setTimeout(() => {
+        bootOverlay.dataset.hidden = "true";
+      }, 220);
+    };
+
+    const runBootSequence = () => {
+      bootLines.forEach((line, index) => {
+        setTimeout(() => appendBootLine(line.text, line.className), 220 + index * 300);
+      });
+
+      setTimeout(finishBoot, 220 + bootLines.length * 300 + 520);
+    };
+
+    const updateClock = () => {
+      const now = new Date();
+      const [hours, minutes] = now.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      }).split(":");
+      clockTime.innerHTML = `${hours}<span class="clock-separator">:</span>${minutes}`;
+      clockDate.textContent = now.toLocaleDateString([], { month: "short", day: "numeric" });
+    };
+
+    const focusWindow = appId => {
+      const target = windowMap.get(appId);
+      if (!target || target.dataset.state === "closed") return;
+
+      zCounter += 1;
+      target.style.zIndex = zCounter;
+
+      windows.forEach(win => {
+        win.dataset.focused = String(win === target);
+      });
+
+      syncWindowUI();
+    };
+
+    const openWindow = (appId, options = {}) => {
+      const win = windowMap.get(appId);
+      if (!win) return;
+
+      const { minimizeOnly = false, skipAnimation = false, preserveLayout = false } = options;
+      const wasClosed = win.dataset.state === "closed";
+      const wasMinimized = win.dataset.state === "minimized";
+
+      if (window.innerWidth >= 768 && wasClosed && !preserveLayout) {
+        placeDesktopWindow(appId);
+      }
+
+      win.dataset.state = minimizeOnly ? "minimized" : "open";
+      win.dataset.focused = "false";
+
+      if (!skipAnimation) {
+        const fromFrames = wasMinimized
+          ? [
+              { opacity: 0, transform: "translateY(18px) scale(0.94)", filter: "blur(8px)" },
+              { opacity: 1, transform: "translateY(0) scale(1)", filter: "blur(0)" }
+            ]
+          : [
+              { opacity: 0, transform: "translateY(22px) scale(0.94)", filter: "blur(10px)" },
+              { opacity: 1, transform: "translateY(0) scale(1)", filter: "blur(0)" }
+            ];
+        animateWindow(win, fromFrames);
+      }
+
+      focusWindow(appId);
+
+      if (appId === "terminal") {
+        document.getElementById("terminalInput")?.focus();
+      }
+    };
+
+    const closeWindow = appId => {
+      const win = windowMap.get(appId);
+      if (!win) return;
+
+      win.dataset.focused = "false";
+
+      const finalizeClose = () => {
+        win.dataset.state = "closed";
+        const nextOpen = [...windowMap.values()]
+          .filter(item => item.dataset.state === "open")
+          .sort((a, b) => Number(b.style.zIndex || 0) - Number(a.style.zIndex || 0))[0];
+
+        if (nextOpen) {
+          focusWindow(nextOpen.dataset.appId);
+        } else {
+          syncWindowUI();
+        }
+      };
+
+      if (window.innerWidth >= 768) {
+        const animation = animateWindow(win, [
+          { opacity: 1, transform: "translateY(0) scale(1)", filter: "blur(0)" },
+          { opacity: 0, transform: "translateY(18px) scale(0.94)", filter: "blur(10px)" }
+        ]);
+        if (animation) {
+          animation.finished.then(finalizeClose).catch(finalizeClose);
+          return;
+        }
+      }
+
+      finalizeClose();
+    };
+
+    const minimizeWindow = appId => {
+      const win = windowMap.get(appId);
+      if (!win) return;
+      win.dataset.focused = "false";
+
+      const finalizeMinimize = () => {
+        win.dataset.state = "minimized";
+        syncWindowUI();
+      };
+
+      if (window.innerWidth >= 768) {
+        const animation = animateWindow(win, [
+          { opacity: 1, transform: "translateY(0) scale(1)", filter: "blur(0)" },
+          { opacity: 0, transform: "translateY(20px) scale(0.92)", filter: "blur(8px)" }
+        ]);
+        if (animation) {
+          animation.finished.then(finalizeMinimize).catch(finalizeMinimize);
+          return;
+        }
+      }
+
+      finalizeMinimize();
+    };
+
+    const toggleMaximizeWindow = appId => {
+      const win = windowMap.get(appId);
+      if (!win || window.innerWidth < 768) return;
+
+      const desktop = document.getElementById("desktopWindows");
+      const desktopRect = desktop.getBoundingClientRect();
+      const isMaximized = win.dataset.maximized === "true";
+
+      if (isMaximized) {
+        win.dataset.maximized = "false";
+        win.style.left = win.dataset.restoreLeft || "";
+        win.style.top = win.dataset.restoreTop || "";
+        win.style.width = win.dataset.restoreWidth || "";
+        win.style.height = win.dataset.restoreHeight || "";
+      } else {
+        win.dataset.restoreLeft = win.style.left || "";
+        win.dataset.restoreTop = win.style.top || "";
+        win.dataset.restoreWidth = win.style.width || "";
+        win.dataset.restoreHeight = win.style.height || "";
+        win.dataset.maximized = "true";
+        win.style.left = "12px";
+        win.style.top = "12px";
+        win.style.width = Math.max(320, desktopRect.width - 24) + "px";
+        win.style.height = Math.max(320, desktopRect.height - 24) + "px";
+      }
+
+      win.dataset.state = "open";
+      animateWindow(win, [
+        { opacity: 0.94, transform: isMaximized ? "scale(0.985)" : "scale(0.97)" },
+        { opacity: 1, transform: "scale(1)" }
+      ], { duration: 240 });
+      focusWindow(appId);
+    };
+
+    const restoreWindow = appId => {
+      const win = windowMap.get(appId);
+      if (!win) return;
+      openWindow(appId, { preserveLayout: true });
+    };
+
+    const toggleTaskWindow = appId => {
+      const win = windowMap.get(appId);
+      if (!win) return;
+
+      if (win.dataset.state === "closed") {
+        openWindow(appId);
+      } else if (win.dataset.state === "minimized") {
+        restoreWindow(appId);
+      } else if (win.dataset.focused === "true") {
+        minimizeWindow(appId);
+      } else {
+        restoreWindow(appId);
+      }
+    };
+
+    const syncWindowUI = () => {
+      launchers.forEach(launcher => {
+        const targetId = launcher.dataset.appTarget;
+        const win = windowMap.get(targetId);
+        const active = win && win.dataset.state !== "closed";
+        launcher.dataset.active = String(active);
+      });
+
+      taskbarApps.querySelectorAll("[data-taskbar-app]").forEach(button => {
+        const targetId = button.dataset.taskbarApp;
+        const win = windowMap.get(targetId);
+        if (!win) return;
+        button.dataset.open = String(win.dataset.state !== "closed");
+        button.dataset.minimized = String(win.dataset.state === "minimized");
+        button.dataset.active = String(win.dataset.focused === "true" && win.dataset.state === "open");
+      });
+    };
+
+    const buildTaskbar = () => {
+      const taskMarkup = windows.map(win => {
+        const title = win.dataset.appTitle;
+        const id = win.dataset.appId;
+        return `
+          <button
+            data-taskbar-app="${id}"
+            data-open="${win.dataset.state !== "closed"}"
+            data-active="${win.dataset.focused === "true"}"
+            data-minimized="${win.dataset.state === "minimized"}"
+            class="taskbar-app relative inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[color:var(--line)] bg-white/[0.03] text-[0.88rem] text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"
+            aria-label="${title}"
+            title="${title}"
+          >
+            <i data-lucide="${taskbarIcons[id] || "app-window"}" class="h-4.5 w-4.5"></i>
+            <span class="taskbar-label">${title}</span>
+            <span class="taskbar-indicator absolute bottom-1.5 left-1/2 h-1.5 w-5 -translate-x-1/2 rounded-full bg-[linear-gradient(90deg,var(--green),var(--cyan))] transition duration-200"></span>
+          </button>
+        `;
+      }).join("");
+
+      taskbarApps.innerHTML = taskMarkup;
+      lucide.createIcons();
+
+      taskbarApps.querySelectorAll("[data-taskbar-app]").forEach(button => {
+        button.addEventListener("click", () => toggleTaskWindow(button.dataset.taskbarApp));
+      });
+    };
+
+    const showDesktop = () => {
+      windows.forEach(win => {
+        if (win.dataset.state !== "closed") {
+          minimizeWindow(win.dataset.appId);
+        }
+      });
+    };
+
+    const startDrag = (event, win) => {
+      if (window.innerWidth < 768) return;
+      const handle = event.target.closest(".window-drag-handle");
+      if (!handle) return;
+      if (event.target.closest(".window-control")) return;
+      if (win.dataset.maximized === "true") return;
+
+      const desktop = document.getElementById("desktopWindows");
+      const desktopRect = desktop.getBoundingClientRect();
+      const winRect = win.getBoundingClientRect();
+
+      dragState = {
+        win,
+        offsetX: event.clientX - winRect.left,
+        offsetY: event.clientY - winRect.top,
+        desktopRect
+      };
+
+      win.dataset.dragging = "true";
+      document.body.classList.add("dragging");
+      focusWindow(win.dataset.appId);
+    };
+
+    const moveDrag = event => {
+      if (!dragState) return;
+
+      const { win, offsetX, offsetY, desktopRect } = dragState;
+      const winRect = win.getBoundingClientRect();
+      const nextLeft = clamp(event.clientX - desktopRect.left - offsetX, 0, Math.max(0, desktopRect.width - winRect.width));
+      const nextTop = clamp(event.clientY - desktopRect.top - offsetY, 0, Math.max(0, desktopRect.height - 80));
+
+      win.style.left = nextLeft + "px";
+      win.style.top = nextTop + "px";
+    };
+
+    const endDrag = () => {
+      if (dragState?.win) {
+        dragState.win.dataset.dragging = "false";
+      }
+      dragState = null;
+      document.body.classList.remove("dragging");
+    };
+
+    const openDesktopStartupLayout = () => {
+      if (window.innerWidth < 768) return;
+      desktopStartupOrder.forEach((appId, index) => {
+        const win = windowMap.get(appId);
+        if (!win) return;
+        placeDesktopWindow(appId);
+        setTimeout(() => {
+          openWindow(appId, { skipAnimation: false });
+        }, index === 0 ? 0 : index * 85);
+      });
+      setTimeout(() => focusWindow("profile"), desktopStartupOrder.length * 85 + 40);
+    };
+
+    buildTaskbar();
+    if (window.innerWidth >= 768) {
+      openDesktopStartupLayout();
+    } else {
+      syncWindowUI();
+    }
+    syncPanelState();
+    updateClock();
+    setInterval(updateClock, 1000 * 30);
+
+    panelToggle.addEventListener("click", () => togglePanel());
+    showDesktopBtn.addEventListener("click", showDesktop);
     themeBtn.addEventListener("click", () => {
       document.documentElement.classList.toggle("theme-alt");
+    });
+
+    launchers.forEach(launcher => {
+      launcher.addEventListener("click", () => {
+        openWindow(launcher.dataset.appTarget);
+        if (window.innerWidth < 1024) togglePanel(false);
+      });
+    });
+
+    windows.forEach(win => {
+      win.addEventListener("pointerdown", event => startDrag(event, win));
+      win.addEventListener("mousedown", () => focusWindow(win.dataset.appId));
+
+      win.querySelectorAll("[data-window-close]").forEach(button => {
+        button.addEventListener("click", event => {
+          event.stopPropagation();
+          closeWindow(win.dataset.appId);
+        });
+      });
+
+      win.querySelectorAll("[data-window-minimize]").forEach(button => {
+        button.addEventListener("click", event => {
+          event.stopPropagation();
+          minimizeWindow(win.dataset.appId);
+        });
+      });
+
+      win.querySelectorAll("[data-window-maximize]").forEach(button => {
+        button.addEventListener("click", event => {
+          event.stopPropagation();
+          toggleMaximizeWindow(win.dataset.appId);
+        });
+      });
+    });
+
+    window.addEventListener("pointermove", moveDrag);
+    window.addEventListener("pointerup", endDrag);
+    window.addEventListener("pointercancel", endDrag);
+    window.addEventListener("keydown", event => {
+      if (!bootCompleted && event.key === "Enter") {
+        finishBoot();
+      }
     });
 
     const terminalOutput = document.getElementById("terminalOutput");
@@ -715,8 +1728,8 @@
       ]);
     };
 
-    terminalInput.addEventListener("keydown", e => {
-      if (e.key === "Enter") {
+    terminalInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") {
         runCommand(terminalInput.value);
         terminalInput.value = "";
       }
@@ -724,12 +1737,14 @@
 
     document.querySelectorAll(".quick-commands button").forEach(btn => {
       btn.addEventListener("click", () => {
+        openWindow("terminal");
         runCommand(btn.dataset.cmd);
         terminalInput.focus();
       });
     });
 
     bootTerminal();
+    runBootSequence();
   </script>
 </body>
 </html>
