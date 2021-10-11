@@ -138,7 +138,7 @@
     .window-shell {
       max-height: calc(100vh - 150px);
       overflow: hidden;
-      border-radius: 26px;
+      border-radius: 20px;
       isolation: isolate;
       transform-origin: top center;
       transition:
@@ -316,9 +316,11 @@
     }
 
     .taskbar-app[data-active="true"] {
-      border-color: rgba(103, 223, 255, 0.32);
-      background: linear-gradient(180deg, rgba(103, 223, 255, 0.16), rgba(110, 143, 255, 0.08));
+      background: linear-gradient(180deg, rgba(103, 223, 255, 0.18), rgba(110, 143, 255, 0.1));
       color: var(--text);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        inset 0 -1px 0 rgba(103, 223, 255, 0.08);
     }
 
     .taskbar-app[data-open="false"] .taskbar-indicator {
@@ -344,28 +346,67 @@
         linear-gradient(90deg, rgba(103, 223, 255, 0.04), rgba(110, 143, 255, 0.04));
     }
 
-    .start-button {
-      background:
-        linear-gradient(135deg, rgba(103, 223, 255, 0.2), rgba(110, 143, 255, 0.12)),
-        rgba(255, 255, 255, 0.04);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    .topbar-control {
+      position: relative;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--soft);
+      box-shadow: none;
+      transition:
+        background-color 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease,
+        box-shadow 180ms ease,
+        transform 180ms ease;
     }
 
-    .start-button:hover {
+    .topbar-control:hover {
+      border-color: rgba(255, 255, 255, 0.08);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+      color: var(--text);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 0 0 1px rgba(103, 223, 255, 0.05);
+    }
+
+    .topbar-control:focus-visible {
+      outline: none;
       border-color: rgba(103, 223, 255, 0.35);
-      background:
-        linear-gradient(135deg, rgba(103, 223, 255, 0.26), rgba(110, 143, 255, 0.16)),
-        rgba(255, 255, 255, 0.06);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.05));
+      color: var(--text);
+      box-shadow:
+        0 0 0 1px rgba(103, 223, 255, 0.18),
+        0 0 0 4px rgba(103, 223, 255, 0.08);
     }
 
-    .tray-button {
-      background: rgba(255, 255, 255, 0.025);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    .start-button {
+      color: rgba(238, 244, 253, 0.92);
     }
 
-    .tray-button:hover {
-      border-color: rgba(103, 223, 255, 0.28);
-      background: rgba(255, 255, 255, 0.06);
+    .start-button i,
+    .tray-button i,
+    .taskbar-app i {
+      transition: color 180ms ease, opacity 180ms ease, transform 180ms ease;
+    }
+
+    .start-button i,
+    .tray-button i {
+      color: rgba(103, 223, 255, 0.88);
+    }
+
+    .start-button:hover i,
+    .tray-button:hover i,
+    .taskbar-app:hover i,
+    .topbar-control:focus-visible i {
+      color: var(--cyan);
+    }
+
+    .clock-block {
+      color: rgba(238, 244, 253, 0.92);
+    }
+
+    .clock-block:hover #clockDate {
+      color: rgba(238, 244, 253, 0.86);
     }
 
     .app-launcher[data-active="true"] {
@@ -380,9 +421,9 @@
 
     .desktop-shortcuts {
       position: absolute;
-      top: clamp(16px, 2vw, 24px);
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translate(-50%, -50%);
       z-index: 20;
       display: grid;
       grid-template-columns: repeat(2, minmax(96px, 120px));
@@ -398,7 +439,7 @@
       width: 100%;
       padding: 10px 8px;
       border: 1px solid transparent;
-      border-radius: 18px;
+      border-radius: 14px;
       background: transparent;
       text-align: center;
       transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
@@ -422,7 +463,7 @@
       place-items: center;
       width: 58px;
       height: 58px;
-      border-radius: 20px;
+      border-radius: 16px;
       border: 1px solid rgba(255, 255, 255, 0.08);
       background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
       box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 12px 28px rgba(0,0,0,.18);
@@ -459,7 +500,6 @@
 
     @media (min-width: 768px) and (max-width: 1439px) {
       .desktop-shortcuts {
-        top: 16px;
         gap: 10px 14px;
       }
 
@@ -540,7 +580,7 @@
     data-hidden="false"
     class="boot-overlay fixed inset-0 z-[120] flex items-center justify-center bg-[radial-gradient(circle_at_top,rgba(103,223,255,.06),transparent_24%),linear-gradient(180deg,#03060a,#07111a)] px-4"
   >
-    <div class="w-full max-w-[920px] overflow-hidden rounded-[28px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(7,12,18,.98),rgba(4,7,12,.99))] shadow-[0_35px_100px_rgba(0,0,0,.56)]">
+    <div class="w-full max-w-[920px] overflow-hidden rounded-[22px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(7,12,18,.98),rgba(4,7,12,.99))] shadow-[0_35px_100px_rgba(0,0,0,.56)]">
       <div class="flex items-center justify-between gap-3 border-b border-[#152131] bg-[#0a1017] px-5 py-3 font-mono text-[0.8rem] text-[color:var(--soft)]">
         <div class="flex items-center gap-2">
           <span class="inline-block h-3 w-3 rounded-full bg-[#ff5f57]"></span>
@@ -561,12 +601,12 @@
   </div>
 
   <div id="desktopRoot" data-booted="false" class="desktop-root flex h-screen flex-col overflow-hidden">
-    <header class="topbar taskbar-shell z-50 w-full border-b border-[color:var(--line)] px-2 py-2 shadow-[0_18px_38px_rgba(0,0,0,.2)] backdrop-blur-[18px] md:px-4">
-      <div class="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+    <header class="topbar taskbar-shell z-50 w-full border-b border-[color:var(--line)] px-2 py-1.5 shadow-[0_18px_38px_rgba(0,0,0,.2)] backdrop-blur-[18px] md:px-4">
+      <div class="flex flex-col gap-1.5 lg:flex-row lg:items-center lg:justify-between">
         <div class="flex flex-wrap items-center gap-2">
           <button
             id="panelToggle"
-            class="start-button inline-flex h-11 items-center gap-2 rounded-2xl border border-[color:var(--line)] px-3.5 py-2 font-medium transition duration-200"
+            class="topbar-control start-button inline-flex h-10 items-center gap-2 rounded-xl px-3.5 py-2 font-medium"
             aria-expanded="false"
             aria-controls="explorerPanel"
           >
@@ -578,15 +618,15 @@
         <div id="taskbarApps" class="flex min-w-0 flex-1 flex-wrap items-center gap-2 lg:justify-center"></div>
 
         <div class="flex flex-wrap items-center justify-end gap-1.5">
-          <button id="showDesktopBtn" class="tray-button inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--line)] transition duration-200" aria-label="Show desktop" title="Show desktop">
+          <button id="showDesktopBtn" class="topbar-control tray-button inline-flex h-10 w-10 items-center justify-center rounded-xl" aria-label="Show desktop" title="Show desktop">
             <i data-lucide="monitor-up" class="h-4 w-4 text-[color:var(--cyan)]"></i>
           </button>
-          <button id="themeBtn" class="tray-button inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[color:var(--line)] transition duration-200" aria-label="Toggle theme" title="Toggle theme">
+          <button id="themeBtn" class="topbar-control tray-button inline-flex h-10 w-10 items-center justify-center rounded-xl" aria-label="Toggle theme" title="Toggle theme">
             <i data-lucide="sun-moon" class="h-4 w-4 text-[color:var(--cyan)]"></i>
           </button>
-          <div class="rounded-2xl border border-[color:var(--line)] bg-white/[0.03] px-3 py-2 text-right shadow-[inset_0_1px_0_rgba(255,255,255,.04)]">
-            <div id="clockTime" class="font-mono text-[0.95rem] font-semibold tracking-[0.08em]"></div>
-            <div id="clockDate" class="font-mono text-[0.72rem] text-[color:var(--soft)]"></div>
+          <div class="topbar-control clock-block inline-flex h-10 min-w-[96px] flex-col items-end justify-center rounded-xl px-3 text-right">
+            <div id="clockTime" class="font-mono text-[0.82rem] font-semibold tracking-[0.04em]"></div>
+            <div id="clockDate" class="font-mono text-[0.64rem] text-[color:var(--soft)]"></div>
           </div>
         </div>
       </div>
@@ -596,18 +636,18 @@
       <aside
         id="explorerPanel"
         data-open="false"
-        class="explorer-panel fixed bottom-3 left-3 top-[84px] z-40 w-[320px] max-w-[calc(100vw-24px)] overflow-auto rounded-[24px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(13,20,30,.995),rgba(7,10,16,.99))] p-3 shadow-[0_30px_70px_rgba(0,0,0,.45)] backdrop-blur-[18px] transition duration-300 md:bottom-5 md:left-5 md:top-[88px] md:p-4"
+        class="explorer-panel fixed bottom-3 left-3 top-[84px] z-40 w-[320px] max-w-[calc(100vw-24px)] overflow-auto rounded-[18px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(13,20,30,.995),rgba(7,10,16,.99))] p-3 shadow-[0_30px_70px_rgba(0,0,0,.45)] backdrop-blur-[18px] transition duration-300 md:bottom-5 md:left-5 md:top-[88px] md:p-4"
       >
-        <div class="relative mb-4 flex items-center gap-4 overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015))] p-4">
+        <div class="relative mb-4 flex items-center gap-4 overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015))] p-4">
           <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(103,223,255,.08),transparent_38%,rgba(255,209,125,.05))]"></div>
-          <div class="grid h-12 w-12 place-items-center rounded-[14px] bg-[linear-gradient(135deg,var(--green),var(--cyan))] font-mono text-lg font-bold text-[#061017] shadow-[0_14px_32px_rgba(103,223,255,.24)]">KU</div>
+          <div class="grid h-12 w-12 place-items-center rounded-[10px] bg-[linear-gradient(135deg,var(--green),var(--cyan))] font-mono text-lg font-bold text-[#061017] shadow-[0_14px_32px_rgba(103,223,255,.24)]">KU</div>
           <div class="relative z-[1]">
             <h1 class="m-0 text-[1.02rem] font-bold leading-[1.1] tracking-[-0.04em]">KmxOS v1.0</h1>
             <p class="mt-1 text-[0.86rem] text-[color:var(--soft)]">Developer Portfolio</p>
           </div>
         </div>
 
-        <div class="mb-4 rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+        <div class="mb-4 rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
           <div class="mb-3 flex items-center justify-between gap-3 font-mono text-[0.84rem] text-[color:var(--soft)]">
             <span>system_status</span>
             <span class="flex items-center gap-2 text-[color:var(--green)]">
@@ -649,34 +689,34 @@
         <div class="mb-4">
           <div class="mb-2 font-mono text-[0.78rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">explorer</div>
           <nav class="grid gap-2" id="panelLaunchers">
-            <button data-app-target="profile" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[16px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+            <button data-app-target="profile" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
               <span class="flex items-center gap-3"><i data-lucide="layout-dashboard" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Profile Overview</span></span>
               <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">00</span>
             </button>
-            <button data-app-target="terminal" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[16px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+            <button data-app-target="terminal" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
               <span class="flex items-center gap-3"><i data-lucide="terminal" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Command Console</span></span>
               <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">01</span>
             </button>
-            <button data-app-target="modules" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[16px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+            <button data-app-target="modules" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
               <span class="flex items-center gap-3"><i data-lucide="layers-3" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Active Modules</span></span>
               <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">02</span>
             </button>
-            <button data-app-target="experience" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[16px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+            <button data-app-target="experience" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
               <span class="flex items-center gap-3"><i data-lucide="scroll-text" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Mission Log</span></span>
               <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">03</span>
             </button>
-            <button data-app-target="stack" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[16px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+            <button data-app-target="stack" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
               <span class="flex items-center gap-3"><i data-lucide="cpu" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Tech Stack</span></span>
               <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">04</span>
             </button>
-            <button data-app-target="projects" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[16px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+            <button data-app-target="projects" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
               <span class="flex items-center gap-3"><i data-lucide="folder-open" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Work Modules</span></span>
               <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">05</span>
             </button>
           </nav>
         </div>
 
-        <div class="rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] p-4">
+        <div class="rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] p-4">
           <div class="mb-2 font-mono text-[0.78rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">readme</div>
           <p class="m-0 text-[0.9rem] leading-[1.7] text-[color:var(--soft)]">
             Software Engineer with 6+ years of experience across backend systems, APIs,
@@ -686,7 +726,7 @@
       </aside>
 
       <main class="desktop-surface relative flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-4 pt-5 md:px-6 md:pb-5 md:pt-6">
-        <section id="desktopHero" class="wallpaper-layer pointer-events-none absolute inset-4 z-0 overflow-hidden rounded-[28px] px-6 py-7 md:hidden">
+        <section id="desktopHero" class="wallpaper-layer pointer-events-none absolute inset-4 z-0 overflow-hidden rounded-[22px] px-6 py-7 md:hidden">
           <div class="max-w-[780px]">
             <div class="mb-4 inline-flex items-center gap-2.5 rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-3 py-[7px] font-mono text-[0.8rem] uppercase tracking-[0.08em] text-[color:var(--cyan)]">
               <span class="h-2 w-2 rounded-full bg-[color:var(--green)] shadow-[0_0_10px_var(--green)]"></span>
@@ -703,21 +743,21 @@
             </p>
           </div>
 
-          <div class="pointer-events-none absolute bottom-6 right-6 hidden max-w-[320px] rounded-[24px] border border-white/8 bg-black/15 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.03)] xl:block">
+          <div class="pointer-events-none absolute bottom-6 right-6 hidden max-w-[320px] rounded-[18px] border border-white/8 bg-black/15 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.03)] xl:block">
             <div class="mb-3 flex items-center justify-between gap-3 font-mono text-[0.8rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">
               <span>desktop_state</span>
               <span class="text-[color:var(--green)]">ready</span>
             </div>
             <div class="grid gap-3">
-              <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3">
+              <div class="rounded-xl border border-white/[0.05] bg-black/10 p-3">
                 <div class="font-mono text-[0.76rem] uppercase text-[color:var(--soft)]">experience_years</div>
                 <div class="mt-2 text-[1.5rem] font-bold tracking-[-0.04em]">6+</div>
               </div>
-              <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3">
+              <div class="rounded-xl border border-white/[0.05] bg-black/10 p-3">
                 <div class="font-mono text-[0.76rem] uppercase text-[color:var(--soft)]">primary_modes</div>
                 <div class="mt-2 text-[1.5rem] font-bold tracking-[-0.04em]">5</div>
               </div>
-              <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3">
+              <div class="rounded-xl border border-white/[0.05] bg-black/10 p-3">
                 <div class="font-mono text-[0.76rem] uppercase text-[color:var(--soft)]">current_focus</div>
                 <div class="mt-2 text-[1.05rem] font-bold tracking-[-0.04em]">Rust Systems</div>
               </div>
@@ -725,15 +765,15 @@
           </div>
 
           <div class="wallpaper-stats-mobile absolute bottom-6 left-6 right-6 grid grid-cols-3 gap-3 xl:hidden">
-            <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+            <div class="rounded-xl border border-white/[0.05] bg-black/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
               <div class="font-mono text-[0.72rem] uppercase text-[color:var(--soft)]">experience_years</div>
               <div class="mt-2 text-[1.25rem] font-bold tracking-[-0.04em]">6+</div>
             </div>
-            <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+            <div class="rounded-xl border border-white/[0.05] bg-black/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
               <div class="font-mono text-[0.72rem] uppercase text-[color:var(--soft)]">primary_modes</div>
               <div class="mt-2 text-[1.25rem] font-bold tracking-[-0.04em]">5</div>
             </div>
-            <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+            <div class="rounded-xl border border-white/[0.05] bg-black/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
               <div class="font-mono text-[0.72rem] uppercase text-[color:var(--soft)]">current_focus</div>
               <div class="mt-2 text-[0.95rem] font-bold tracking-[-0.04em]">Rust Systems</div>
             </div>
@@ -777,7 +817,7 @@
             class="window-shell md:absolute md:left-[3%] md:top-[2%] md:w-[min(920px,72vw)]"
             style="z-index: 20;"
           >
-            <div class="window-frame panel-shell relative overflow-hidden rounded-[26px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
+            <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
               <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
                 <div class="flex items-center gap-3">
                   <div class="window-controls">
@@ -792,7 +832,7 @@
                 </div>
               </div>
               <div class="window-content relative z-[1] grid gap-4 p-5">
-                <div class="hidden gap-5 rounded-[24px] border border-white/[0.05] bg-[linear-gradient(135deg,rgba(103,223,255,.06),rgba(255,255,255,.015)_38%,rgba(255,209,125,.03))] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.04)] md:grid lg:grid-cols-[minmax(0,1.6fr)_250px]">
+                <div class="hidden gap-5 rounded-[18px] border border-white/[0.05] bg-[linear-gradient(135deg,rgba(103,223,255,.06),rgba(255,255,255,.015)_38%,rgba(255,209,125,.03))] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.04)] md:grid lg:grid-cols-[minmax(0,1.6fr)_250px]">
                   <div>
                     <div class="mb-4 inline-flex items-center gap-2.5 rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-3 py-[7px] font-mono text-[0.8rem] uppercase tracking-[0.08em] text-[color:var(--cyan)]">
                       <span class="h-2 w-2 rounded-full bg-[color:var(--green)] shadow-[0_0_10px_var(--green)]"></span>
@@ -809,15 +849,15 @@
                     </p>
                   </div>
                   <div class="grid gap-3">
-                    <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3">
+                    <div class="rounded-xl border border-white/[0.05] bg-black/10 p-3">
                       <div class="font-mono text-[0.76rem] uppercase text-[color:var(--soft)]">experience_years</div>
                       <div class="mt-2 text-[1.5rem] font-bold tracking-[-0.04em]">6+</div>
                     </div>
-                    <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3">
+                    <div class="rounded-xl border border-white/[0.05] bg-black/10 p-3">
                       <div class="font-mono text-[0.76rem] uppercase text-[color:var(--soft)]">primary_modes</div>
                       <div class="mt-2 text-[1.5rem] font-bold tracking-[-0.04em]">5</div>
                     </div>
-                    <div class="rounded-2xl border border-white/[0.05] bg-black/10 p-3">
+                    <div class="rounded-xl border border-white/[0.05] bg-black/10 p-3">
                       <div class="font-mono text-[0.76rem] uppercase text-[color:var(--soft)]">current_focus</div>
                       <div class="mt-2 text-[1.05rem] font-bold tracking-[-0.04em]">Rust Systems</div>
                     </div>
@@ -826,7 +866,7 @@
                 <div class="grid gap-4 xl:grid-cols-2">
                   <div>
                     <div class="mb-2.5 font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">specializations</div>
-                    <div class="rounded-2xl border border-white/[0.04] bg-white/[0.02] p-4">
+                    <div class="rounded-xl border border-white/[0.04] bg-white/[0.02] p-4">
                       <div class="flex flex-wrap gap-[10px]">
                         <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Backend Development</span>
                         <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">RESTful APIs</span>
@@ -839,7 +879,7 @@
                   </div>
                   <div>
                     <div class="mb-2.5 font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">core_stack</div>
-                    <div class="rounded-2xl border border-white/[0.04] bg-white/[0.02] p-4">
+                    <div class="rounded-xl border border-white/[0.04] bg-white/[0.02] p-4">
                       <div class="flex flex-wrap gap-[10px]">
                         <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">PHP</span>
                         <span class="rounded-full border border-[color:var(--line)] bg-white/[0.035] px-[11px] py-[9px] text-[0.88rem]">Laravel</span>
@@ -852,7 +892,7 @@
                   </div>
                   <div class="xl:col-span-2">
                     <div class="mb-2.5 font-mono text-[0.86rem] font-medium uppercase tracking-[0.04em] text-[color:var(--soft)]">summary</div>
-                    <div class="rounded-2xl border border-white/[0.04] bg-white/[0.02] p-4">
+                    <div class="rounded-xl border border-white/[0.04] bg-white/[0.02] p-4">
                       <p class="m-0 leading-[1.8] text-[color:var(--soft)]">
                         Started with CRM and e-commerce systems, expanded into logistics platforms,
                         built custom educational games and desktop productivity tools, then moved
@@ -875,7 +915,7 @@
             class="window-shell md:absolute md:left-[12%] md:top-[8%] md:w-[min(760px,62vw)]"
             style="z-index: 60;"
           >
-            <div class="window-frame panel-shell relative overflow-hidden rounded-[26px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.992))] shadow-window">
+            <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.992))] shadow-window">
               <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
                 <div class="flex items-center gap-3">
                   <div class="window-controls">
@@ -890,7 +930,7 @@
                 </div>
               </div>
               <div class="window-content relative z-[1] p-5">
-                <div class="flex min-h-[420px] flex-col overflow-hidden rounded-2xl border border-[#152131] bg-[linear-gradient(180deg,#05080d,#09111a)] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                <div class="flex min-h-[420px] flex-col overflow-hidden rounded-xl border border-[#152131] bg-[linear-gradient(180deg,#05080d,#09111a)] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
                   <div class="flex items-center justify-between gap-3 border-b border-[#152131] bg-[#0b1018] px-[14px] py-[10px] font-mono text-[0.82rem] text-[color:var(--soft)]">
                     <span>kmx@developer-os:~</span>
                     <span>type "help"</span>
@@ -931,7 +971,7 @@
             class="window-shell md:absolute md:left-[58%] md:top-[5%] md:w-[min(520px,34vw)]"
             style="z-index: 30;"
           >
-            <div class="window-frame panel-shell relative overflow-hidden rounded-[26px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
+            <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
               <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
                 <div class="flex items-center gap-3">
                   <div class="window-controls">
@@ -947,28 +987,28 @@
               </div>
               <div class="window-content relative z-[1] p-5">
                 <div class="grid gap-3">
-                  <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                  <div class="rounded-[10px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
                     <div class="mb-2 flex items-center justify-between gap-[10px]">
                       <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">backend.api.core</h3>
                       <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
                     </div>
                     <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Backend web development, RESTful APIs, business systems, e-commerce, and platform improvements.</p>
                   </div>
-                  <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                  <div class="rounded-[10px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
                     <div class="mb-2 flex items-center justify-between gap-[10px]">
                       <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">desktop.workflow.tools</h3>
                       <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
                     </div>
                     <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Cross-platform application work using Electron-Vue for internal processes and productivity workflows.</p>
                   </div>
-                  <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                  <div class="rounded-[10px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
                     <div class="mb-2 flex items-center justify-between gap-[10px]">
                       <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">game.phaser.interactive</h3>
                       <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
                     </div>
                     <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Custom eLearning games, proof-of-concept builds, and integration of educational content and assets.</p>
                   </div>
-                  <div class="rounded-[14px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                  <div class="rounded-[10px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
                     <div class="mb-2 flex items-center justify-between gap-[10px]">
                       <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">systems.rust.cluster</h3>
                       <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">active</span>
@@ -990,7 +1030,7 @@
             class="window-shell md:absolute md:left-[18%] md:top-[44%] md:w-[min(620px,48vw)]"
             style="z-index: 25;"
           >
-            <div class="window-frame panel-shell relative overflow-hidden rounded-[26px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
+            <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
               <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
                 <div class="flex items-center gap-3">
                   <div class="window-controls">
@@ -1046,7 +1086,7 @@
             class="window-shell md:absolute md:left-[45%] md:top-[35%] md:w-[min(760px,52vw)]"
             style="z-index: 22;"
           >
-            <div class="window-frame panel-shell relative overflow-hidden rounded-[26px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
+            <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
               <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
                 <div class="flex items-center gap-3">
                   <div class="window-controls">
@@ -1062,37 +1102,37 @@
               </div>
               <div class="window-content relative z-[1] p-5">
                 <div class="grid grid-cols-1 gap-[18px] xl:grid-cols-3">
-                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
                     <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
                     <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">languages</small>
                     <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Core Languages</h3>
                     <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">PHP, JavaScript, Rust, Python, C, and C++.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
                     <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
                     <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">frameworks</small>
                     <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Frameworks & Platforms</h3>
                     <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Laravel, CodeIgniter, Electron-Vue, Phaser, Node.js, and Socket.IO.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
                     <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
                     <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">databases</small>
                     <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Storage</h3>
                     <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">MySQL and SQLite for application data, prototyping, and internal tooling.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
                     <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
                     <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">toolchain</small>
                     <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Developer Tools</h3>
                     <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Git, Docker, and Postman for version control, containerized workflows, and API testing.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
                     <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
                     <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">backend</small>
                     <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Application Engineering</h3>
                     <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Backend development, RESTful API development, web application development, and system integrations.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
                     <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
                     <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">interactive</small>
                     <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Creative + Systems Blend</h3>
@@ -1113,7 +1153,7 @@
             class="window-shell md:absolute md:left-[35%] md:top-[16%] md:w-[min(840px,58vw)]"
             style="z-index: 24;"
           >
-            <div class="window-frame panel-shell relative overflow-hidden rounded-[26px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
+            <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
               <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
                 <div class="flex items-center gap-3">
                   <div class="window-controls">
@@ -1129,37 +1169,37 @@
               </div>
               <div class="window-content relative z-[1] p-5">
                 <div class="grid grid-cols-1 gap-[18px] xl:grid-cols-3">
-                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
                     <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
                     <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_01</small>
                     <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">CRM & E-Commerce Systems</h3>
                     <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Revamped internal CRM flows and helped build an e-commerce platform that supported new business ventures.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
                     <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
                     <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_02</small>
                     <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Logistics Platform Engineering</h3>
                     <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Worked on delivery and logistics software, including backend services and API support for mobile clients.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
                     <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
                     <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_03</small>
                     <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Custom eLearning Games</h3>
                     <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Built client-tailored Phaser games, integrated artwork, and created proof-of-concept interactive experiences.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
                     <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
                     <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_04</small>
                     <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Desktop Productivity Software</h3>
                     <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Developed internal applications including an automated time tracker and Teamwork.com API integration.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
                     <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
                     <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_05</small>
                     <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Rust Cluster Systems</h3>
                     <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Implemented structured logging, periodic system metrics, blockserver management, and filesystem-related tasks.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
+                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
                     <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
                     <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_06</small>
                     <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Engineering Style</h3>
@@ -1291,13 +1331,19 @@
 
     const updateClock = () => {
       const now = new Date();
-      const [hours, minutes] = now.toLocaleTimeString([], {
+      const timeString = now.toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
-        hour12: false
-      }).split(":");
-      clockTime.innerHTML = `${hours}<span class="clock-separator">:</span>${minutes}`;
-      clockDate.textContent = now.toLocaleDateString([], { month: "short", day: "numeric" });
+        hour12: true
+      });
+      const [timePart, meridiem] = timeString.split(" ");
+      const [hours, minutes] = timePart.split(":");
+      clockTime.innerHTML = `${hours}<span class="clock-separator">:</span>${minutes} ${meridiem}`;
+      clockDate.textContent = now.toLocaleDateString("en-US", {
+        month: "numeric",
+        day: "numeric",
+        year: "numeric"
+      });
     };
 
     const focusWindow = appId => {
@@ -1489,13 +1535,13 @@
             data-open="${win.dataset.state !== "closed"}"
             data-active="${win.dataset.focused === "true"}"
             data-minimized="${win.dataset.state === "minimized"}"
-            class="taskbar-app relative inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[color:var(--line)] bg-white/[0.03] text-[0.88rem] text-[color:var(--soft)] transition duration-200 hover:border-cyan-300/35 hover:text-[color:var(--text)]"
+            class="topbar-control taskbar-app relative inline-flex h-10 w-10 items-center justify-center rounded-xl text-[0.88rem]"
             aria-label="${title}"
             title="${title}"
           >
             <i data-lucide="${taskbarIcons[id] || "app-window"}" class="h-4.5 w-4.5"></i>
             <span class="taskbar-label">${title}</span>
-            <span class="taskbar-indicator absolute bottom-1.5 left-1/2 h-1.5 w-5 -translate-x-1/2 rounded-full bg-[linear-gradient(90deg,var(--green),var(--cyan))] transition duration-200"></span>
+            <span class="taskbar-indicator absolute bottom-0.5 left-1/2 h-1 w-4 -translate-x-1/2 rounded-full bg-[linear-gradient(90deg,var(--green),var(--cyan))] transition duration-200"></span>
           </button>
         `;
       }).join("");
