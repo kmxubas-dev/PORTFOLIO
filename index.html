@@ -171,7 +171,7 @@
     }
 
     .window-content::-webkit-scrollbar,
-    .explorer-panel::-webkit-scrollbar,
+    .start-menu-panel::-webkit-scrollbar,
     #terminalOutput::-webkit-scrollbar,
     .desktop-window-area::-webkit-scrollbar {
       width: 12px;
@@ -179,7 +179,7 @@
     }
 
     .window-content::-webkit-scrollbar-track,
-    .explorer-panel::-webkit-scrollbar-track,
+    .start-menu-panel::-webkit-scrollbar-track,
     #terminalOutput::-webkit-scrollbar-track,
     .desktop-window-area::-webkit-scrollbar-track {
       background: rgba(255, 255, 255, 0.04);
@@ -187,7 +187,7 @@
     }
 
     .window-content::-webkit-scrollbar-thumb,
-    .explorer-panel::-webkit-scrollbar-thumb,
+    .start-menu-panel::-webkit-scrollbar-thumb,
     #terminalOutput::-webkit-scrollbar-thumb,
     .desktop-window-area::-webkit-scrollbar-thumb {
       border: 3px solid transparent;
@@ -197,14 +197,14 @@
     }
 
     .window-content::-webkit-scrollbar-thumb:hover,
-    .explorer-panel::-webkit-scrollbar-thumb:hover,
+    .start-menu-panel::-webkit-scrollbar-thumb:hover,
     #terminalOutput::-webkit-scrollbar-thumb:hover,
     .desktop-window-area::-webkit-scrollbar-thumb:hover {
       background:
         linear-gradient(180deg, rgba(103, 223, 255, 0.75), rgba(110, 143, 255, 0.6)) padding-box;
     }
 
-    .explorer-panel,
+    .start-menu-panel,
     #terminalOutput,
     .desktop-window-area {
       scrollbar-width: thin;
@@ -304,13 +304,13 @@
       max-height: none;
     }
 
-    .explorer-panel[data-open="false"] {
+    .start-menu-panel[data-open="false"] {
       transform: translateX(-120%);
       opacity: 0;
       pointer-events: none;
     }
 
-    .explorer-panel[data-open="true"] {
+    .start-menu-panel[data-open="true"] {
       transform: translateX(0);
       opacity: 1;
     }
@@ -608,7 +608,7 @@
             id="panelToggle"
             class="topbar-control start-button inline-flex h-10 items-center gap-2 rounded-xl px-3.5 py-2 font-medium"
             aria-expanded="false"
-            aria-controls="explorerPanel"
+            aria-controls="startMenuPanel"
           >
             <i data-lucide="menu" class="h-4 w-4 text-[color:var(--cyan)]"></i>
             <span class="font-mono text-[0.82rem] uppercase tracking-[0.08em]">start</span>
@@ -634,91 +634,112 @@
 
     <div class="relative flex min-h-0 flex-1 overflow-hidden">
       <aside
-        id="explorerPanel"
+        id="startMenuPanel"
         data-open="false"
-        class="explorer-panel fixed bottom-3 left-3 top-[84px] z-40 w-[320px] max-w-[calc(100vw-24px)] overflow-auto rounded-[18px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(13,20,30,.995),rgba(7,10,16,.99))] p-3 shadow-[0_30px_70px_rgba(0,0,0,.45)] backdrop-blur-[18px] transition duration-300 md:bottom-5 md:left-5 md:top-[88px] md:p-4"
+        class="start-menu-panel fixed bottom-3 left-3 top-[3.25rem] z-40 w-[320px] max-w-[calc(100vw-24px)] overflow-auto rounded-[18px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(13,20,30,.995),rgba(7,10,16,.99))] p-3 shadow-[0_30px_70px_rgba(0,0,0,.45)] backdrop-blur-[18px] transition duration-300 md:bottom-4 md:left-4 md:top-[4.25rem] md:max-w-[calc(100vw-32px)] md:p-3"
       >
-        <div class="relative mb-4 flex items-center gap-4 overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015))] p-4">
+        <div class="relative mb-3.5 flex items-center gap-3 overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015))] px-3.5 py-3">
           <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(103,223,255,.08),transparent_38%,rgba(255,209,125,.05))]"></div>
-          <div class="grid h-12 w-12 place-items-center rounded-[10px] bg-[linear-gradient(135deg,var(--green),var(--cyan))] font-mono text-lg font-bold text-[#061017] shadow-[0_14px_32px_rgba(103,223,255,.24)]">KU</div>
+          <div class="grid h-10 w-10 place-items-center rounded-[10px] bg-[linear-gradient(135deg,var(--green),var(--cyan))] font-mono text-[0.95rem] font-bold text-[#061017] shadow-[0_14px_32px_rgba(103,223,255,.24)]">KU</div>
           <div class="relative z-[1]">
-            <h1 class="m-0 text-[1.02rem] font-bold leading-[1.1] tracking-[-0.04em]">KmxOS v1.0</h1>
-            <p class="mt-1 text-[0.86rem] text-[color:var(--soft)]">Developer Portfolio</p>
+            <h1 class="m-0 text-[0.98rem] font-bold leading-none tracking-[-0.04em]">KmxOS v1.0</h1>
+            <p class="mt-1 text-[0.8rem] leading-none text-[color:var(--soft)]">Developer Portfolio</p>
           </div>
         </div>
 
-        <div class="mb-4 rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-          <div class="mb-3 flex items-center justify-between gap-3 font-mono text-[0.84rem] text-[color:var(--soft)]">
+        <div class="mb-3.5 rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] px-3.5 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+          <div class="mb-2.5 flex items-center justify-between gap-3 font-mono text-[0.76rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">
             <span>system_status</span>
-            <span class="flex items-center gap-2 text-[color:var(--green)]">
-              <span class="h-2 w-2 rounded-full bg-[color:var(--green)] shadow-[0_0_12px_var(--green)] [animation:pulse_1.8s_infinite]"></span>
+            <span class="flex items-center gap-1.5 text-[color:var(--green)]">
+              <span class="h-1.5 w-1.5 rounded-full bg-[color:var(--green)] shadow-[0_0_10px_var(--green)] [animation:pulse_1.8s_infinite]"></span>
               online
             </span>
           </div>
-          <div class="grid gap-3">
+          <div class="grid gap-2.5">
             <div>
-              <div class="mb-2 flex items-center justify-between gap-3 font-mono text-[0.78rem] text-[color:var(--soft)]">
+              <div class="mb-1.5 flex items-center justify-between gap-3 font-mono text-[0.74rem] text-[color:var(--soft)]">
                 <span>backend</span>
                 <span>94%</span>
               </div>
-              <div class="h-2 overflow-hidden rounded-full border border-white/5 bg-[#0a1018]">
+              <div class="h-1.5 overflow-hidden rounded-full border border-white/5 bg-[#0a1018]">
                 <span class="block h-full w-[94%] rounded-full bg-[linear-gradient(90deg,var(--green),var(--cyan),var(--blue))]"></span>
               </div>
             </div>
             <div>
-              <div class="mb-2 flex items-center justify-between gap-3 font-mono text-[0.78rem] text-[color:var(--soft)]">
+              <div class="mb-1.5 flex items-center justify-between gap-3 font-mono text-[0.74rem] text-[color:var(--soft)]">
                 <span>games</span>
                 <span>81%</span>
               </div>
-              <div class="h-2 overflow-hidden rounded-full border border-white/5 bg-[#0a1018]">
+              <div class="h-1.5 overflow-hidden rounded-full border border-white/5 bg-[#0a1018]">
                 <span class="block h-full w-[81%] rounded-full bg-[linear-gradient(90deg,var(--green),var(--cyan),var(--blue))]"></span>
               </div>
             </div>
             <div>
-              <div class="mb-2 flex items-center justify-between gap-3 font-mono text-[0.78rem] text-[color:var(--soft)]">
+              <div class="mb-1.5 flex items-center justify-between gap-3 font-mono text-[0.74rem] text-[color:var(--soft)]">
                 <span>systems</span>
                 <span>88%</span>
               </div>
-              <div class="h-2 overflow-hidden rounded-full border border-white/5 bg-[#0a1018]">
+              <div class="h-1.5 overflow-hidden rounded-full border border-white/5 bg-[#0a1018]">
                 <span class="block h-full w-[88%] rounded-full bg-[linear-gradient(90deg,var(--green),var(--cyan),var(--blue))]"></span>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="mb-4">
-          <div class="mb-2 font-mono text-[0.78rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">explorer</div>
-          <nav class="grid gap-2" id="panelLaunchers">
-            <button data-app-target="profile" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
-              <span class="flex items-center gap-3"><i data-lucide="layout-dashboard" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Profile Overview</span></span>
-              <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">00</span>
+        <div class="mb-3.5">
+          <div class="mb-2 flex items-center justify-between gap-3">
+            <div class="font-mono text-[0.76rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">quick_access</div>
+            <div class="font-mono text-[0.72rem] uppercase tracking-[0.08em] text-[color:var(--cyan)]">6 modules</div>
+          </div>
+          <nav class="grid grid-cols-2 gap-1.5" id="startMenuLaunchers">
+            <button data-app-target="profile" class="start-menu-link flex min-h-[64px] flex-col items-start gap-2.5 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-3.5 py-2.5 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+              <i data-lucide="layout-dashboard" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+              <span>
+                <span class="block text-[0.84rem] font-medium leading-tight text-[color:var(--text)]">Profile</span>
+                <span class="mt-1 block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">overview</span>
+              </span>
             </button>
-            <button data-app-target="terminal" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
-              <span class="flex items-center gap-3"><i data-lucide="terminal" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Command Console</span></span>
-              <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">01</span>
+            <button data-app-target="terminal" class="start-menu-link flex min-h-[64px] flex-col items-start gap-2.5 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-3.5 py-2.5 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+              <i data-lucide="terminal" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+              <span>
+                <span class="block text-[0.84rem] font-medium leading-tight text-[color:var(--text)]">Console</span>
+                <span class="mt-1 block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">commands</span>
+              </span>
             </button>
-            <button data-app-target="modules" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
-              <span class="flex items-center gap-3"><i data-lucide="layers-3" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Active Modules</span></span>
-              <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">02</span>
+            <button data-app-target="modules" class="start-menu-link flex min-h-[64px] flex-col items-start gap-2.5 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-3.5 py-2.5 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+              <i data-lucide="layers-3" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+              <span>
+                <span class="block text-[0.84rem] font-medium leading-tight text-[color:var(--text)]">Modules</span>
+                <span class="mt-1 block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">loaded</span>
+              </span>
             </button>
-            <button data-app-target="experience" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
-              <span class="flex items-center gap-3"><i data-lucide="scroll-text" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Mission Log</span></span>
-              <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">03</span>
+            <button data-app-target="experience" class="start-menu-link flex min-h-[64px] flex-col items-start gap-2.5 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-3.5 py-2.5 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+              <i data-lucide="scroll-text" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+              <span>
+                <span class="block text-[0.84rem] font-medium leading-tight text-[color:var(--text)]">Mission</span>
+                <span class="mt-1 block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">timeline</span>
+              </span>
             </button>
-            <button data-app-target="stack" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
-              <span class="flex items-center gap-3"><i data-lucide="cpu" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Tech Stack</span></span>
-              <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">04</span>
+            <button data-app-target="projects" class="start-menu-link flex min-h-[64px] flex-col items-start gap-2.5 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-3.5 py-2.5 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+              <i data-lucide="folder-open" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+              <span>
+                <span class="block text-[0.84rem] font-medium leading-tight text-[color:var(--text)]">Projects</span>
+                <span class="mt-1 block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">work modules</span>
+              </span>
             </button>
-            <button data-app-target="projects" class="explorer-link inline-flex items-center justify-between gap-3 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-4 py-3 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
-              <span class="flex items-center gap-3"><i data-lucide="folder-open" class="h-4 w-4 text-[color:var(--cyan)]"></i><span>Work Modules</span></span>
-              <span class="font-mono text-[0.78rem] text-[color:var(--cyan)]">05</span>
+            <button data-app-target="stack" class="start-menu-link flex min-h-[64px] flex-col items-start gap-2.5 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-3.5 py-2.5 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+              <i data-lucide="cpu" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+              <span>
+                <span class="block text-[0.84rem] font-medium leading-tight text-[color:var(--text)]">Stack</span>
+                <span class="mt-1 block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">inventory</span>
+              </span>
             </button>
           </nav>
         </div>
 
-        <div class="rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] p-4">
-          <div class="mb-2 font-mono text-[0.78rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">readme</div>
-          <p class="m-0 text-[0.9rem] leading-[1.7] text-[color:var(--soft)]">
+        <div class="rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015))] px-3.5 py-3">
+          <div class="mb-2 font-mono text-[0.76rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">readme</div>
+          <p class="m-0 text-[0.84rem] leading-[1.55] text-[color:var(--soft)]">
             Software Engineer with 6+ years of experience across backend systems, APIs,
             desktop applications, 2D games, and Rust-based systems software.
           </p>
@@ -1223,7 +1244,7 @@
 
     const themeBtn = document.getElementById("themeBtn");
     const panelToggle = document.getElementById("panelToggle");
-    const explorerPanel = document.getElementById("explorerPanel");
+    const startMenuPanel = document.getElementById("startMenuPanel");
     const showDesktopBtn = document.getElementById("showDesktopBtn");
     const taskbarApps = document.getElementById("taskbarApps");
     const clockTime = document.getElementById("clockTime");
@@ -1283,13 +1304,13 @@
     };
 
     const syncPanelState = () => {
-      const isOpen = explorerPanel.dataset.open !== "false";
+      const isOpen = startMenuPanel.dataset.open !== "false";
       panelToggle.setAttribute("aria-expanded", String(isOpen));
     };
 
     const togglePanel = force => {
-      const nextState = typeof force === "boolean" ? force : explorerPanel.dataset.open === "false";
-      explorerPanel.dataset.open = String(nextState);
+      const nextState = typeof force === "boolean" ? force : startMenuPanel.dataset.open === "false";
+      startMenuPanel.dataset.open = String(nextState);
       syncPanelState();
     };
 
