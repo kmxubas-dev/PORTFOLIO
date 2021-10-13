@@ -241,8 +241,95 @@
       user-select: none;
     }
 
+    .selecting-desktop {
+      cursor: crosshair !important;
+      user-select: none;
+    }
+
+    .desktop-selection-box {
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 45;
+      display: none;
+      min-width: 2px;
+      min-height: 2px;
+      border: 1px solid rgba(103, 223, 255, 0.72);
+      border-radius: 8px;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      background:
+        linear-gradient(135deg, rgba(103, 223, 255, 0.2), rgba(110, 143, 255, 0.12)),
+        repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 8px);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+        0 0 22px rgba(103, 223, 255, 0.22),
+        0 14px 36px rgba(0, 0, 0, 0.24);
+      opacity: 0;
+      transform-origin: top left;
+      transition: opacity 120ms ease;
+    }
+
+    .desktop-selection-box[data-active="true"] {
+      display: block;
+      opacity: 1;
+    }
+
+    .desktop-selection-box::before,
+    .desktop-selection-box::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .desktop-selection-box::before {
+      inset: -1px;
+      border-radius: inherit;
+      background:
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.38), transparent) 0 0 / 120px 100% no-repeat;
+      animation: selectionScan 900ms linear infinite;
+    }
+
+    .desktop-selection-box::after {
+      inset: 5px;
+      border-radius: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
     .window-drag-handle {
+      position: relative;
       cursor: grab;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03)),
+        linear-gradient(180deg, rgba(8, 13, 20, 0.72), rgba(11, 17, 26, 0.42));
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    .window-drag-handle::after {
+      content: "";
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      height: 12px;
+      width: 54px;
+      transform: translateY(-50%);
+      border-radius: 999px;
+      opacity: 0.45;
+      background-image: radial-gradient(circle, rgba(142, 166, 191, 0.68) 1.2px, transparent 1.2px);
+      background-size: 9px 9px;
+      background-position: center;
+      pointer-events: none;
+    }
+
+    .window-shell[data-focused="true"] .window-drag-handle {
+      background:
+        linear-gradient(180deg, rgba(103, 223, 255, 0.09), rgba(255, 255, 255, 0.03)),
+        linear-gradient(180deg, rgba(9, 16, 25, 0.82), rgba(11, 17, 26, 0.48));
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(103, 223, 255, 0.08);
     }
 
     .window-drag-handle:active {
@@ -415,10 +502,6 @@
       transform: translateY(-4px);
     }
 
-    .wallpaper-layer {
-      pointer-events: none;
-    }
-
     .desktop-shortcuts {
       position: absolute;
       top: 50%;
@@ -474,10 +557,6 @@
       line-height: 1.35;
       color: var(--text);
       text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
-    }
-
-    .wallpaper-stats-mobile {
-      pointer-events: none;
     }
 
     .desktop-window-area {
@@ -564,6 +643,11 @@
         opacity: 1;
         transform: translateY(0);
       }
+    }
+
+    @keyframes selectionScan {
+      from { background-position: -120px 0; }
+      to { background-position: calc(100% + 120px) 0; }
     }
 
     .lucide {
@@ -747,61 +831,8 @@
       </aside>
 
       <main class="desktop-surface relative flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-4 pt-5 md:px-6 md:pb-5 md:pt-6">
-        <section id="desktopHero" class="wallpaper-layer pointer-events-none absolute inset-4 z-0 overflow-hidden rounded-[22px] px-6 py-7 md:hidden">
-          <div class="max-w-[780px]">
-            <div class="mb-4 inline-flex items-center gap-2.5 rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-3 py-[7px] font-mono text-[0.8rem] uppercase tracking-[0.08em] text-[color:var(--cyan)]">
-              <span class="h-2 w-2 rounded-full bg-[color:var(--green)] shadow-[0_0_10px_var(--green)]"></span>
-              systems-ready profile
-            </div>
-            <h2 class="mb-3 max-w-[12ch] text-[clamp(2rem,5vw,4.6rem)] font-bold leading-[0.94] tracking-[-0.06em] text-[color:var(--text)] [text-shadow:0_18px_36px_rgba(0,0,0,.45)]">
-              Kent Mark Xavier Ubas<br />
-              <span class="text-[color:var(--cyan)]">developer operating system</span>
-            </h2>
-            <p class="max-w-[64ch] text-[1rem] leading-[1.9] text-[color:var(--soft)] [text-shadow:0_12px_24px_rgba(0,0,0,.45)]">
-              I build software across multiple layers of the stack: backend platforms,
-              REST APIs, desktop tools, interactive 2D games, and Rust systems software.
-              My work blends product thinking, practical engineering, and clean implementation.
-            </p>
-          </div>
-
-          <div class="pointer-events-none absolute bottom-6 right-6 hidden max-w-[320px] rounded-[18px] border border-white/8 bg-black/15 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,.03)] xl:block">
-            <div class="mb-3 flex items-center justify-between gap-3 font-mono text-[0.8rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">
-              <span>desktop_state</span>
-              <span class="text-[color:var(--green)]">ready</span>
-            </div>
-            <div class="grid gap-3">
-              <div class="rounded-xl border border-white/[0.05] bg-black/10 p-3">
-                <div class="font-mono text-[0.76rem] uppercase text-[color:var(--soft)]">experience_years</div>
-                <div class="mt-2 text-[1.5rem] font-bold tracking-[-0.04em]">6+</div>
-              </div>
-              <div class="rounded-xl border border-white/[0.05] bg-black/10 p-3">
-                <div class="font-mono text-[0.76rem] uppercase text-[color:var(--soft)]">primary_modes</div>
-                <div class="mt-2 text-[1.5rem] font-bold tracking-[-0.04em]">5</div>
-              </div>
-              <div class="rounded-xl border border-white/[0.05] bg-black/10 p-3">
-                <div class="font-mono text-[0.76rem] uppercase text-[color:var(--soft)]">current_focus</div>
-                <div class="mt-2 text-[1.05rem] font-bold tracking-[-0.04em]">Rust Systems</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="wallpaper-stats-mobile absolute bottom-6 left-6 right-6 grid grid-cols-3 gap-3 xl:hidden">
-            <div class="rounded-xl border border-white/[0.05] bg-black/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-              <div class="font-mono text-[0.72rem] uppercase text-[color:var(--soft)]">experience_years</div>
-              <div class="mt-2 text-[1.25rem] font-bold tracking-[-0.04em]">6+</div>
-            </div>
-            <div class="rounded-xl border border-white/[0.05] bg-black/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-              <div class="font-mono text-[0.72rem] uppercase text-[color:var(--soft)]">primary_modes</div>
-              <div class="mt-2 text-[1.25rem] font-bold tracking-[-0.04em]">5</div>
-            </div>
-            <div class="rounded-xl border border-white/[0.05] bg-black/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-              <div class="font-mono text-[0.72rem] uppercase text-[color:var(--soft)]">current_focus</div>
-              <div class="mt-2 text-[0.95rem] font-bold tracking-[-0.04em]">Rust Systems</div>
-            </div>
-          </div>
-        </section>
-
         <section id="desktopWindows" class="desktop-window-area relative z-10 flex flex-1 flex-col gap-5 md:block">
+          <div id="desktopSelectionBox" class="desktop-selection-box" aria-hidden="true"></div>
           <div class="desktop-shortcuts">
             <button data-app-target="profile" class="desktop-shortcut app-launcher">
               <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="layout-dashboard" class="h-6 w-6"></i></span>
@@ -839,21 +870,18 @@
             style="z-index: 20;"
           >
             <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
-              <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
-                <div class="flex items-center gap-3">
+              <div class="window-drag-handle flex items-center justify-between gap-2 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-2">
+                <div class="flex items-center gap-2.5">
                   <div class="window-controls">
                     <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Profile Overview" title="Close"></button>
                     <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Profile Overview" title="Minimize"></button>
                     <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Profile Overview" title="Expand"></button>
                   </div>
-                  <div>
-                    <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">profile_overview</div>
-                    <div class="text-[0.92rem] font-semibold">Hero + Specializations + Core Stack</div>
-                  </div>
+                  <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">profile_overview</div>
                 </div>
               </div>
               <div class="window-content relative z-[1] grid gap-4 p-5">
-                <div class="hidden gap-5 rounded-[18px] border border-white/[0.05] bg-[linear-gradient(135deg,rgba(103,223,255,.06),rgba(255,255,255,.015)_38%,rgba(255,209,125,.03))] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.04)] md:grid lg:grid-cols-[minmax(0,1.6fr)_250px]">
+                <div class="grid gap-5 rounded-[18px] border border-white/[0.05] bg-[linear-gradient(135deg,rgba(103,223,255,.06),rgba(255,255,255,.015)_38%,rgba(255,209,125,.03))] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.04)] lg:grid-cols-[minmax(0,1.6fr)_250px]">
                   <div>
                     <div class="mb-4 inline-flex items-center gap-2.5 rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-3 py-[7px] font-mono text-[0.8rem] uppercase tracking-[0.08em] text-[color:var(--cyan)]">
                       <span class="h-2 w-2 rounded-full bg-[color:var(--green)] shadow-[0_0_10px_var(--green)]"></span>
@@ -937,17 +965,14 @@
             style="z-index: 60;"
           >
             <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.992))] shadow-window">
-              <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
-                <div class="flex items-center gap-3">
+              <div class="window-drag-handle flex items-center justify-between gap-2 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-2">
+                <div class="flex items-center gap-2.5">
                   <div class="window-controls">
                     <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Command Console" title="Close"></button>
                     <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Command Console" title="Minimize"></button>
                     <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Command Console" title="Expand"></button>
                   </div>
-                  <div>
-                    <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">command_console</div>
-                    <div class="text-[0.92rem] font-semibold">Interactive Terminal</div>
-                  </div>
+                  <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">command_console</div>
                 </div>
               </div>
               <div class="window-content relative z-[1] p-5">
@@ -993,17 +1018,14 @@
             style="z-index: 30;"
           >
             <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
-              <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
-                <div class="flex items-center gap-3">
+              <div class="window-drag-handle flex items-center justify-between gap-2 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-2">
+                <div class="flex items-center gap-2.5">
                   <div class="window-controls">
                     <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Active Modules" title="Close"></button>
                     <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Active Modules" title="Minimize"></button>
                     <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Active Modules" title="Expand"></button>
                   </div>
-                  <div>
-                    <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">active_modules</div>
-                    <div class="text-[0.92rem] font-semibold">6 loaded</div>
-                  </div>
+                  <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">active_modules</div>
                 </div>
               </div>
               <div class="window-content relative z-[1] p-5">
@@ -1052,17 +1074,14 @@
             style="z-index: 25;"
           >
             <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
-              <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
-                <div class="flex items-center gap-3">
+              <div class="window-drag-handle flex items-center justify-between gap-2 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-2">
+                <div class="flex items-center gap-2.5">
                   <div class="window-controls">
                     <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Mission Log" title="Close"></button>
                     <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Mission Log" title="Minimize"></button>
                     <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Mission Log" title="Expand"></button>
                   </div>
-                  <div>
-                    <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">mission_log</div>
-                    <div class="text-[0.92rem] font-semibold">2018-2026</div>
-                  </div>
+                  <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">mission_log</div>
                 </div>
               </div>
               <div class="window-content relative z-[1] p-5">
@@ -1108,17 +1127,14 @@
             style="z-index: 22;"
           >
             <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
-              <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
-                <div class="flex items-center gap-3">
+              <div class="window-drag-handle flex items-center justify-between gap-2 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-2">
+                <div class="flex items-center gap-2.5">
                   <div class="window-controls">
                     <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Tech Stack" title="Close"></button>
                     <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Tech Stack" title="Minimize"></button>
                     <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Tech Stack" title="Expand"></button>
                   </div>
-                  <div>
-                    <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">stack_inventory</div>
-                    <div class="text-[0.92rem] font-semibold">Categorized</div>
-                  </div>
+                  <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">stack_inventory</div>
                 </div>
               </div>
               <div class="window-content relative z-[1] p-5">
@@ -1175,17 +1191,14 @@
             style="z-index: 24;"
           >
             <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
-              <div class="window-drag-handle flex items-center justify-between gap-3 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-3">
-                <div class="flex items-center gap-3">
+              <div class="window-drag-handle flex items-center justify-between gap-2 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-2">
+                <div class="flex items-center gap-2.5">
                   <div class="window-controls">
                     <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Work Modules" title="Close"></button>
                     <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Work Modules" title="Minimize"></button>
                     <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Work Modules" title="Expand"></button>
                   </div>
-                  <div>
-                    <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">work_modules</div>
-                    <div class="text-[0.92rem] font-semibold">Highlighted</div>
-                  </div>
+                  <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">work_modules</div>
                 </div>
               </div>
               <div class="window-content relative z-[1] p-5">
@@ -1251,6 +1264,8 @@
     const clockDate = document.getElementById("clockDate");
     const bootOverlay = document.getElementById("bootOverlay");
     const desktopRoot = document.getElementById("desktopRoot");
+    const desktopWindows = document.getElementById("desktopWindows");
+    const desktopSelectionBox = document.getElementById("desktopSelectionBox");
     const bootSequence = document.getElementById("bootSequence");
     const bootPrompt = document.getElementById("bootPrompt");
 
@@ -1277,6 +1292,7 @@
 
     let zCounter = 100;
     let dragState = null;
+    let selectionState = null;
     let bootCompleted = false;
     const motionDuration = 280;
 
@@ -1388,15 +1404,25 @@
       const { minimizeOnly = false, skipAnimation = false, preserveLayout = false } = options;
       const wasClosed = win.dataset.state === "closed";
       const wasMinimized = win.dataset.state === "minimized";
+      const shouldAnimate = !skipAnimation && (wasClosed || wasMinimized);
 
       if (window.innerWidth >= 768 && wasClosed && !preserveLayout) {
         placeDesktopWindow(appId);
       }
 
+      if (!minimizeOnly && !wasClosed && !wasMinimized) {
+        focusWindow(appId);
+
+        if (appId === "terminal") {
+          document.getElementById("terminalInput")?.focus();
+        }
+        return;
+      }
+
       win.dataset.state = minimizeOnly ? "minimized" : "open";
       win.dataset.focused = "false";
 
-      if (!skipAnimation) {
+      if (shouldAnimate) {
         const fromFrames = wasMinimized
           ? [
               { opacity: 0, transform: "translateY(18px) scale(0.94)", filter: "blur(8px)" },
@@ -1452,6 +1478,7 @@
     const minimizeWindow = appId => {
       const win = windowMap.get(appId);
       if (!win) return;
+      if (win.dataset.state === "minimized" || win.dataset.state === "closed") return;
       win.dataset.focused = "false";
 
       const finalizeMinimize = () => {
@@ -1583,6 +1610,64 @@
       });
     };
 
+    const updateDesktopSelection = event => {
+      if (!selectionState || !desktopSelectionBox) return;
+
+      const { originX, originY, desktopRect } = selectionState;
+      const currentX = clamp(event.clientX - desktopRect.left, 0, desktopRect.width);
+      const currentY = clamp(event.clientY - desktopRect.top, 0, desktopRect.height);
+      const left = Math.min(originX, currentX);
+      const top = Math.min(originY, currentY);
+      const width = Math.abs(currentX - originX);
+      const height = Math.abs(currentY - originY);
+
+      desktopSelectionBox.style.transform = `translate(${left}px, ${top}px)`;
+      desktopSelectionBox.style.width = width + "px";
+      desktopSelectionBox.style.height = height + "px";
+    };
+
+    const startDesktopSelection = event => {
+      if (window.innerWidth < 768) return;
+      if (event.button !== 0 || dragState) return;
+      if (event.target.closest(".window-shell, .desktop-shortcut, .topbar-control, .start-menu-panel")) return;
+      if (!desktopWindows || !desktopSelectionBox) return;
+
+      event.preventDefault();
+      const desktopRect = desktopWindows.getBoundingClientRect();
+      selectionState = {
+        originX: clamp(event.clientX - desktopRect.left, 0, desktopRect.width),
+        originY: clamp(event.clientY - desktopRect.top, 0, desktopRect.height),
+        desktopRect
+      };
+
+      desktopSelectionBox.style.width = "0px";
+      desktopSelectionBox.style.height = "0px";
+      desktopSelectionBox.dataset.active = "true";
+      document.body.classList.add("selecting-desktop");
+      desktopWindows.setPointerCapture?.(event.pointerId);
+      updateDesktopSelection(event);
+    };
+
+    const moveDesktopSelection = event => {
+      updateDesktopSelection(event);
+    };
+
+    const endDesktopSelection = event => {
+      if (!selectionState) return;
+
+      selectionState = null;
+      document.body.classList.remove("selecting-desktop");
+      desktopWindows?.releasePointerCapture?.(event.pointerId);
+
+      window.setTimeout(() => {
+        if (!selectionState && desktopSelectionBox) {
+          desktopSelectionBox.dataset.active = "false";
+          desktopSelectionBox.style.width = "0px";
+          desktopSelectionBox.style.height = "0px";
+        }
+      }, 90);
+    };
+
     const startDrag = (event, win) => {
       if (window.innerWidth < 768) return;
       const handle = event.target.closest(".window-drag-handle");
@@ -1691,6 +1776,10 @@
     window.addEventListener("pointermove", moveDrag);
     window.addEventListener("pointerup", endDrag);
     window.addEventListener("pointercancel", endDrag);
+    desktopWindows?.addEventListener("pointerdown", startDesktopSelection);
+    desktopWindows?.addEventListener("pointermove", moveDesktopSelection);
+    desktopWindows?.addEventListener("pointerup", endDesktopSelection);
+    desktopWindows?.addEventListener("pointercancel", endDesktopSelection);
     window.addEventListener("keydown", event => {
       if (!bootCompleted && event.key === "Enter") {
         finishBoot();
