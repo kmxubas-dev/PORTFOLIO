@@ -559,6 +559,53 @@
       text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
     }
 
+    .info-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 0.75rem;
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015));
+      transition: transform 200ms ease, border-color 200ms ease;
+    }
+
+    .info-card:hover {
+      border-color: rgba(103, 223, 255, 0.3);
+      transform: translateY(-0.25rem);
+    }
+
+    .info-card-accent {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 0;
+      height: 2px;
+      pointer-events: none;
+      background: linear-gradient(90deg, var(--cyan), transparent 70%);
+      opacity: 0.7;
+    }
+
+    .info-card-kicker {
+      display: inline-block;
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+      color: var(--cyan);
+    }
+
+    .info-card-title {
+      margin: 0 0 10px;
+      font-size: 1.08rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+    }
+
+    .info-card-copy {
+      margin: 0;
+      color: var(--soft);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
     .desktop-window-area {
       position: absolute;
       inset: 0;
@@ -1139,41 +1186,41 @@
               </div>
               <div class="window-content relative z-[1] p-5">
                 <div class="grid grid-cols-1 gap-[18px] xl:grid-cols-3">
-                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">languages</small>
-                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Core Languages</h3>
-                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">PHP, JavaScript, Rust, Python, C, and C++.</p>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">languages</small>
+                    <h3 class="info-card-title">Core Languages</h3>
+                    <p class="info-card-copy">PHP, JavaScript, Rust, Python, C, and C++.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">frameworks</small>
-                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Frameworks & Platforms</h3>
-                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Laravel, CodeIgniter, Electron-Vue, Phaser, Node.js, and Socket.IO.</p>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">frameworks</small>
+                    <h3 class="info-card-title">Frameworks & Platforms</h3>
+                    <p class="info-card-copy">Laravel, CodeIgniter, Electron-Vue, Phaser, Node.js, and Socket.IO.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">databases</small>
-                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Storage</h3>
-                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">MySQL and SQLite for application data, prototyping, and internal tooling.</p>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">databases</small>
+                    <h3 class="info-card-title">Storage</h3>
+                    <p class="info-card-copy">MySQL and SQLite for application data, prototyping, and internal tooling.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">toolchain</small>
-                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Developer Tools</h3>
-                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Git, Docker, and Postman for version control, containerized workflows, and API testing.</p>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">toolchain</small>
+                    <h3 class="info-card-title">Developer Tools</h3>
+                    <p class="info-card-copy">Git, Docker, and Postman for version control, containerized workflows, and API testing.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">backend</small>
-                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Application Engineering</h3>
-                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Backend development, RESTful API development, web application development, and system integrations.</p>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">backend</small>
+                    <h3 class="info-card-title">Application Engineering</h3>
+                    <p class="info-card-copy">Backend development, RESTful API development, web application development, and system integrations.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">interactive</small>
-                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Creative + Systems Blend</h3>
-                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Cross-platform desktop applications, 2D game development, and systems programming.</p>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">interactive</small>
+                    <h3 class="info-card-title">Creative + Systems Blend</h3>
+                    <p class="info-card-copy">Cross-platform desktop applications, 2D game development, and systems programming.</p>
                   </article>
                 </div>
               </div>
@@ -1203,41 +1250,41 @@
               </div>
               <div class="window-content relative z-[1] p-5">
                 <div class="grid grid-cols-1 gap-[18px] xl:grid-cols-3">
-                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_01</small>
-                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">CRM & E-Commerce Systems</h3>
-                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Revamped internal CRM flows and helped build an e-commerce platform that supported new business ventures.</p>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">module_01</small>
+                    <h3 class="info-card-title">CRM & E-Commerce Systems</h3>
+                    <p class="info-card-copy">Revamped internal CRM flows and helped build an e-commerce platform that supported new business ventures.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_02</small>
-                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Logistics Platform Engineering</h3>
-                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Worked on delivery and logistics software, including backend services and API support for mobile clients.</p>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">module_02</small>
+                    <h3 class="info-card-title">Logistics Platform Engineering</h3>
+                    <p class="info-card-copy">Worked on delivery and logistics software, including backend services and API support for mobile clients.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_03</small>
-                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Custom eLearning Games</h3>
-                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Built client-tailored Phaser games, integrated artwork, and created proof-of-concept interactive experiences.</p>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">module_03</small>
+                    <h3 class="info-card-title">Custom eLearning Games</h3>
+                    <p class="info-card-copy">Built client-tailored Phaser games, integrated artwork, and created proof-of-concept interactive experiences.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_04</small>
-                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Desktop Productivity Software</h3>
-                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Developed internal applications including an automated time tracker and Teamwork.com API integration.</p>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">module_04</small>
+                    <h3 class="info-card-title">Desktop Productivity Software</h3>
+                    <p class="info-card-copy">Developed internal applications including an automated time tracker and Teamwork.com API integration.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_05</small>
-                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Rust Cluster Systems</h3>
-                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Implemented structured logging, periodic system metrics, blockserver management, and filesystem-related tasks.</p>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">module_05</small>
+                    <h3 class="info-card-title">Rust Cluster Systems</h3>
+                    <p class="info-card-copy">Implemented structured logging, periodic system metrics, blockserver management, and filesystem-related tasks.</p>
                   </article>
-                  <article class="relative overflow-hidden rounded-xl border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[18px] transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30">
-                    <div class="pointer-events-none absolute left-[18px] right-[18px] top-0 h-0.5 bg-[linear-gradient(90deg,var(--cyan),transparent_70%)] opacity-70"></div>
-                    <small class="mb-[10px] inline-block font-mono text-[color:var(--cyan)]">module_06</small>
-                    <h3 class="m-0 mb-[10px] text-[1.08rem] font-semibold tracking-[-0.03em]">Engineering Style</h3>
-                    <p class="m-0 text-[0.95rem] leading-[1.7] text-[color:var(--soft)]">Practical, product-aware, and adaptable across web, desktop, game, and systems environments.</p>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">module_06</small>
+                    <h3 class="info-card-title">Engineering Style</h3>
+                    <p class="info-card-copy">Practical, product-aware, and adaptable across web, desktop, game, and systems environments.</p>
                   </article>
                 </div>
               </div>
@@ -1268,19 +1315,20 @@
     const desktopSelectionBox = document.getElementById("desktopSelectionBox");
     const bootSequence = document.getElementById("bootSequence");
     const bootPrompt = document.getElementById("bootPrompt");
+    const terminalInput = document.getElementById("terminalInput");
 
     const windows = Array.from(document.querySelectorAll("[data-app-window]"));
     const windowMap = new Map(windows.map(win => [win.dataset.appId, win]));
     const launchers = Array.from(document.querySelectorAll("[data-app-target]"));
     const desktopWindowLayout = {
-      profile: { left: 24, top: 18, width: "min(860px, 50vw)", z: 80 },
-      terminal: { left: "calc(50% + 11vw)", top: 30, width: "clamp(400px, 36vw, 580px)", z: 74 },
-      modules: { left: "calc(50% + 9.8vw)", top: 54, width: "clamp(380px, 33vw, 540px)", z: 70 },
-      experience: { left: "calc(50% + 8.8vw)", top: 78, width: "clamp(372px, 31vw, 516px)", z: 66 },
-      stack: { left: "calc(50% + 7.8vw)", top: 102, width: "clamp(388px, 34vw, 548px)", z: 62 },
-      projects: { left: "calc(50% + 6.8vw)", top: 126, width: "clamp(404px, 36vw, 584px)", z: 58 }
+      profile: { left: "calc(50% - ((clamp(560px, 54vw, 840px) + clamp(340px, 28vw, 500px) + 24px) / 2))", top: 24, width: "clamp(560px, 54vw, 840px)", z: 80 },
+      terminal: { left: "calc(50% - ((clamp(560px, 54vw, 840px) + clamp(340px, 28vw, 500px) + 24px) / 2) + clamp(560px, 54vw, 840px) + 24px)", top: 62, width: "clamp(340px, 28vw, 500px)", z: 74 },
+      modules: { left: "max(32px, calc(50% - 270px))", top: 70, width: "clamp(420px, 42vw, 620px)", z: 70 },
+      experience: { left: "max(32px, calc(50% - 315px))", top: 58, width: "clamp(460px, 48vw, 700px)", z: 70 },
+      stack: { left: "max(32px, calc(50% - 260px))", top: 82, width: "clamp(420px, 40vw, 600px)", z: 70 },
+      projects: { left: "max(32px, calc(50% - 360px))", top: 44, width: "clamp(560px, 58vw, 820px)", z: 70 }
     };
-    const desktopStartupOrder = ["projects", "stack", "experience", "modules", "terminal", "profile"];
+    const desktopStartupOrder = ["terminal", "profile"];
     const taskbarIcons = {
       profile: "layout-dashboard",
       terminal: "terminal",
@@ -1397,6 +1445,12 @@
       syncWindowUI();
     };
 
+    const focusTerminalInput = appId => {
+      if (appId === "terminal") {
+        terminalInput?.focus();
+      }
+    };
+
     const openWindow = (appId, options = {}) => {
       const win = windowMap.get(appId);
       if (!win) return;
@@ -1412,10 +1466,7 @@
 
       if (!minimizeOnly && !wasClosed && !wasMinimized) {
         focusWindow(appId);
-
-        if (appId === "terminal") {
-          document.getElementById("terminalInput")?.focus();
-        }
+        focusTerminalInput(appId);
         return;
       }
 
@@ -1436,10 +1487,7 @@
       }
 
       focusWindow(appId);
-
-      if (appId === "terminal") {
-        document.getElementById("terminalInput")?.focus();
-      }
+      focusTerminalInput(appId);
     };
 
     const closeWindow = appId => {
@@ -1502,10 +1550,9 @@
 
     const toggleMaximizeWindow = appId => {
       const win = windowMap.get(appId);
-      if (!win || window.innerWidth < 768) return;
+      if (!win || !desktopWindows || window.innerWidth < 768) return;
 
-      const desktop = document.getElementById("desktopWindows");
-      const desktopRect = desktop.getBoundingClientRect();
+      const desktopRect = desktopWindows.getBoundingClientRect();
       const isMaximized = win.dataset.maximized === "true";
 
       if (isMaximized) {
@@ -1674,9 +1721,9 @@
       if (!handle) return;
       if (event.target.closest(".window-control")) return;
       if (win.dataset.maximized === "true") return;
+      if (!desktopWindows) return;
 
-      const desktop = document.getElementById("desktopWindows");
-      const desktopRect = desktop.getBoundingClientRect();
+      const desktopRect = desktopWindows.getBoundingClientRect();
       const winRect = win.getBoundingClientRect();
 
       dragState = {
@@ -1787,7 +1834,6 @@
     });
 
     const terminalOutput = document.getElementById("terminalOutput");
-    const terminalInput = document.getElementById("terminalInput");
 
     const terminalLineClasses = {
       dim: "text-[#86a0ba]",
