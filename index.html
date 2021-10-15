@@ -14,8 +14,6 @@
     href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700;800&display=swap"
     rel="stylesheet"
   />
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
   <style type="text/tailwindcss">
     @theme {
       --font-sans: "Space Grotesk", "Segoe UI", sans-serif;
@@ -42,6 +40,8 @@
       --blue: #6e8fff;
       --amber: #ffd17d;
       --red: #ff7a87;
+      --font-sans: "Space Grotesk", "Segoe UI", sans-serif;
+      --font-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     }
 
     .theme-alt {
@@ -56,6 +56,8 @@
     }
 
     body {
+      color: var(--text);
+      font-family: var(--font-sans);
       background:
         radial-gradient(circle at 12% 18%, rgba(103, 223, 255, 0.12), transparent 20%),
         radial-gradient(circle at 88% 12%, rgba(110, 143, 255, 0.12), transparent 18%),
@@ -112,7 +114,88 @@
     }
 
     .boot-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-inline: 1rem;
+      background:
+        radial-gradient(circle at top, rgba(103, 223, 255, 0.06), transparent 24%),
+        linear-gradient(180deg, #03060a, #07111a);
       transition: opacity 420ms ease, visibility 420ms ease;
+    }
+
+    .boot-overlay > div {
+      width: 100%;
+      max-width: 920px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(7, 12, 18, 0.98), rgba(4, 7, 12, 0.99));
+      box-shadow: 0 35px 100px rgba(0, 0, 0, 0.56);
+    }
+
+    .boot-overlay > div > div:first-child {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid #152131;
+      background: #0a1017;
+      padding: 12px 20px;
+      color: var(--soft);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+
+    .boot-overlay > div > div:first-child > div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .boot-overlay > div > div:first-child > div span {
+      display: inline-block;
+      height: 12px;
+      width: 12px;
+      border-radius: 999px;
+    }
+
+    .boot-overlay > div > div:first-child > div span:nth-child(1) {
+      background: #ff5f57;
+    }
+
+    .boot-overlay > div > div:first-child > div span:nth-child(2) {
+      background: #febc2e;
+    }
+
+    .boot-overlay > div > div:first-child > div span:nth-child(3) {
+      background: #28c840;
+    }
+
+    .boot-overlay > div > div:nth-child(2) {
+      min-height: 340px;
+      background: linear-gradient(180deg, #03070c, #07111b);
+      padding: 20px;
+      color: #d9e8f7;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    #bootSequence {
+      display: grid;
+      gap: 4px;
+    }
+
+    #bootSequence + div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      color: var(--green);
     }
 
     .boot-overlay[data-hidden="true"] {
@@ -128,6 +211,11 @@
     }
 
     .boot-caret {
+      display: inline-block;
+      height: 20px;
+      width: 8px;
+      border-radius: 2px;
+      background: var(--green);
       animation: pulse 1s steps(1, end) infinite;
     }
 
@@ -1300,26 +1388,52 @@
   </div>
 
   <script>
-    lucide.createIcons();
+    window.refreshKmxIcons = () => window.lucide?.createIcons?.();
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script defer src="https://unpkg.com/lucide@latest" onload="window.refreshKmxIcons()"></script>
+  <script>
+    const elements = {
+      themeBtn: document.getElementById("themeBtn"),
+      panelToggle: document.getElementById("panelToggle"),
+      startMenuPanel: document.getElementById("startMenuPanel"),
+      showDesktopBtn: document.getElementById("showDesktopBtn"),
+      taskbarApps: document.getElementById("taskbarApps"),
+      clockTime: document.getElementById("clockTime"),
+      clockDate: document.getElementById("clockDate"),
+      bootOverlay: document.getElementById("bootOverlay"),
+      desktopRoot: document.getElementById("desktopRoot"),
+      desktopWindows: document.getElementById("desktopWindows"),
+      desktopSelectionBox: document.getElementById("desktopSelectionBox"),
+      bootSequence: document.getElementById("bootSequence"),
+      bootPrompt: document.getElementById("bootPrompt"),
+      terminalInput: document.getElementById("terminalInput"),
+      windows: Array.from(document.querySelectorAll("[data-app-window]")),
+      launchers: Array.from(document.querySelectorAll("[data-app-target]")),
+      quickCommandButtons: Array.from(document.querySelectorAll(".quick-commands button"))
+    };
 
-    const themeBtn = document.getElementById("themeBtn");
-    const panelToggle = document.getElementById("panelToggle");
-    const startMenuPanel = document.getElementById("startMenuPanel");
-    const showDesktopBtn = document.getElementById("showDesktopBtn");
-    const taskbarApps = document.getElementById("taskbarApps");
-    const clockTime = document.getElementById("clockTime");
-    const clockDate = document.getElementById("clockDate");
-    const bootOverlay = document.getElementById("bootOverlay");
-    const desktopRoot = document.getElementById("desktopRoot");
-    const desktopWindows = document.getElementById("desktopWindows");
-    const desktopSelectionBox = document.getElementById("desktopSelectionBox");
-    const bootSequence = document.getElementById("bootSequence");
-    const bootPrompt = document.getElementById("bootPrompt");
-    const terminalInput = document.getElementById("terminalInput");
+    const {
+      themeBtn,
+      panelToggle,
+      startMenuPanel,
+      showDesktopBtn,
+      taskbarApps,
+      clockTime,
+      clockDate,
+      bootOverlay,
+      desktopRoot,
+      desktopWindows,
+      desktopSelectionBox,
+      bootSequence,
+      bootPrompt,
+      terminalInput,
+      windows,
+      launchers,
+      quickCommandButtons
+    } = elements;
 
-    const windows = Array.from(document.querySelectorAll("[data-app-window]"));
     const windowMap = new Map(windows.map(win => [win.dataset.appId, win]));
-    const launchers = Array.from(document.querySelectorAll("[data-app-target]"));
     const desktopWindowLayout = {
       profile: { left: "calc(50% - ((clamp(560px, 54vw, 840px) + clamp(340px, 28vw, 500px) + 24px) / 2))", top: 24, width: "clamp(560px, 54vw, 840px)", z: 80 },
       terminal: { left: "calc(50% - ((clamp(560px, 54vw, 840px) + clamp(340px, 28vw, 500px) + 24px) / 2) + clamp(560px, 54vw, 840px) + 24px)", top: 62, width: "clamp(340px, 28vw, 500px)", z: 74 },
@@ -1342,7 +1456,10 @@
     let dragState = null;
     let selectionState = null;
     let bootCompleted = false;
+    let taskbarButtons = [];
     const motionDuration = 280;
+
+    const refreshIcons = () => window.refreshKmxIcons();
 
     const animateWindow = (win, keyframes, options = {}) => {
       if (typeof win.animate !== "function") return null;
@@ -1388,10 +1505,18 @@
       { text: "[launch] mounting desktop shell for Kent Mark Xavier Ubas", className: "text-[color:var(--amber)]" }
     ];
 
+    const bootLineColors = {
+      "text-[color:var(--green)]": "var(--green)",
+      "text-[color:var(--cyan)]": "var(--cyan)",
+      "text-[color:var(--amber)]": "var(--amber)",
+      "text-[#86a0ba]": "#86a0ba"
+    };
+
     const appendBootLine = (text, className = "") => {
       const line = document.createElement("div");
       line.className = "boot-sequence-line whitespace-pre-wrap";
       if (className) line.classList.add(className);
+      if (bootLineColors[className]) line.style.color = bootLineColors[className];
       line.textContent = text;
       bootSequence.appendChild(line);
     };
@@ -1610,7 +1735,7 @@
         launcher.dataset.active = String(active);
       });
 
-      taskbarApps.querySelectorAll("[data-taskbar-app]").forEach(button => {
+      taskbarButtons.forEach(button => {
         const targetId = button.dataset.taskbarApp;
         const win = windowMap.get(targetId);
         if (!win) return;
@@ -1642,9 +1767,10 @@
       }).join("");
 
       taskbarApps.innerHTML = taskMarkup;
-      lucide.createIcons();
+      taskbarButtons = Array.from(taskbarApps.querySelectorAll("[data-taskbar-app]"));
+      refreshIcons();
 
-      taskbarApps.querySelectorAll("[data-taskbar-app]").forEach(button => {
+      taskbarButtons.forEach(button => {
         button.addEventListener("click", () => toggleTaskWindow(button.dataset.taskbarApp));
       });
     };
@@ -1937,7 +2063,7 @@
       }
     });
 
-    document.querySelectorAll(".quick-commands button").forEach(btn => {
+    quickCommandButtons.forEach(btn => {
       btn.addEventListener("click", () => {
         openWindow("terminal");
         runCommand(btn.dataset.cmd);
