@@ -134,14 +134,14 @@
         <div class="mb-3.5">
           <div class="mb-2 flex items-center justify-between gap-3">
             <div class="font-mono text-[0.76rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">quick_access</div>
-            <div class="font-mono text-[0.72rem] uppercase tracking-[0.08em] text-[color:var(--cyan)]">6 modules</div>
+            <div class="font-mono text-[0.72rem] uppercase tracking-[0.08em] text-[color:var(--cyan)]">2 apps</div>
           </div>
           <nav class="grid grid-cols-2 gap-1.5" id="startMenuLaunchers">
             <button data-app-target="profile" class="start-menu-link flex min-h-[64px] flex-col items-start gap-2.5 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-3.5 py-2.5 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
-              <i data-lucide="layout-dashboard" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+              <i data-lucide="file-user" class="h-4 w-4 text-[color:var(--cyan)]"></i>
               <span>
                 <span class="block text-[0.84rem] font-medium leading-tight text-[color:var(--text)]">Profile</span>
-                <span class="mt-1 block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">overview</span>
+                <span class="mt-1 block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">career</span>
               </span>
             </button>
             <button data-app-target="terminal" class="start-menu-link flex min-h-[64px] flex-col items-start gap-2.5 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-3.5 py-2.5 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
@@ -149,34 +149,6 @@
               <span>
                 <span class="block text-[0.84rem] font-medium leading-tight text-[color:var(--text)]">Console</span>
                 <span class="mt-1 block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">commands</span>
-              </span>
-            </button>
-            <button data-app-target="modules" class="start-menu-link flex min-h-[64px] flex-col items-start gap-2.5 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-3.5 py-2.5 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
-              <i data-lucide="layers-3" class="h-4 w-4 text-[color:var(--cyan)]"></i>
-              <span>
-                <span class="block text-[0.84rem] font-medium leading-tight text-[color:var(--text)]">Modules</span>
-                <span class="mt-1 block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">loaded</span>
-              </span>
-            </button>
-            <button data-app-target="experience" class="start-menu-link flex min-h-[64px] flex-col items-start gap-2.5 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-3.5 py-2.5 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
-              <i data-lucide="scroll-text" class="h-4 w-4 text-[color:var(--cyan)]"></i>
-              <span>
-                <span class="block text-[0.84rem] font-medium leading-tight text-[color:var(--text)]">Mission</span>
-                <span class="mt-1 block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">timeline</span>
-              </span>
-            </button>
-            <button data-app-target="projects" class="start-menu-link flex min-h-[64px] flex-col items-start gap-2.5 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-3.5 py-2.5 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
-              <i data-lucide="folder-open" class="h-4 w-4 text-[color:var(--cyan)]"></i>
-              <span>
-                <span class="block text-[0.84rem] font-medium leading-tight text-[color:var(--text)]">Projects</span>
-                <span class="mt-1 block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">work modules</span>
-              </span>
-            </button>
-            <button data-app-target="stack" class="start-menu-link flex min-h-[64px] flex-col items-start gap-2.5 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-3.5 py-2.5 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
-              <i data-lucide="cpu" class="h-4 w-4 text-[color:var(--cyan)]"></i>
-              <span>
-                <span class="block text-[0.84rem] font-medium leading-tight text-[color:var(--text)]">Stack</span>
-                <span class="mt-1 block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">inventory</span>
               </span>
             </button>
           </nav>
@@ -196,52 +168,68 @@
           <div id="desktopSelectionBox" class="desktop-selection-box" aria-hidden="true"></div>
           <div class="desktop-shortcuts">
             <button data-app-target="profile" class="desktop-shortcut app-launcher">
-              <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="layout-dashboard" class="h-6 w-6"></i></span>
-              <span class="desktop-shortcut-label">Profile Overview</span>
+              <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="file-user" class="h-6 w-6"></i></span>
+              <span class="desktop-shortcut-label">Profile</span>
             </button>
             <button data-app-target="terminal" class="desktop-shortcut app-launcher">
               <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="terminal" class="h-6 w-6"></i></span>
               <span class="desktop-shortcut-label">Command Console</span>
-            </button>
-            <button data-app-target="modules" class="desktop-shortcut app-launcher">
-              <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="layers-3" class="h-6 w-6"></i></span>
-              <span class="desktop-shortcut-label">Active Modules</span>
-            </button>
-            <button data-app-target="experience" class="desktop-shortcut app-launcher">
-              <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="scroll-text" class="h-6 w-6"></i></span>
-              <span class="desktop-shortcut-label">Mission Log</span>
-            </button>
-            <button data-app-target="stack" class="desktop-shortcut app-launcher">
-              <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="cpu" class="h-6 w-6"></i></span>
-              <span class="desktop-shortcut-label">Tech Stack</span>
-            </button>
-            <button data-app-target="projects" class="desktop-shortcut app-launcher">
-              <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="folder-open" class="h-6 w-6"></i></span>
-              <span class="desktop-shortcut-label">Work Modules</span>
             </button>
           </div>
           <article
             id="app-profile"
             data-app-window
             data-app-id="profile"
-            data-app-title="Profile Overview"
+            data-app-title="Profile"
             data-state="closed"
             data-focused="false"
-            class="window-shell md:absolute md:left-[3%] md:top-[2%] md:w-[min(920px,72vw)]"
+            class="window-shell md:absolute md:left-[3%] md:top-[2%] md:w-[min(1040px,72vw)]"
             style="z-index: 20;"
           >
             <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
               <div class="window-drag-handle flex items-center justify-between gap-2 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-2">
                 <div class="flex items-center gap-2.5">
                   <div class="window-controls">
-                    <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Profile Overview" title="Close"></button>
-                    <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Profile Overview" title="Minimize"></button>
-                    <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Profile Overview" title="Expand"></button>
+                    <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Profile" title="Close"></button>
+                    <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Profile" title="Minimize"></button>
+                    <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Profile" title="Expand"></button>
                   </div>
-                  <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">profile_overview</div>
+                  <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">profile</div>
                 </div>
               </div>
-              <div class="window-content relative z-[1] grid gap-4 p-5">
+              <div class="profile-tabs relative z-[1] border-b border-[color:var(--line)]">
+                <div class="profile-tablist" role="tablist" aria-label="Profile sections">
+                  <button type="button" id="profile-tab-overview" data-profile-tab="overview" class="profile-tab" role="tab" aria-selected="true" aria-controls="profile-panel-overview" tabindex="0">
+                    <i data-lucide="layout-dashboard" class="h-4 w-4"></i>
+                    <span>Overview</span>
+                  </button>
+                  <button type="button" id="profile-tab-experience" data-profile-tab="experience" class="profile-tab" role="tab" aria-selected="false" aria-controls="profile-panel-experience" tabindex="-1">
+                    <i data-lucide="scroll-text" class="h-4 w-4"></i>
+                    <span>Experience</span>
+                  </button>
+                  <button type="button" id="profile-tab-stack" data-profile-tab="stack" class="profile-tab" role="tab" aria-selected="false" aria-controls="profile-panel-stack" tabindex="-1">
+                    <i data-lucide="cpu" class="h-4 w-4"></i>
+                    <span>Stack</span>
+                  </button>
+                  <button type="button" id="profile-tab-projects" data-profile-tab="projects" class="profile-tab" role="tab" aria-selected="false" aria-controls="profile-panel-projects" tabindex="-1">
+                    <i data-lucide="folder-open" class="h-4 w-4"></i>
+                    <span>Projects</span>
+                  </button>
+                </div>
+                <div class="profile-browser-bar" aria-hidden="true">
+                  <div class="profile-nav-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                  <div class="profile-address-field">
+                    <i data-lucide="lock-keyhole" class="h-3.5 w-3.5"></i>
+                    <span>kmx://profile</span>
+                  </div>
+                </div>
+              </div>
+              <div class="window-content relative z-[1] p-5">
+                <section id="profile-panel-overview" data-profile-panel="overview" class="profile-panel grid gap-4" role="tabpanel" aria-labelledby="profile-tab-overview">
                 <div class="grid gap-5 rounded-[18px] border border-white/[0.05] bg-[linear-gradient(135deg,rgba(103,223,255,.06),rgba(255,255,255,.015)_38%,rgba(255,209,125,.03))] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,.04)] lg:grid-cols-[minmax(0,1.6fr)_250px]">
                   <div>
                     <div class="mb-4 inline-flex items-center gap-2.5 rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-3 py-[7px] font-mono text-[0.8rem] uppercase tracking-[0.08em] text-[color:var(--cyan)]">
@@ -311,6 +299,140 @@
                     </div>
                   </div>
                 </div>
+                <div class="grid gap-3">
+                  <div class="rounded-[10px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                    <div class="mb-2 flex items-center justify-between gap-[10px]">
+                      <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">backend.api.core</h3>
+                      <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
+                    </div>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Backend web development, RESTful APIs, business systems, e-commerce, and platform improvements.</p>
+                  </div>
+                  <div class="rounded-[10px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                    <div class="mb-2 flex items-center justify-between gap-[10px]">
+                      <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">desktop.workflow.tools</h3>
+                      <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
+                    </div>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Cross-platform application work using Electron-Vue for internal processes and productivity workflows.</p>
+                  </div>
+                  <div class="rounded-[10px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                    <div class="mb-2 flex items-center justify-between gap-[10px]">
+                      <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">game.phaser.interactive</h3>
+                      <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
+                    </div>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Custom eLearning games, proof-of-concept builds, and integration of educational content and assets.</p>
+                  </div>
+                  <div class="rounded-[10px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
+                    <div class="mb-2 flex items-center justify-between gap-[10px]">
+                      <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">systems.rust.cluster</h3>
+                      <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">active</span>
+                    </div>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Rust backend daemon work involving logging, metrics collection, blockserver management, and filesystem tasks.</p>
+                  </div>
+                </div>
+                </section>
+                <section id="profile-panel-experience" data-profile-panel="experience" class="profile-panel grid gap-[14px]" role="tabpanel" aria-labelledby="profile-tab-experience" hidden>
+                  <div class="border-l-2 border-cyan-300/35 pl-4">
+                    <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2018.02 - 2018.03</div>
+                    <h3 class="m-0 mb-1.5 text-base font-semibold">WLCLIFE // OJT / Web Developer</h3>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Revamped the in-house CRM and helped resolve minor hardware issues.</p>
+                  </div>
+                  <div class="border-l-2 border-cyan-300/35 pl-4">
+                    <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2018.03 - 2019.07</div>
+                    <h3 class="m-0 mb-1.5 text-base font-semibold">WLCLIFE // Backend Web Developer</h3>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Improved CRM stability and built an e-commerce platform for company expansion.</p>
+                  </div>
+                  <div class="border-l-2 border-cyan-300/35 pl-4">
+                    <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2020.03 - 2021.07</div>
+                    <h3 class="m-0 mb-1.5 text-base font-semibold">Jogxpress // Backend Web Developer</h3>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Developed a logistics platform and maintained APIs for mobile applications.</p>
+                  </div>
+                  <div class="border-l-2 border-cyan-300/35 pl-4">
+                    <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2021.08 - 2025.10</div>
+                    <h3 class="m-0 mb-1.5 text-base font-semibold">AGuyIKnow // Game + Software Developer</h3>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Built custom eLearning games and internal productivity software with API integrations.</p>
+                  </div>
+                  <div class="border-l-2 border-cyan-300/35 pl-4">
+                    <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2025.10 - 2026.03</div>
+                    <h3 class="m-0 mb-1.5 text-base font-semibold">Tekkio // Systems Software Engineer</h3>
+                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Contributed to Rust-based systems software for cluster coordination and node operations.</p>
+                  </div>
+                </section>
+                <section id="profile-panel-stack" data-profile-panel="stack" class="profile-panel grid grid-cols-1 gap-[18px] xl:grid-cols-3" role="tabpanel" aria-labelledby="profile-tab-stack" hidden>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">languages</small>
+                    <h3 class="info-card-title">Core Languages</h3>
+                    <p class="info-card-copy">PHP, JavaScript, Rust, Python, C, and C++.</p>
+                  </article>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">frameworks</small>
+                    <h3 class="info-card-title">Frameworks & Platforms</h3>
+                    <p class="info-card-copy">Laravel, CodeIgniter, Electron-Vue, Phaser, Node.js, and Socket.IO.</p>
+                  </article>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">databases</small>
+                    <h3 class="info-card-title">Storage</h3>
+                    <p class="info-card-copy">MySQL and SQLite for application data, prototyping, and internal tooling.</p>
+                  </article>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">toolchain</small>
+                    <h3 class="info-card-title">Developer Tools</h3>
+                    <p class="info-card-copy">Git, Docker, and Postman for version control, containerized workflows, and API testing.</p>
+                  </article>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">backend</small>
+                    <h3 class="info-card-title">Application Engineering</h3>
+                    <p class="info-card-copy">Backend development, RESTful API development, web application development, and system integrations.</p>
+                  </article>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">interactive</small>
+                    <h3 class="info-card-title">Creative + Systems Blend</h3>
+                    <p class="info-card-copy">Cross-platform desktop applications, 2D game development, and systems programming.</p>
+                  </article>
+                </section>
+                <section id="profile-panel-projects" data-profile-panel="projects" class="profile-panel grid grid-cols-1 gap-[18px] xl:grid-cols-3" role="tabpanel" aria-labelledby="profile-tab-projects" hidden>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">module_01</small>
+                    <h3 class="info-card-title">CRM & E-Commerce Systems</h3>
+                    <p class="info-card-copy">Revamped internal CRM flows and helped build an e-commerce platform that supported new business ventures.</p>
+                  </article>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">module_02</small>
+                    <h3 class="info-card-title">Logistics Platform Engineering</h3>
+                    <p class="info-card-copy">Worked on delivery and logistics software, including backend services and API support for mobile clients.</p>
+                  </article>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">module_03</small>
+                    <h3 class="info-card-title">Custom eLearning Games</h3>
+                    <p class="info-card-copy">Built client-tailored Phaser games, integrated artwork, and created proof-of-concept interactive experiences.</p>
+                  </article>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">module_04</small>
+                    <h3 class="info-card-title">Desktop Productivity Software</h3>
+                    <p class="info-card-copy">Developed internal applications including an automated time tracker and Teamwork.com API integration.</p>
+                  </article>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">module_05</small>
+                    <h3 class="info-card-title">Rust Cluster Systems</h3>
+                    <p class="info-card-copy">Implemented structured logging, periodic system metrics, blockserver management, and filesystem-related tasks.</p>
+                  </article>
+                  <article class="info-card">
+                    <div class="info-card-accent"></div>
+                    <small class="info-card-kicker">module_06</small>
+                    <h3 class="info-card-title">Engineering Style</h3>
+                    <p class="info-card-copy">Practical, product-aware, and adaptable across web, desktop, game, and systems environments.</p>
+                  </article>
+                </section>
               </div>
             </div>
           </article>
@@ -368,242 +490,6 @@
             </div>
           </article>
 
-          <article
-            id="app-modules"
-            data-app-window
-            data-app-id="modules"
-            data-app-title="Active Modules"
-            data-state="closed"
-            data-focused="false"
-            class="window-shell md:absolute md:left-[58%] md:top-[5%] md:w-[min(520px,34vw)]"
-            style="z-index: 30;"
-          >
-            <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
-              <div class="window-drag-handle flex items-center justify-between gap-2 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-2">
-                <div class="flex items-center gap-2.5">
-                  <div class="window-controls">
-                    <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Active Modules" title="Close"></button>
-                    <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Active Modules" title="Minimize"></button>
-                    <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Active Modules" title="Expand"></button>
-                  </div>
-                  <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">active_modules</div>
-                </div>
-              </div>
-              <div class="window-content relative z-[1] p-5">
-                <div class="grid gap-3">
-                  <div class="rounded-[10px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-                    <div class="mb-2 flex items-center justify-between gap-[10px]">
-                      <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">backend.api.core</h3>
-                      <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
-                    </div>
-                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Backend web development, RESTful APIs, business systems, e-commerce, and platform improvements.</p>
-                  </div>
-                  <div class="rounded-[10px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-                    <div class="mb-2 flex items-center justify-between gap-[10px]">
-                      <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">desktop.workflow.tools</h3>
-                      <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
-                    </div>
-                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Cross-platform application work using Electron-Vue for internal processes and productivity workflows.</p>
-                  </div>
-                  <div class="rounded-[10px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-                    <div class="mb-2 flex items-center justify-between gap-[10px]">
-                      <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">game.phaser.interactive</h3>
-                      <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">stable</span>
-                    </div>
-                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Custom eLearning games, proof-of-concept builds, and integration of educational content and assets.</p>
-                  </div>
-                  <div class="rounded-[10px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,.03)]">
-                    <div class="mb-2 flex items-center justify-between gap-[10px]">
-                      <h3 class="m-0 text-base font-semibold tracking-[-0.03em]">systems.rust.cluster</h3>
-                      <span class="rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-[5px] font-mono text-[0.78rem] text-[color:var(--green)]">active</span>
-                    </div>
-                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Rust backend daemon work involving logging, metrics collection, blockserver management, and filesystem tasks.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article
-            id="app-experience"
-            data-app-window
-            data-app-id="experience"
-            data-app-title="Mission Log"
-            data-state="closed"
-            data-focused="false"
-            class="window-shell md:absolute md:left-[18%] md:top-[44%] md:w-[min(620px,48vw)]"
-            style="z-index: 25;"
-          >
-            <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
-              <div class="window-drag-handle flex items-center justify-between gap-2 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-2">
-                <div class="flex items-center gap-2.5">
-                  <div class="window-controls">
-                    <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Mission Log" title="Close"></button>
-                    <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Mission Log" title="Minimize"></button>
-                    <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Mission Log" title="Expand"></button>
-                  </div>
-                  <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">mission_log</div>
-                </div>
-              </div>
-              <div class="window-content relative z-[1] p-5">
-                <div class="grid gap-[14px]">
-                  <div class="border-l-2 border-cyan-300/35 pl-4">
-                    <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2018.02 - 2018.03</div>
-                    <h3 class="m-0 mb-1.5 text-base font-semibold">WLCLIFE // OJT / Web Developer</h3>
-                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Revamped the in-house CRM and helped resolve minor hardware issues.</p>
-                  </div>
-                  <div class="border-l-2 border-cyan-300/35 pl-4">
-                    <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2018.03 - 2019.07</div>
-                    <h3 class="m-0 mb-1.5 text-base font-semibold">WLCLIFE // Backend Web Developer</h3>
-                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Improved CRM stability and built an e-commerce platform for company expansion.</p>
-                  </div>
-                  <div class="border-l-2 border-cyan-300/35 pl-4">
-                    <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2020.03 - 2021.07</div>
-                    <h3 class="m-0 mb-1.5 text-base font-semibold">Jogxpress // Backend Web Developer</h3>
-                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Developed a logistics platform and maintained APIs for mobile applications.</p>
-                  </div>
-                  <div class="border-l-2 border-cyan-300/35 pl-4">
-                    <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2021.08 - 2025.10</div>
-                    <h3 class="m-0 mb-1.5 text-base font-semibold">AGuyIKnow // Game + Software Developer</h3>
-                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Built custom eLearning games and internal productivity software with API integrations.</p>
-                  </div>
-                  <div class="border-l-2 border-cyan-300/35 pl-4">
-                    <div class="mb-1.5 font-mono text-[0.82rem] text-[color:var(--cyan)]">2025.10 - 2026.03</div>
-                    <h3 class="m-0 mb-1.5 text-base font-semibold">Tekkio // Systems Software Engineer</h3>
-                    <p class="m-0 text-[0.94rem] leading-[1.7] text-[color:var(--soft)]">Contributed to Rust-based systems software for cluster coordination and node operations.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article
-            id="app-stack"
-            data-app-window
-            data-app-id="stack"
-            data-app-title="Tech Stack"
-            data-state="closed"
-            data-focused="false"
-            class="window-shell md:absolute md:left-[45%] md:top-[35%] md:w-[min(760px,52vw)]"
-            style="z-index: 22;"
-          >
-            <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
-              <div class="window-drag-handle flex items-center justify-between gap-2 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-2">
-                <div class="flex items-center gap-2.5">
-                  <div class="window-controls">
-                    <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Tech Stack" title="Close"></button>
-                    <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Tech Stack" title="Minimize"></button>
-                    <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Tech Stack" title="Expand"></button>
-                  </div>
-                  <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">stack_inventory</div>
-                </div>
-              </div>
-              <div class="window-content relative z-[1] p-5">
-                <div class="grid grid-cols-1 gap-[18px] xl:grid-cols-3">
-                  <article class="info-card">
-                    <div class="info-card-accent"></div>
-                    <small class="info-card-kicker">languages</small>
-                    <h3 class="info-card-title">Core Languages</h3>
-                    <p class="info-card-copy">PHP, JavaScript, Rust, Python, C, and C++.</p>
-                  </article>
-                  <article class="info-card">
-                    <div class="info-card-accent"></div>
-                    <small class="info-card-kicker">frameworks</small>
-                    <h3 class="info-card-title">Frameworks & Platforms</h3>
-                    <p class="info-card-copy">Laravel, CodeIgniter, Electron-Vue, Phaser, Node.js, and Socket.IO.</p>
-                  </article>
-                  <article class="info-card">
-                    <div class="info-card-accent"></div>
-                    <small class="info-card-kicker">databases</small>
-                    <h3 class="info-card-title">Storage</h3>
-                    <p class="info-card-copy">MySQL and SQLite for application data, prototyping, and internal tooling.</p>
-                  </article>
-                  <article class="info-card">
-                    <div class="info-card-accent"></div>
-                    <small class="info-card-kicker">toolchain</small>
-                    <h3 class="info-card-title">Developer Tools</h3>
-                    <p class="info-card-copy">Git, Docker, and Postman for version control, containerized workflows, and API testing.</p>
-                  </article>
-                  <article class="info-card">
-                    <div class="info-card-accent"></div>
-                    <small class="info-card-kicker">backend</small>
-                    <h3 class="info-card-title">Application Engineering</h3>
-                    <p class="info-card-copy">Backend development, RESTful API development, web application development, and system integrations.</p>
-                  </article>
-                  <article class="info-card">
-                    <div class="info-card-accent"></div>
-                    <small class="info-card-kicker">interactive</small>
-                    <h3 class="info-card-title">Creative + Systems Blend</h3>
-                    <p class="info-card-copy">Cross-platform desktop applications, 2D game development, and systems programming.</p>
-                  </article>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article
-            id="app-projects"
-            data-app-window
-            data-app-id="projects"
-            data-app-title="Work Modules"
-            data-state="closed"
-            data-focused="false"
-            class="window-shell md:absolute md:left-[35%] md:top-[16%] md:w-[min(840px,58vw)]"
-            style="z-index: 24;"
-          >
-            <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.99))] shadow-window">
-              <div class="window-drag-handle flex items-center justify-between gap-2 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-2">
-                <div class="flex items-center gap-2.5">
-                  <div class="window-controls">
-                    <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Work Modules" title="Close"></button>
-                    <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Work Modules" title="Minimize"></button>
-                    <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Work Modules" title="Expand"></button>
-                  </div>
-                  <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">work_modules</div>
-                </div>
-              </div>
-              <div class="window-content relative z-[1] p-5">
-                <div class="grid grid-cols-1 gap-[18px] xl:grid-cols-3">
-                  <article class="info-card">
-                    <div class="info-card-accent"></div>
-                    <small class="info-card-kicker">module_01</small>
-                    <h3 class="info-card-title">CRM & E-Commerce Systems</h3>
-                    <p class="info-card-copy">Revamped internal CRM flows and helped build an e-commerce platform that supported new business ventures.</p>
-                  </article>
-                  <article class="info-card">
-                    <div class="info-card-accent"></div>
-                    <small class="info-card-kicker">module_02</small>
-                    <h3 class="info-card-title">Logistics Platform Engineering</h3>
-                    <p class="info-card-copy">Worked on delivery and logistics software, including backend services and API support for mobile clients.</p>
-                  </article>
-                  <article class="info-card">
-                    <div class="info-card-accent"></div>
-                    <small class="info-card-kicker">module_03</small>
-                    <h3 class="info-card-title">Custom eLearning Games</h3>
-                    <p class="info-card-copy">Built client-tailored Phaser games, integrated artwork, and created proof-of-concept interactive experiences.</p>
-                  </article>
-                  <article class="info-card">
-                    <div class="info-card-accent"></div>
-                    <small class="info-card-kicker">module_04</small>
-                    <h3 class="info-card-title">Desktop Productivity Software</h3>
-                    <p class="info-card-copy">Developed internal applications including an automated time tracker and Teamwork.com API integration.</p>
-                  </article>
-                  <article class="info-card">
-                    <div class="info-card-accent"></div>
-                    <small class="info-card-kicker">module_05</small>
-                    <h3 class="info-card-title">Rust Cluster Systems</h3>
-                    <p class="info-card-copy">Implemented structured logging, periodic system metrics, blockserver management, and filesystem-related tasks.</p>
-                  </article>
-                  <article class="info-card">
-                    <div class="info-card-accent"></div>
-                    <small class="info-card-kicker">module_06</small>
-                    <h3 class="info-card-title">Engineering Style</h3>
-                    <p class="info-card-copy">Practical, product-aware, and adaptable across web, desktop, game, and systems environments.</p>
-                  </article>
-                </div>
-              </div>
-            </div>
-          </article>
         </section>
 
         <footer class="pointer-events-none relative mt-auto flex-none pt-3 text-center font-mono text-[0.8rem] font-medium text-[color:var(--soft)] opacity-85 [text-shadow:0_8px_20px_rgba(0,0,0,.45)]">

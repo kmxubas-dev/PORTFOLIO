@@ -15,6 +15,8 @@
       bootSequence: document.getElementById("bootSequence"),
       bootPrompt: document.getElementById("bootPrompt"),
       terminalInput: document.getElementById("terminalInput"),
+      profileTabs: Array.from(document.querySelectorAll("[data-profile-tab]")),
+      profilePanels: Array.from(document.querySelectorAll("[data-profile-panel]")),
       windows: Array.from(document.querySelectorAll("[data-app-window]")),
       launchers: Array.from(document.querySelectorAll("[data-app-target]")),
       quickCommandButtons: Array.from(document.querySelectorAll(".quick-commands button"))
@@ -35,6 +37,8 @@
       bootSequence,
       bootPrompt,
       terminalInput,
+      profileTabs,
+      profilePanels,
       windows,
       launchers,
       quickCommandButtons
@@ -42,21 +46,13 @@
 
     const windowMap = new Map(windows.map(win => [win.dataset.appId, win]));
     const desktopWindowLayout = {
-      profile: { left: "calc(50% - ((clamp(560px, 54vw, 840px) + clamp(340px, 28vw, 500px) + 24px) / 2))", top: 24, width: "clamp(560px, 54vw, 840px)", z: 80 },
-      terminal: { left: "calc(50% - ((clamp(560px, 54vw, 840px) + clamp(340px, 28vw, 500px) + 24px) / 2) + clamp(560px, 54vw, 840px) + 24px)", top: 62, width: "clamp(340px, 28vw, 500px)", z: 74 },
-      modules: { left: "max(32px, calc(50% - 270px))", top: 70, width: "clamp(420px, 42vw, 620px)", z: 70 },
-      experience: { left: "max(32px, calc(50% - 315px))", top: 58, width: "clamp(460px, 48vw, 700px)", z: 70 },
-      stack: { left: "max(32px, calc(50% - 260px))", top: 82, width: "clamp(420px, 40vw, 600px)", z: 70 },
-      projects: { left: "max(32px, calc(50% - 360px))", top: 44, width: "clamp(560px, 58vw, 820px)", z: 70 }
+      profile: { left: "calc(50% - ((clamp(620px, 58vw, 960px) + clamp(340px, 28vw, 500px) + 24px) / 2))", top: 24, width: "clamp(620px, 58vw, 960px)", z: 80 },
+      terminal: { left: "calc(50% - ((clamp(620px, 58vw, 960px) + clamp(340px, 28vw, 500px) + 24px) / 2) + clamp(620px, 58vw, 960px) + 24px)", top: 62, width: "clamp(340px, 28vw, 500px)", z: 74 }
     };
     const desktopStartupOrder = ["terminal", "profile"];
     const taskbarIcons = {
-      profile: "layout-dashboard",
-      terminal: "terminal",
-      modules: "layers-3",
-      experience: "scroll-text",
-      stack: "cpu",
-      projects: "folder-open"
+      profile: "file-user",
+      terminal: "terminal"
     };
 
     let zCounter = 100;
@@ -106,8 +102,8 @@
 
     const bootLines = [
       { text: "[init] KmxOS bootstrap sequence initiated", className: "text-[color:var(--green)]" },
-      { text: "[scan] loading profile modules... OK", className: "text-[color:var(--cyan)]" },
-      { text: "[scan] loading mission logs, stack inventory, work modules... OK", className: "text-[#86a0ba]" },
+      { text: "[scan] loading profile tabs... OK", className: "text-[color:var(--cyan)]" },
+      { text: "[scan] loading terminal command console... OK", className: "text-[#86a0ba]" },
       { text: "[tty0] interactive console ready", className: "text-[color:var(--cyan)]" },
       { text: "[launch] mounting desktop shell for Kent Mark Xavier Ubas", className: "text-[color:var(--amber)]" }
     ];
@@ -319,6 +315,31 @@
       openWindow(appId, { preserveLayout: true });
     };
 
+    const activateProfileTab = tabId => {
+      const targetTab = profileTabs.find(tab => tab.dataset.profileTab === tabId);
+      if (!targetTab) return;
+
+      profileTabs.forEach(tab => {
+        const isActive = tab === targetTab;
+        tab.setAttribute("aria-selected", String(isActive));
+        tab.tabIndex = isActive ? 0 : -1;
+      });
+
+      profilePanels.forEach(panel => {
+        panel.hidden = panel.dataset.profilePanel !== tabId;
+      });
+    };
+
+    const moveProfileTabFocus = (currentTab, direction) => {
+      const currentIndex = profileTabs.indexOf(currentTab);
+      if (currentIndex === -1) return;
+
+      const nextIndex = (currentIndex + direction + profileTabs.length) % profileTabs.length;
+      const nextTab = profileTabs[nextIndex];
+      activateProfileTab(nextTab.dataset.profileTab);
+      nextTab.focus();
+    };
+
     const toggleTaskWindow = appId => {
       const win = windowMap.get(appId);
       if (!win) return;
@@ -524,6 +545,28 @@
       launcher.addEventListener("click", () => {
         openWindow(launcher.dataset.appTarget);
         if (window.innerWidth < 1024) togglePanel(false);
+      });
+    });
+
+    profileTabs.forEach(tab => {
+      tab.addEventListener("click", () => activateProfileTab(tab.dataset.profileTab));
+      tab.addEventListener("keydown", event => {
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          moveProfileTabFocus(tab, 1);
+        } else if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          moveProfileTabFocus(tab, -1);
+        } else if (event.key === "Home") {
+          event.preventDefault();
+          activateProfileTab(profileTabs[0].dataset.profileTab);
+          profileTabs[0].focus();
+        } else if (event.key === "End") {
+          event.preventDefault();
+          const lastTab = profileTabs[profileTabs.length - 1];
+          activateProfileTab(lastTab.dataset.profileTab);
+          lastTab.focus();
+        }
       });
     });
 
