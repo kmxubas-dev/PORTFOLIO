@@ -2,6 +2,7 @@
 
     const elements = {
       themeBtn: document.getElementById("themeBtn"),
+      themeTray: document.getElementById("themeTray"),
       panelToggle: document.getElementById("panelToggle"),
       startMenuPanel: document.getElementById("startMenuPanel"),
       showDesktopBtn: document.getElementById("showDesktopBtn"),
@@ -24,6 +25,7 @@
 
     const {
       themeBtn,
+      themeTray,
       panelToggle,
       startMenuPanel,
       showDesktopBtn,
@@ -54,15 +56,90 @@
       profile: "file-user",
       terminal: "terminal"
     };
+    const themeStorageKey = "kmx-theme";
+    const themes = [
+      { id: "midnight", name: "Midnight", swatch: ["#06080d", "#67dfff", "#53f5c0"] },
+      { id: "aurora", name: "Aurora", swatch: ["#061012", "#87f7ff", "#6affc5"] },
+      { id: "matrix", name: "Matrix", swatch: ["#030805", "#57ff8f", "#c7ff79"] },
+      { id: "synthwave", name: "Synthwave", swatch: ["#10051f", "#ff6aa9", "#63e5ff"] },
+      { id: "terminal", name: "Terminal", swatch: ["#050706", "#b5ff9a", "#9affd8"] },
+      { id: "solar", name: "Solar", swatch: ["#10100a", "#ffd166", "#8de7c9"] },
+      { id: "rose", name: "Rose", swatch: ["#120912", "#ff83ad", "#98def5"] },
+      { id: "ocean", name: "Ocean", swatch: ["#031019", "#62dfff", "#6aa4ff"] },
+      { id: "ember", name: "Ember", swatch: ["#100807", "#ff765f", "#ffc15a"] },
+      { id: "mono", name: "Mono", swatch: ["#070809", "#f3f6fa", "#b8c0ca"] }
+    ];
 
     let zCounter = 100;
     let dragState = null;
     let selectionState = null;
     let bootCompleted = false;
     let taskbarButtons = [];
+    let activeTheme = "midnight";
     const motionDuration = 280;
 
     const refreshIcons = () => window.refreshKmxIcons();
+    const closestElement = (target, selector) => target instanceof Element ? target.closest(selector) : null;
+
+    const getStoredTheme = () => {
+      try {
+        return localStorage.getItem(themeStorageKey);
+      } catch {
+        return null;
+      }
+    };
+
+    const storeTheme = themeId => {
+      try {
+        localStorage.setItem(themeStorageKey, themeId);
+      } catch {
+        return;
+      }
+    };
+
+    const syncThemeOptions = () => {
+      themeTray?.querySelectorAll("[data-theme-option]").forEach(option => {
+        const isSelected = option.dataset.themeOption === activeTheme;
+        option.setAttribute("aria-selected", String(isSelected));
+        option.setAttribute("aria-checked", String(isSelected));
+      });
+    };
+
+    const applyTheme = (themeId, { persist = true } = {}) => {
+      const nextTheme = themes.some(theme => theme.id === themeId) ? themeId : "midnight";
+      activeTheme = nextTheme;
+      document.documentElement.dataset.theme = nextTheme;
+      const themeName = themes.find(theme => theme.id === nextTheme)?.name || "Midnight";
+
+      themeBtn?.setAttribute("aria-label", `Choose theme, current theme ${themeName}`);
+      themeBtn?.setAttribute("title", `Theme: ${themeName}`);
+      if (persist) storeTheme(nextTheme);
+      syncThemeOptions();
+    };
+
+    const renderThemeTray = () => {
+      if (!themeTray) return;
+      themeTray.innerHTML = themes.map(theme => {
+        const swatch = `linear-gradient(135deg, ${theme.swatch[0]} 0 34%, ${theme.swatch[1]} 34% 67%, ${theme.swatch[2]} 67% 100%)`;
+        return `
+          <button class="theme-option" type="button" role="menuitemradio" data-theme-option="${theme.id}" aria-selected="false" aria-checked="false">
+            <span class="theme-swatch" style="background: ${swatch};"></span>
+            <span class="theme-name">${theme.name}</span>
+          </button>
+        `;
+      }).join("");
+      syncThemeOptions();
+    };
+
+    const setThemeTrayOpen = isOpen => {
+      if (!themeTray || !themeBtn) return;
+      themeTray.dataset.open = String(isOpen);
+      themeBtn.setAttribute("aria-expanded", String(isOpen));
+    };
+
+    const toggleThemeTray = () => {
+      setThemeTrayOpen(themeTray?.dataset.open !== "true");
+    };
 
     const animateWindow = (win, keyframes, options = {}) => {
       if (typeof win.animate !== "function") return null;
@@ -525,6 +602,8 @@
       setTimeout(() => focusWindow("profile"), desktopStartupOrder.length * 85 + 40);
     };
 
+    renderThemeTray();
+    applyTheme(getStoredTheme(), { persist: false });
     buildTaskbar();
     if (window.innerWidth >= 768) {
       openDesktopStartupLayout();
@@ -537,8 +616,21 @@
 
     panelToggle.addEventListener("click", () => togglePanel());
     showDesktopBtn.addEventListener("click", showDesktop);
-    themeBtn.addEventListener("click", () => {
-      document.documentElement.classList.toggle("theme-alt");
+    themeBtn.addEventListener("click", event => {
+      event.stopPropagation();
+      toggleThemeTray();
+    });
+    themeTray?.addEventListener("click", event => {
+      const option = closestElement(event.target, "[data-theme-option]");
+      if (!option) return;
+      applyTheme(option.dataset.themeOption);
+      setThemeTrayOpen(false);
+      themeBtn.focus();
+    });
+    document.addEventListener("pointerdown", event => {
+      if (themeTray?.dataset.open !== "true") return;
+      if (closestElement(event.target, ".theme-tray")) return;
+      setThemeTrayOpen(false);
     });
 
     launchers.forEach(launcher => {
@@ -604,6 +696,11 @@
     desktopWindows?.addEventListener("pointerup", endDesktopSelection);
     desktopWindows?.addEventListener("pointercancel", endDesktopSelection);
     window.addEventListener("keydown", event => {
+      if (event.key === "Escape" && themeTray?.dataset.open === "true") {
+        setThemeTrayOpen(false);
+        themeBtn.focus();
+        return;
+      }
       if (!bootCompleted && event.key === "Enter") {
         finishBoot();
       }

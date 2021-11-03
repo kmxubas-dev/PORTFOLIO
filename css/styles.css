@@ -11,7 +11,8 @@
       overflow: hidden;
     }
 
-    :root {
+    :root,
+    :root[data-theme="midnight"] {
       --bg: #06080d;
       --bg2: #0b1118;
       --line: #223247;
@@ -28,7 +29,7 @@
       --shadow-window: 0 32px 80px rgba(0, 0, 0, 0.46);
     }
 
-    .theme-alt {
+    :root[data-theme="aurora"] {
       --bg: #061012;
       --bg2: #07161d;
       --line: #1d3637;
@@ -37,15 +38,121 @@
       --green: #6affc5;
       --cyan: #87f7ff;
       --blue: #70e0ff;
+      --amber: #f9e18d;
+      --red: #ff8fa3;
+    }
+
+    :root[data-theme="matrix"] {
+      --bg: #030805;
+      --bg2: #06140d;
+      --line: #164126;
+      --soft: #79a989;
+      --text: #ecfff1;
+      --green: #57ff8f;
+      --cyan: #7dffce;
+      --blue: #58b98a;
+      --amber: #c7ff79;
+      --red: #ff6f7f;
+    }
+
+    :root[data-theme="synthwave"] {
+      --bg: #10051f;
+      --bg2: #1d0b33;
+      --line: #513368;
+      --soft: #bca5d9;
+      --text: #fff2ff;
+      --green: #72ffd2;
+      --cyan: #63e5ff;
+      --blue: #9b6bff;
+      --amber: #ffe071;
+      --red: #ff6aa9;
+    }
+
+    :root[data-theme="terminal"] {
+      --bg: #050706;
+      --bg2: #0b0f0b;
+      --line: #2d3a2f;
+      --soft: #a3b7a7;
+      --text: #f3fff3;
+      --green: #b5ff9a;
+      --cyan: #9affd8;
+      --blue: #8bcf9f;
+      --amber: #f3ff9d;
+      --red: #ff8a8a;
+    }
+
+    :root[data-theme="solar"] {
+      --bg: #10100a;
+      --bg2: #1b170d;
+      --line: #4a3c20;
+      --soft: #d1b779;
+      --text: #fff8df;
+      --green: #b8f087;
+      --cyan: #8de7c9;
+      --blue: #9cc8ff;
+      --amber: #ffd166;
+      --red: #ff806c;
+    }
+
+    :root[data-theme="rose"] {
+      --bg: #120912;
+      --bg2: #1c0d19;
+      --line: #4d2d42;
+      --soft: #d1a1bd;
+      --text: #fff1f8;
+      --green: #84f4bd;
+      --cyan: #98def5;
+      --blue: #c39bff;
+      --amber: #ffd28b;
+      --red: #ff83ad;
+    }
+
+    :root[data-theme="ocean"] {
+      --bg: #031019;
+      --bg2: #061827;
+      --line: #1f4258;
+      --soft: #8db6cf;
+      --text: #edf9ff;
+      --green: #5df0bf;
+      --cyan: #62dfff;
+      --blue: #6aa4ff;
+      --amber: #ffd486;
+      --red: #ff7f91;
+    }
+
+    :root[data-theme="ember"] {
+      --bg: #100807;
+      --bg2: #1c0f0b;
+      --line: #4f2d23;
+      --soft: #d6a891;
+      --text: #fff3eb;
+      --green: #a8f08b;
+      --cyan: #8de6df;
+      --blue: #ffae70;
+      --amber: #ffc15a;
+      --red: #ff765f;
+    }
+
+    :root[data-theme="mono"] {
+      --bg: #070809;
+      --bg2: #111315;
+      --line: #34383d;
+      --soft: #a8afb7;
+      --text: #f6f8fb;
+      --green: #d8dee5;
+      --cyan: #f3f6fa;
+      --blue: #b8c0ca;
+      --amber: #e4e7eb;
+      --red: #cfd5dd;
     }
 
     body {
       color: var(--text);
       font-family: var(--font-sans);
       background:
-        radial-gradient(circle at 12% 18%, rgba(103, 223, 255, 0.12), transparent 20%),
-        radial-gradient(circle at 88% 12%, rgba(110, 143, 255, 0.12), transparent 18%),
-        radial-gradient(circle at 50% 100%, rgba(83, 245, 192, 0.07), transparent 26%),
+        radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--cyan), transparent 88%), transparent 20%),
+        radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--blue), transparent 88%), transparent 18%),
+        radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--green), transparent 93%), transparent 26%),
         linear-gradient(180deg, var(--bg), var(--bg2));
     }
 
@@ -58,7 +165,7 @@
       mix-blend-mode: screen;
       background:
         linear-gradient(135deg, rgba(255, 255, 255, 0.02), transparent 32%),
-        radial-gradient(circle at 50% 0%, rgba(255, 209, 125, 0.08), transparent 25%);
+        radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--amber), transparent 92%), transparent 25%);
     }
 
     .grid-overlay,
@@ -536,6 +643,87 @@
       box-shadow:
         0 0 0 1px rgba(103, 223, 255, 0.18),
         0 0 0 4px rgba(103, 223, 255, 0.08);
+    }
+
+    .theme-tray-panel {
+      position: absolute;
+      top: calc(100% + 0.55rem);
+      right: 0;
+      z-index: 80;
+      width: min(20rem, calc(100vw - 1rem));
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.45rem;
+      padding: 0.6rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(18, 26, 39, 0.98), rgba(8, 12, 19, 0.99)),
+        linear-gradient(90deg, rgba(103, 223, 255, 0.05), rgba(110, 143, 255, 0.04));
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px) scale(0.98);
+      transform-origin: top right;
+      transition: opacity 160ms ease, transform 160ms ease, visibility 160ms ease;
+      visibility: hidden;
+    }
+
+    .theme-tray-panel[data-open="true"] {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+      visibility: visible;
+    }
+
+    .theme-option {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 0.52rem 0.58rem;
+      color: var(--soft);
+      background: rgba(255, 255, 255, 0.025);
+      transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .theme-option:hover,
+    .theme-option:focus-visible,
+    .theme-option[aria-selected="true"] {
+      border-color: color-mix(in srgb, var(--cyan), transparent 55%);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.065);
+    }
+
+    .theme-option:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--cyan), transparent 78%);
+    }
+
+    .theme-option[aria-selected="true"] {
+      transform: translateY(-1px);
+    }
+
+    .theme-swatch {
+      width: 1.45rem;
+      height: 1.45rem;
+      flex: none;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 8px 18px rgba(0, 0, 0, 0.22);
+    }
+
+    .theme-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
 
     .start-button {

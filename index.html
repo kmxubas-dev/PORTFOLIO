@@ -66,9 +66,25 @@
           <button id="showDesktopBtn" class="topbar-control tray-button inline-flex h-10 w-10 items-center justify-center rounded-xl" aria-label="Show desktop" title="Show desktop">
             <i data-lucide="monitor-up" class="h-4 w-4 text-[color:var(--cyan)]"></i>
           </button>
-          <button id="themeBtn" class="topbar-control tray-button inline-flex h-10 w-10 items-center justify-center rounded-xl" aria-label="Toggle theme" title="Toggle theme">
-            <i data-lucide="sun-moon" class="h-4 w-4 text-[color:var(--cyan)]"></i>
-          </button>
+          <div class="theme-tray relative">
+            <button
+              id="themeBtn"
+              class="topbar-control tray-button inline-flex h-10 w-10 items-center justify-center rounded-xl"
+              aria-label="Choose theme"
+              aria-expanded="false"
+              aria-controls="themeTray"
+              title="Choose theme"
+            >
+              <i data-lucide="palette" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+            </button>
+            <div
+              id="themeTray"
+              data-open="false"
+              class="theme-tray-panel"
+              role="menu"
+              aria-label="Theme picker"
+            ></div>
+          </div>
           <div class="topbar-control clock-block inline-flex h-10 min-w-[96px] flex-col items-end justify-center rounded-xl px-3 text-right">
             <div id="clockTime" class="font-mono text-[0.82rem] font-semibold tracking-[0.04em]"></div>
             <div id="clockDate" class="font-mono text-[0.64rem] text-[color:var(--soft)]"></div>
