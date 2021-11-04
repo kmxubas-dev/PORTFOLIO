@@ -49,12 +49,14 @@
     const windowMap = new Map(windows.map(win => [win.dataset.appId, win]));
     const desktopWindowLayout = {
       profile: { left: "calc(50% - ((clamp(620px, 58vw, 960px) + clamp(340px, 28vw, 500px) + 24px) / 2))", top: 24, width: "clamp(620px, 58vw, 960px)", z: 80 },
-      terminal: { left: "calc(50% - ((clamp(620px, 58vw, 960px) + clamp(340px, 28vw, 500px) + 24px) / 2) + clamp(620px, 58vw, 960px) + 24px)", top: 62, width: "clamp(340px, 28vw, 500px)", z: 74 }
+      terminal: { left: "calc(50% - ((clamp(620px, 58vw, 960px) + clamp(340px, 28vw, 500px) + 24px) / 2) + clamp(620px, 58vw, 960px) + 24px)", top: 62, width: "clamp(340px, 28vw, 500px)", z: 74 },
+      games: { left: "calc(50% - min(720px, 56vw) / 2)", top: 190, width: "min(720px, 56vw)", z: 72 }
     };
     const desktopStartupOrder = ["terminal", "profile"];
     const taskbarIcons = {
       profile: "file-user",
-      terminal: "terminal"
+      terminal: "terminal",
+      games: "gamepad-2"
     };
     const themeStorageKey = "kmx-theme";
     const themes = [

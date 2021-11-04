@@ -150,7 +150,7 @@
         <div class="mb-3.5">
           <div class="mb-2 flex items-center justify-between gap-3">
             <div class="font-mono text-[0.76rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">quick_access</div>
-            <div class="font-mono text-[0.72rem] uppercase tracking-[0.08em] text-[color:var(--cyan)]">2 apps</div>
+            <div class="font-mono text-[0.72rem] uppercase tracking-[0.08em] text-[color:var(--cyan)]">3 apps</div>
           </div>
           <nav class="grid grid-cols-2 gap-1.5" id="startMenuLaunchers">
             <button data-app-target="profile" class="start-menu-link flex min-h-[64px] flex-col items-start gap-2.5 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-3.5 py-2.5 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
@@ -165,6 +165,13 @@
               <span>
                 <span class="block text-[0.84rem] font-medium leading-tight text-[color:var(--text)]">Console</span>
                 <span class="mt-1 block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">commands</span>
+              </span>
+            </button>
+            <button data-app-target="games" class="start-menu-link flex min-h-[64px] flex-col items-start gap-2.5 rounded-[12px] border border-[color:var(--line)] bg-white/[0.02] px-3.5 py-2.5 text-left transition duration-200 hover:border-cyan-300/35 hover:bg-white/[0.05]">
+              <i data-lucide="gamepad-2" class="h-4 w-4 text-[color:var(--cyan)]"></i>
+              <span>
+                <span class="block text-[0.84rem] font-medium leading-tight text-[color:var(--text)]">Games</span>
+                <span class="mt-1 block font-mono text-[0.7rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">arcade</span>
               </span>
             </button>
           </nav>
@@ -190,6 +197,10 @@
             <button data-app-target="terminal" class="desktop-shortcut app-launcher">
               <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="terminal" class="h-6 w-6"></i></span>
               <span class="desktop-shortcut-label">Command Console</span>
+            </button>
+            <button data-app-target="games" class="desktop-shortcut app-launcher">
+              <span class="desktop-shortcut-icon text-[color:var(--cyan)]"><i data-lucide="gamepad-2" class="h-6 w-6"></i></span>
+              <span class="desktop-shortcut-label">Games</span>
             </button>
           </div>
           <article
@@ -449,6 +460,94 @@
                     <p class="info-card-copy">Practical, product-aware, and adaptable across web, desktop, game, and systems environments.</p>
                   </article>
                 </section>
+              </div>
+            </div>
+          </article>
+
+          <article
+            id="app-games"
+            data-app-window
+            data-app-id="games"
+            data-app-title="Games"
+            data-state="closed"
+            data-focused="false"
+            class="window-shell md:absolute md:left-[18%] md:top-[26%] md:w-[min(720px,56vw)]"
+            style="z-index: 54;"
+          >
+            <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.992))] shadow-window">
+              <div class="window-drag-handle flex items-center justify-between gap-2 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-2">
+                <div class="flex items-center gap-2.5">
+                  <div class="window-controls">
+                    <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Games" title="Close"></button>
+                    <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Games" title="Minimize"></button>
+                    <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Games" title="Expand"></button>
+                  </div>
+                  <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">games</div>
+                </div>
+              </div>
+              <div class="games-toolbar relative z-[1]">
+                <div class="games-nav-controls" aria-label="Games explorer navigation">
+                  <button type="button" class="games-command-button" aria-label="Back"><i data-lucide="arrow-left" class="h-4 w-4"></i></button>
+                  <button type="button" class="games-command-button" aria-label="Forward"><i data-lucide="arrow-right" class="h-4 w-4"></i></button>
+                  <button type="button" class="games-command-button" aria-label="Refresh"><i data-lucide="refresh-cw" class="h-4 w-4"></i></button>
+                </div>
+                <div class="games-address-field">
+                  <i data-lucide="folder-open" class="h-3.5 w-3.5"></i>
+                  <span>kmx://games</span>
+                </div>
+                <button type="button" class="games-search-button" aria-label="Search games" title="Search games">
+                  <i data-lucide="search" class="h-4 w-4"></i>
+                </button>
+              </div>
+              <div class="window-content games-window-content relative z-[1]">
+                <div class="games-commandbar" aria-label="Games explorer controls">
+                  <button type="button" class="games-command-button games-command-label"><i data-lucide="list-filter" class="h-4 w-4"></i><span>Sort</span></button>
+                  <button type="button" class="games-command-button games-command-label"><i data-lucide="layout-grid" class="h-4 w-4"></i><span>View</span></button>
+                </div>
+                <div class="games-explorer-body">
+                  <aside class="games-sidebar" aria-label="Games explorer sidebar">
+                    <button type="button" class="games-sidebar-item" data-active="true">
+                      <i data-lucide="gamepad-2" class="h-4 w-4"></i>
+                      <span>Games</span>
+                    </button>
+                    <button type="button" class="games-sidebar-item">
+                      <i data-lucide="star" class="h-4 w-4"></i>
+                      <span>Favorites</span>
+                    </button>
+                    <button type="button" class="games-sidebar-item">
+                      <i data-lucide="clock-3" class="h-4 w-4"></i>
+                      <span>Recent</span>
+                    </button>
+                  </aside>
+                  <div class="games-file-pane">
+                    <div class="games-file-grid" aria-label="Game shortcuts">
+                      <button type="button" class="game-file-tile" aria-label="Snake game placeholder">
+                        <span class="game-file-icon game-file-icon-green"><i data-lucide="route" class="h-8 w-8"></i></span>
+                        <span class="game-file-name">Snake</span>
+                      </button>
+                      <button type="button" class="game-file-tile" aria-label="Pong game placeholder">
+                        <span class="game-file-icon game-file-icon-cyan"><i data-lucide="columns-2" class="h-8 w-8"></i></span>
+                        <span class="game-file-name">Pong</span>
+                      </button>
+                      <button type="button" class="game-file-tile" aria-label="Minesweeper game placeholder">
+                        <span class="game-file-icon game-file-icon-amber"><i data-lucide="bomb" class="h-8 w-8"></i></span>
+                        <span class="game-file-name">Minesweeper</span>
+                      </button>
+                      <button type="button" class="game-file-tile" aria-label="Asteroids game placeholder">
+                        <span class="game-file-icon game-file-icon-blue"><i data-lucide="rocket" class="h-8 w-8"></i></span>
+                        <span class="game-file-name">Asteroids</span>
+                      </button>
+                      <button type="button" class="game-file-tile" aria-label="Tetris game placeholder">
+                        <span class="game-file-icon game-file-icon-red"><i data-lucide="blocks" class="h-8 w-8"></i></span>
+                        <span class="game-file-name">Tetris</span>
+                      </button>
+                    </div>
+                    <div class="games-statusbar">
+                      <span>5 items</span>
+                      <span>Games folder</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </article>
