@@ -3,6 +3,14 @@
       --font-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       --shadow-panel: 0 24px 60px rgba(0, 0, 0, 0.42);
       --shadow-window: 0 32px 80px rgba(0, 0, 0, 0.46);
+      --chrome-popover-bg:
+        linear-gradient(180deg, rgba(18, 26, 39, 0.995), rgba(7, 11, 18, 1)),
+        linear-gradient(90deg, rgba(103, 223, 255, 0.08), rgba(110, 143, 255, 0.06));
+      --field-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        0 0 0 1px rgba(103, 223, 255, 0.035);
+      --focus-ring: 0 0 0 3px color-mix(in srgb, var(--cyan), transparent 78%);
+      --interactive-transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
     }
 
     html,
@@ -27,6 +35,14 @@
       --font-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       --shadow-panel: 0 24px 60px rgba(0, 0, 0, 0.42);
       --shadow-window: 0 32px 80px rgba(0, 0, 0, 0.46);
+      --chrome-popover-bg:
+        linear-gradient(180deg, rgba(18, 26, 39, 0.995), rgba(7, 11, 18, 1)),
+        linear-gradient(90deg, rgba(103, 223, 255, 0.08), rgba(110, 143, 255, 0.06));
+      --field-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        0 0 0 1px rgba(103, 223, 255, 0.035);
+      --focus-ring: 0 0 0 3px color-mix(in srgb, var(--cyan), transparent 78%);
+      --interactive-transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
     }
 
     :root[data-theme="aurora"] {
@@ -390,6 +406,16 @@
       scrollbar-color: rgba(103, 223, 255, 0.3) rgba(255, 255, 255, 0.04);
     }
 
+    .start-menu-panel.start-menu-panel {
+      z-index: 120;
+      background-color: #07111a;
+      background: var(--chrome-popover-bg);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.36),
+        0 24px 70px rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(18px) saturate(1.15);
+    }
+
     .desktop-root[data-booted="false"] {
       opacity: 0.15;
       filter: blur(10px);
@@ -607,6 +633,8 @@
     }
 
     .taskbar-shell {
+      position: relative;
+      z-index: 130;
       background:
         linear-gradient(180deg, rgba(18, 26, 39, 0.96), rgba(10, 16, 26, 0.97)),
         linear-gradient(90deg, rgba(103, 223, 255, 0.04), rgba(110, 143, 255, 0.04));
@@ -645,22 +673,21 @@
         0 0 0 4px rgba(103, 223, 255, 0.08);
     }
 
-    .theme-tray-panel {
+    .theme-tray-panel,
+    .calendar-tray-panel {
       position: absolute;
       top: calc(100% + 0.55rem);
       right: 0;
-      z-index: 80;
+      z-index: 140;
       width: min(20rem, calc(100vw - 1rem));
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.45rem;
-      padding: 0.6rem;
       border: 1px solid var(--line);
       border-radius: 14px;
-      background:
-        linear-gradient(180deg, rgba(18, 26, 39, 0.98), rgba(8, 12, 19, 0.99)),
-        linear-gradient(90deg, rgba(103, 223, 255, 0.05), rgba(110, 143, 255, 0.04));
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+      background-color: #07111a;
+      background: var(--chrome-popover-bg);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.36),
+        0 24px 70px rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(18px) saturate(1.15);
       opacity: 0;
       pointer-events: none;
       transform: translateY(-6px) scale(0.98);
@@ -669,11 +696,136 @@
       visibility: hidden;
     }
 
-    .theme-tray-panel[data-open="true"] {
+    .theme-tray-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.45rem;
+      padding: 0.6rem;
+    }
+
+    .calendar-tray-panel {
+      padding: 0.75rem;
+    }
+
+    .theme-tray-panel[data-open="true"],
+    .calendar-tray-panel[data-open="true"] {
       opacity: 1;
       pointer-events: auto;
       transform: translateY(0) scale(1);
       visibility: visible;
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .calendar-title {
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-align: center;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .calendar-nav-button {
+      display: grid;
+      width: 2rem;
+      height: 2rem;
+      flex: none;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      color: var(--soft);
+      background: rgba(255, 255, 255, 0.025);
+      transition: var(--interactive-transition);
+    }
+
+    .calendar-nav-button:hover,
+    .calendar-nav-button:focus-visible {
+      border-color: color-mix(in srgb, var(--cyan), transparent 55%);
+      color: var(--cyan);
+      background: rgba(255, 255, 255, 0.065);
+      transform: translateY(-1px);
+    }
+
+    .calendar-nav-button:focus-visible,
+    .calendar-day:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    .calendar-weekdays,
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 0.32rem;
+    }
+
+    .calendar-grid {
+      grid-template-rows: repeat(6, minmax(0, 1fr));
+    }
+
+    .calendar-weekdays {
+      margin-bottom: 0.38rem;
+      color: var(--soft);
+      font-family: var(--font-mono);
+      font-size: 0.64rem;
+      font-weight: 700;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .calendar-weekdays span {
+      display: grid;
+      min-height: 1rem;
+      place-items: center;
+    }
+
+    .calendar-day {
+      display: grid;
+      aspect-ratio: 1;
+      min-width: 0;
+      place-items: center;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      color: rgba(238, 244, 253, 0.88);
+      background: transparent;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 700;
+      line-height: 1;
+      transition: var(--interactive-transition);
+    }
+
+    .calendar-day:hover {
+      border-color: color-mix(in srgb, var(--cyan), transparent 60%);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.065);
+      transform: translateY(-1px);
+    }
+
+    .calendar-day[data-today="true"] {
+      border-color: color-mix(in srgb, var(--cyan), transparent 26%);
+      color: #061017;
+      background: linear-gradient(135deg, var(--green), var(--cyan));
+      box-shadow: 0 10px 24px color-mix(in srgb, var(--cyan), transparent 78%);
+    }
+
+    .calendar-day-empty {
+      border-color: transparent;
+      background: transparent;
+      pointer-events: none;
     }
 
     .theme-option {
@@ -686,7 +838,7 @@
       padding: 0.52rem 0.58rem;
       color: var(--soft);
       background: rgba(255, 255, 255, 0.025);
-      transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+      transition: var(--interactive-transition);
     }
 
     .theme-option:hover,
@@ -699,7 +851,7 @@
 
     .theme-option:focus-visible {
       outline: none;
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--cyan), transparent 78%);
+      box-shadow: var(--focus-ring);
     }
 
     .theme-option[aria-selected="true"] {
@@ -716,9 +868,6 @@
     }
 
     .theme-name {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
       font-family: var(--font-mono);
       font-size: 0.72rem;
       font-weight: 700;
@@ -769,8 +918,8 @@
       transform: translate(-50%, -50%);
       z-index: 20;
       display: grid;
-      grid-template-columns: repeat(2, minmax(96px, 120px));
-      gap: 12px 16px;
+      grid-template-columns: repeat(2, 88px);
+      gap: 8px;
       justify-content: center;
     }
 
@@ -778,9 +927,11 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-      width: 100%;
-      padding: 10px 8px;
+      justify-content: flex-start;
+      gap: 7px;
+      width: 88px;
+      min-height: 94px;
+      padding: 7px 5px;
       border: 1px solid transparent;
       border-radius: 14px;
       background: transparent;
@@ -804,17 +955,23 @@
     .desktop-shortcut-icon {
       display: inline-grid;
       place-items: center;
-      width: 58px;
-      height: 58px;
-      border-radius: 16px;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.08);
       background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
       box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 12px 28px rgba(0,0,0,.18);
     }
 
     .desktop-shortcut-label {
-      font-size: 0.8rem;
-      line-height: 1.35;
+      display: -webkit-box;
+      min-height: 2.4em;
+      max-width: 100%;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      font-size: 0.72rem;
+      line-height: 1.2;
       color: var(--text);
       text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
     }
@@ -850,10 +1007,10 @@
       gap: 4px;
     }
 
-    .games-address-field {
+    .games-address-field,
+    .profile-address-field {
       display: flex;
       min-width: 0;
-      height: 32px;
       align-items: center;
       gap: 8px;
       overflow: hidden;
@@ -864,42 +1021,55 @@
       color: var(--soft);
       font-family: var(--font-mono);
       font-size: 0.74rem;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.035),
-        0 0 0 1px rgba(103, 223, 255, 0.035);
+      box-shadow: var(--field-shadow);
     }
 
-    .games-search-button {
-      display: inline-flex;
-      width: 32px;
+    .games-address-field {
       height: 32px;
-      flex: none;
+    }
+
+    .games-search-button,
+    .games-command-button,
+    .profile-nav-button {
+      display: inline-flex;
+      min-width: 30px;
+      height: 28px;
       align-items: center;
       justify-content: center;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 999px;
-      background: rgba(3, 7, 12, 0.42);
-      color: var(--cyan);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.035),
-        0 0 0 1px rgba(103, 223, 255, 0.035);
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--soft);
       transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
     }
 
+    .games-search-button {
+      flex: none;
+    }
+
     .games-search-button:hover,
-    .games-search-button:focus-visible {
-      border-color: rgba(103, 223, 255, 0.24);
+    .games-search-button:focus-visible,
+    .games-command-button:hover,
+    .games-command-button:focus-visible,
+    .profile-nav-button:hover,
+    .profile-nav-button:focus-visible {
+      border-color: rgba(103, 223, 255, 0.18);
       background: rgba(255, 255, 255, 0.055);
       color: var(--text);
       outline: none;
     }
 
-    .games-address-field i {
+    .games-address-field i,
+    .profile-address-field i {
       flex: 0 0 auto;
       color: var(--green);
     }
 
-    .games-address-field span {
+    .games-address-field span,
+    .profile-address-field span,
+    .games-sidebar-item span,
+    .profile-tab span,
+    .theme-name {
       min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -925,25 +1095,7 @@
     }
 
     .games-command-button {
-      display: inline-flex;
-      min-width: 30px;
-      height: 28px;
-      align-items: center;
-      justify-content: center;
       gap: 7px;
-      border: 1px solid transparent;
-      border-radius: 8px;
-      background: transparent;
-      color: var(--soft);
-      transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
-    }
-
-    .games-command-button:hover,
-    .games-command-button:focus-visible {
-      border-color: rgba(103, 223, 255, 0.18);
-      background: rgba(255, 255, 255, 0.055);
-      color: var(--text);
-      outline: none;
     }
 
     .games-command-label {
@@ -985,13 +1137,6 @@
       font-size: 0.82rem;
       text-align: left;
       transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
-    }
-
-    .games-sidebar-item span {
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
     .games-sidebar-item i {
@@ -1142,30 +1287,31 @@
     .profile-tablist {
       display: flex;
       align-items: flex-end;
-      gap: 2px;
+      gap: 1px;
       min-width: 0;
       overflow: visible;
       padding-bottom: 0;
+      padding-inline: 8px;
     }
 
     .profile-tab {
       display: inline-flex;
       position: relative;
-      min-height: 36px;
+      min-height: 32px;
       min-width: 0;
-      max-width: 190px;
-      flex: 1 1 0;
+      max-width: 158px;
+      flex: 0 1 158px;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
+      justify-content: flex-start;
+      gap: 7px;
       border: 1px solid rgba(255, 255, 255, 0.055);
       border-bottom-color: rgba(34, 50, 71, 0.95);
-      border-radius: 9px 9px 0 0;
+      border-radius: 8px 8px 0 0;
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018));
-      padding: 8px 12px 9px;
+      padding: 6px 10px 7px;
       color: var(--soft);
       font-family: var(--font-mono);
-      font-size: 0.76rem;
+      font-size: 0.72rem;
       font-weight: 600;
       text-transform: uppercase;
       transition:
@@ -1186,7 +1332,7 @@
 
     .profile-tab[aria-selected="true"] {
       z-index: 1;
-      min-height: 40px;
+      min-height: 34px;
       border-color: rgba(103, 223, 255, 0.34);
       border-bottom-color: rgba(17, 25, 37, 0.995);
       background: linear-gradient(180deg, rgba(103, 223, 255, 0.13), rgba(17, 25, 37, 0.995));
@@ -1203,15 +1349,12 @@
     }
 
     .profile-tab span {
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      text-align: left;
     }
 
     .profile-browser-bar {
       display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-columns: auto minmax(0, 1fr) auto;
       align-items: center;
       gap: 10px;
       border-top: 1px solid rgba(103, 223, 255, 0.12);
@@ -1220,50 +1363,20 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
     }
 
-    .profile-nav-dots {
+    .profile-nav-controls,
+    .profile-browser-actions {
       display: flex;
-      gap: 6px;
-      padding-inline: 2px;
+      align-items: center;
+      gap: 4px;
     }
 
-    .profile-nav-dots span {
-      display: block;
-      height: 7px;
-      width: 7px;
-      border-radius: 999px;
-      background: rgba(142, 166, 191, 0.58);
-      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04);
+    .profile-nav-button {
+      width: 30px;
+      flex: none;
     }
 
     .profile-address-field {
-      display: flex;
-      min-width: 0;
       height: 30px;
-      align-items: center;
-      gap: 8px;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 999px;
-      background: rgba(3, 7, 12, 0.42);
-      padding-inline: 12px;
-      color: var(--soft);
-      font-family: var(--font-mono);
-      font-size: 0.74rem;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.035),
-        0 0 0 1px rgba(103, 223, 255, 0.035);
-    }
-
-    .profile-address-field i {
-      flex: 0 0 auto;
-      color: var(--green);
-    }
-
-    .profile-address-field span {
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
     .profile-panel[hidden] {
@@ -1337,20 +1450,22 @@
 
     @media (min-width: 768px) and (max-width: 1439px) {
       .desktop-shortcuts {
-        gap: 10px 14px;
+        gap: 7px;
       }
 
       .desktop-shortcut {
-        padding: 8px 6px;
+        width: 82px;
+        min-height: 88px;
+        padding: 6px 5px;
       }
 
       .desktop-shortcut-icon {
-        width: 52px;
-        height: 52px;
+        width: 44px;
+        height: 44px;
       }
 
       .desktop-shortcut-label {
-        font-size: 0.76rem;
+        font-size: 0.7rem;
       }
     }
 
@@ -1358,8 +1473,20 @@
       .desktop-shortcuts {
         position: static;
         transform: none;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        margin-bottom: 12px;
+        grid-template-columns: repeat(3, 82px);
+        gap: 7px;
+        justify-content: center;
+        margin-bottom: 10px;
+      }
+
+      .desktop-shortcut {
+        width: 82px;
+        min-height: 88px;
+      }
+
+      .desktop-shortcut-icon {
+        width: 44px;
+        height: 44px;
       }
 
       .profile-tablist {
@@ -1367,24 +1494,25 @@
       }
 
       .profile-tab {
-        flex-basis: calc(50% - 2px);
+        flex-basis: calc(50% - 1px);
         max-width: none;
-        min-height: 34px;
+        min-height: 32px;
         padding-inline: 9px;
-        font-size: 0.72rem;
+        font-size: 0.7rem;
       }
 
       .profile-tab[aria-selected="true"] {
-        min-height: 36px;
+        min-height: 34px;
       }
 
       .profile-browser-bar {
-        grid-template-columns: 1fr;
+        grid-template-columns: auto minmax(0, 1fr);
         gap: 7px;
       }
 
-      .profile-nav-dots {
-        display: none;
+      .profile-browser-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
       }
 
       .games-toolbar {
@@ -1475,6 +1603,50 @@
 
     .lucide {
       stroke-width: 1.9;
+    }
+
+    /* Global radius tuning: tighter desktop UI, while preserving intentional circles. */
+    .rounded-xl,
+    [class*="rounded-[18px]"],
+    [class*="rounded-[20px]"],
+    [class*="rounded-[22px]"],
+    .boot-overlay > div,
+    .window-shell,
+    .window-frame,
+    .start-menu-panel,
+    .theme-tray-panel,
+    .calendar-tray-panel,
+    .desktop-shortcut,
+    .desktop-shortcut-icon,
+    .game-file-icon {
+      border-radius: 10px !important;
+    }
+
+    [class*="rounded-[10px]"],
+    [class*="rounded-[12px]"],
+    .theme-option,
+    .calendar-nav-button,
+    .calendar-day,
+    .profile-tab,
+    .profile-browser-bar,
+    .info-card,
+    .experience-card,
+    .game-file-tile,
+    .game-folder-shell,
+    .terminal-mini-card {
+      border-radius: 6px !important;
+    }
+
+    .topbar-control,
+    .taskbar-app,
+    .start-menu-link,
+    .desktop-shortcut-label,
+    .quick-commands button {
+      border-radius: 7px !important;
+    }
+
+    .profile-tab {
+      border-radius: 6px 6px 0 0 !important;
     }
 
 .font-sans {

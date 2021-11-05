@@ -7,8 +7,13 @@
       startMenuPanel: document.getElementById("startMenuPanel"),
       showDesktopBtn: document.getElementById("showDesktopBtn"),
       taskbarApps: document.getElementById("taskbarApps"),
+      clockBtn: document.getElementById("clockBtn"),
       clockTime: document.getElementById("clockTime"),
       clockDate: document.getElementById("clockDate"),
+      calendarTray: document.getElementById("calendarTray"),
+      calendarTitle: document.getElementById("calendarTitle"),
+      calendarGrid: document.getElementById("calendarGrid"),
+      calendarWeekdays: document.querySelector(".calendar-weekdays"),
       bootOverlay: document.getElementById("bootOverlay"),
       desktopRoot: document.getElementById("desktopRoot"),
       desktopWindows: document.getElementById("desktopWindows"),
@@ -30,8 +35,13 @@
       startMenuPanel,
       showDesktopBtn,
       taskbarApps,
+      clockBtn,
       clockTime,
       clockDate,
+      calendarTray,
+      calendarTitle,
+      calendarGrid,
+      calendarWeekdays,
       bootOverlay,
       desktopRoot,
       desktopWindows,
@@ -78,7 +88,9 @@
     let bootCompleted = false;
     let taskbarButtons = [];
     let activeTheme = "midnight";
+    let visibleCalendarDate = new Date();
     const motionDuration = 280;
+    const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
     const refreshIcons = () => window.refreshKmxIcons();
     const closestElement = (target, selector) => target instanceof Element ? target.closest(selector) : null;
@@ -236,6 +248,84 @@
         day: "numeric",
         year: "numeric"
       });
+    };
+
+    const isSameCalendarDay = (firstDate, secondDate) => (
+      firstDate.getFullYear() === secondDate.getFullYear()
+      && firstDate.getMonth() === secondDate.getMonth()
+      && firstDate.getDate() === secondDate.getDate()
+    );
+
+    const renderCalendar = () => {
+      if (!calendarTitle || !calendarGrid || !calendarWeekdays) return;
+
+      const today = new Date();
+      const year = visibleCalendarDate.getFullYear();
+      const month = visibleCalendarDate.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      calendarTitle.textContent = firstDay.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric"
+      });
+
+      calendarWeekdays.innerHTML = weekdayLabels
+        .map(label => `<span>${label}</span>`)
+        .join("");
+
+      const days = [];
+      for (let index = 0; index < firstDay.getDay(); index += 1) {
+        days.push('<span class="calendar-day calendar-day-empty" aria-hidden="true"></span>');
+      }
+
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        const date = new Date(year, month, day);
+        const isToday = isSameCalendarDay(date, today);
+        const label = date.toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric"
+        });
+
+        days.push(`
+          <button type="button" class="calendar-day" data-today="${isToday}" aria-current="${isToday ? "date" : "false"}" aria-label="${label}">
+            ${day}
+          </button>
+        `);
+      }
+
+      while (days.length < 42) {
+        days.push('<span class="calendar-day calendar-day-empty" aria-hidden="true"></span>');
+      }
+
+      calendarGrid.innerHTML = days.join("");
+    };
+
+    const setCalendarOpen = isOpen => {
+      if (!calendarTray || !clockBtn) return;
+      calendarTray.dataset.open = String(isOpen);
+      clockBtn.setAttribute("aria-expanded", String(isOpen));
+
+      if (isOpen) {
+        const now = new Date();
+        visibleCalendarDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        renderCalendar();
+      }
+    };
+
+    const toggleCalendar = () => {
+      setCalendarOpen(calendarTray?.dataset.open !== "true");
+    };
+
+    const moveCalendarMonth = direction => {
+      visibleCalendarDate = new Date(
+        visibleCalendarDate.getFullYear(),
+        visibleCalendarDate.getMonth() + direction,
+        1
+      );
+      renderCalendar();
     };
 
     const focusWindow = appId => {
@@ -615,11 +705,29 @@
     syncPanelState();
     updateClock();
     setInterval(updateClock, 1000 * 30);
+    renderCalendar();
 
-    panelToggle.addEventListener("click", () => togglePanel());
+    panelToggle.addEventListener("click", event => {
+      event.stopPropagation();
+      setThemeTrayOpen(false);
+      setCalendarOpen(false);
+      togglePanel();
+    });
     showDesktopBtn.addEventListener("click", showDesktop);
+    clockBtn?.addEventListener("click", event => {
+      event.stopPropagation();
+      setThemeTrayOpen(false);
+      toggleCalendar();
+    });
+    calendarTray?.addEventListener("click", event => {
+      event.stopPropagation();
+      const navButton = closestElement(event.target, "[data-calendar-nav]");
+      if (!navButton) return;
+      moveCalendarMonth(navButton.dataset.calendarNav === "prev" ? -1 : 1);
+    });
     themeBtn.addEventListener("click", event => {
       event.stopPropagation();
+      setCalendarOpen(false);
       toggleThemeTray();
     });
     themeTray?.addEventListener("click", event => {
@@ -633,6 +741,17 @@
       if (themeTray?.dataset.open !== "true") return;
       if (closestElement(event.target, ".theme-tray")) return;
       setThemeTrayOpen(false);
+    });
+    document.addEventListener("pointerdown", event => {
+      if (calendarTray?.dataset.open !== "true") return;
+      if (closestElement(event.target, ".clock-tray")) return;
+      setCalendarOpen(false);
+    });
+    document.addEventListener("pointerdown", event => {
+      if (startMenuPanel?.dataset.open !== "true") return;
+      if (closestElement(event.target, "#startMenuPanel")) return;
+      if (closestElement(event.target, "#panelToggle")) return;
+      togglePanel(false);
     });
 
     launchers.forEach(launcher => {
@@ -698,6 +817,11 @@
     desktopWindows?.addEventListener("pointerup", endDesktopSelection);
     desktopWindows?.addEventListener("pointercancel", endDesktopSelection);
     window.addEventListener("keydown", event => {
+      if (event.key === "Escape" && calendarTray?.dataset.open === "true") {
+        setCalendarOpen(false);
+        clockBtn?.focus();
+        return;
+      }
       if (event.key === "Escape" && themeTray?.dataset.open === "true") {
         setThemeTrayOpen(false);
         themeBtn.focus();

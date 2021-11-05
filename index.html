@@ -85,9 +85,38 @@
               aria-label="Theme picker"
             ></div>
           </div>
-          <div class="topbar-control clock-block inline-flex h-10 min-w-[96px] flex-col items-end justify-center rounded-xl px-3 text-right">
-            <div id="clockTime" class="font-mono text-[0.82rem] font-semibold tracking-[0.04em]"></div>
-            <div id="clockDate" class="font-mono text-[0.64rem] text-[color:var(--soft)]"></div>
+          <div class="clock-tray relative">
+            <button
+              id="clockBtn"
+              type="button"
+              class="topbar-control clock-block inline-flex h-10 min-w-[96px] flex-col items-end justify-center rounded-xl px-3 text-right"
+              aria-label="Open calendar"
+              aria-expanded="false"
+              aria-controls="calendarTray"
+              title="Calendar"
+            >
+              <span id="clockTime" class="font-mono text-[0.82rem] font-semibold tracking-[0.04em]"></span>
+              <span id="clockDate" class="font-mono text-[0.64rem] text-[color:var(--soft)]"></span>
+            </button>
+            <div
+              id="calendarTray"
+              data-open="false"
+              class="calendar-tray-panel"
+              role="dialog"
+              aria-label="Calendar"
+            >
+              <div class="calendar-header">
+                <button type="button" class="calendar-nav-button" data-calendar-nav="prev" aria-label="Previous month" title="Previous month">
+                  <i data-lucide="chevron-left" class="h-4 w-4"></i>
+                </button>
+                <div id="calendarTitle" class="calendar-title"></div>
+                <button type="button" class="calendar-nav-button" data-calendar-nav="next" aria-label="Next month" title="Next month">
+                  <i data-lucide="chevron-right" class="h-4 w-4"></i>
+                </button>
+              </div>
+              <div class="calendar-weekdays" aria-hidden="true"></div>
+              <div id="calendarGrid" class="calendar-grid"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -243,15 +272,38 @@
                     <span>Projects</span>
                   </button>
                 </div>
-                <div class="profile-browser-bar" aria-hidden="true">
-                  <div class="profile-nav-dots">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                <div class="profile-browser-bar">
+                  <div class="profile-nav-controls">
+                    <button type="button" class="profile-nav-button" aria-label="Back" title="Back">
+                      <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    </button>
+                    <button type="button" class="profile-nav-button" aria-label="Forward" title="Forward">
+                      <i data-lucide="arrow-right" class="h-4 w-4"></i>
+                    </button>
+                    <button type="button" class="profile-nav-button" aria-label="Refresh" title="Refresh">
+                      <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+                    </button>
+                    <button type="button" class="profile-nav-button" aria-label="Bookmark" title="Bookmark">
+                      <i data-lucide="bookmark" class="h-4 w-4"></i>
+                    </button>
                   </div>
                   <div class="profile-address-field">
                     <i data-lucide="lock-keyhole" class="h-3.5 w-3.5"></i>
                     <span>kmx://profile</span>
+                  </div>
+                  <div class="profile-browser-actions">
+                    <button type="button" class="profile-nav-button" aria-label="Extensions" title="Extensions">
+                      <i data-lucide="puzzle" class="h-4 w-4"></i>
+                    </button>
+                    <button type="button" class="profile-nav-button" aria-label="Sidebar" title="Sidebar">
+                      <i data-lucide="panel-right" class="h-4 w-4"></i>
+                    </button>
+                    <button type="button" class="profile-nav-button" aria-label="Profile" title="Profile">
+                      <i data-lucide="circle-user-round" class="h-4 w-4"></i>
+                    </button>
+                    <button type="button" class="profile-nav-button" aria-label="Menu" title="Menu">
+                      <i data-lucide="ellipsis-vertical" class="h-4 w-4"></i>
+                    </button>
                   </div>
                 </div>
               </div>
