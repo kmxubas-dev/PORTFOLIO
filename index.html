@@ -15,6 +15,7 @@
     rel="stylesheet"
   />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/game_snake.css" />
 </head>
 <body class="relative h-screen overflow-hidden font-sans font-normal text-[color:var(--text)] antialiased">
   <div class="grid-overlay"></div>
@@ -573,7 +574,7 @@
                   </aside>
                   <div class="games-file-pane">
                     <div class="games-file-grid" aria-label="Game shortcuts">
-                      <button type="button" class="game-file-tile" aria-label="Snake game placeholder">
+                      <button type="button" data-app-target="snake" class="game-file-tile" aria-label="Open Snake game">
                         <span class="game-file-icon game-file-icon-green"><i data-lucide="route" class="h-8 w-8"></i></span>
                         <span class="game-file-name">Snake</span>
                       </button>
@@ -599,6 +600,58 @@
                       <span>Games folder</span>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article
+            id="app-snake"
+            data-app-window
+            data-app-id="snake"
+            data-app-title="Snake"
+            data-state="closed"
+            data-focused="false"
+            class="window-shell md:absolute md:left-[22%] md:top-[14%] md:w-[min(560px,48vw)]"
+            style="z-index: 58;"
+          >
+            <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.992))] shadow-window">
+              <div class="window-drag-handle flex items-center justify-between gap-2 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-2">
+                <div class="flex items-center gap-2.5">
+                  <div class="window-controls">
+                    <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Snake" title="Close"></button>
+                    <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Snake" title="Minimize"></button>
+                    <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Snake" title="Expand"></button>
+                  </div>
+                  <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">snake</div>
+                </div>
+              </div>
+              <div class="window-content snake-window-content relative z-[1]">
+                <div class="snake-hud" aria-label="Snake score">
+                  <div class="snake-score-card">
+                    <span>Score</span>
+                    <strong id="snakeScore">0</strong>
+                  </div>
+                  <div class="snake-score-card">
+                    <span>Best</span>
+                    <strong id="snakeBest">0</strong>
+                  </div>
+                  <button type="button" id="snakeRestart" class="snake-restart-button">
+                    <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
+                    <span>Start</span>
+                  </button>
+                  <button type="button" id="snakePause" class="snake-pause-button" disabled>
+                    <i data-lucide="pause" class="h-4 w-4"></i>
+                    <span>Pause</span>
+                  </button>
+                </div>
+                <div class="snake-stage">
+                  <canvas id="snakeCanvas" width="420" height="420" aria-label="Snake game board"></canvas>
+                  <div id="snakeOverlay" class="snake-overlay" data-visible="false" aria-live="polite"></div>
+                </div>
+                <div class="snake-statusbar">
+                  <span id="snakeStatus">Ready</span>
+                  <span>kmx://games/snake</span>
                 </div>
               </div>
             </div>
@@ -668,6 +721,7 @@
 
   <script defer src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script defer src="https://unpkg.com/lucide@latest"></script>
+  <script defer src="js/game_snake.js"></script>
   <script defer src="js/script.js"></script>
 </body>
 </html>

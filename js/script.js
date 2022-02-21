@@ -60,13 +60,15 @@
     const desktopWindowLayout = {
       profile: { left: "calc(50% - ((clamp(620px, 58vw, 960px) + clamp(340px, 28vw, 500px) + 24px) / 2))", top: 24, width: "clamp(620px, 58vw, 960px)", z: 80 },
       terminal: { left: "calc(50% - ((clamp(620px, 58vw, 960px) + clamp(340px, 28vw, 500px) + 24px) / 2) + clamp(620px, 58vw, 960px) + 24px)", top: 62, width: "clamp(340px, 28vw, 500px)", z: 74 },
-      games: { left: "calc(50% - min(720px, 56vw) / 2)", top: 190, width: "min(720px, 56vw)", z: 72 }
+      games: { left: "calc(50% - min(720px, 56vw) / 2)", top: 190, width: "min(720px, 56vw)", z: 72 },
+      snake: { left: "calc(50% - min(560px, 48vw) / 2)", top: 112, width: "min(560px, 48vw)", z: 76 }
     };
     const desktopStartupOrder = ["terminal", "profile"];
     const taskbarIcons = {
       profile: "file-user",
       terminal: "terminal",
-      games: "gamepad-2"
+      games: "gamepad-2",
+      snake: "route"
     };
     const themeStorageKey = "kmx-theme";
     const themes = [
@@ -94,6 +96,14 @@
 
     const refreshIcons = () => window.refreshKmxIcons();
     const closestElement = (target, selector) => target instanceof Element ? target.closest(selector) : null;
+    const dispatchWindowEvent = (eventName, appId, win) => {
+      window.dispatchEvent(new CustomEvent(eventName, {
+        detail: {
+          appId,
+          window: win
+        }
+      }));
+    };
 
     const getStoredTheme = () => {
       try {
@@ -364,6 +374,7 @@
       if (!minimizeOnly && !wasClosed && !wasMinimized) {
         focusWindow(appId);
         focusTerminalInput(appId);
+        dispatchWindowEvent("kmx:window-open", appId, win);
         return;
       }
 
@@ -385,6 +396,7 @@
 
       focusWindow(appId);
       focusTerminalInput(appId);
+      if (!minimizeOnly) dispatchWindowEvent("kmx:window-open", appId, win);
     };
 
     const closeWindow = appId => {
@@ -395,6 +407,7 @@
 
       const finalizeClose = () => {
         win.dataset.state = "closed";
+        dispatchWindowEvent("kmx:window-close", appId, win);
         const nextOpen = [...windowMap.values()]
           .filter(item => item.dataset.state === "open")
           .sort((a, b) => Number(b.style.zIndex || 0) - Number(a.style.zIndex || 0))[0];
