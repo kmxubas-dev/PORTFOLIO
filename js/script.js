@@ -62,7 +62,8 @@
       terminal: { left: "calc(50% - ((clamp(620px, 58vw, 960px) + clamp(340px, 28vw, 500px) + 24px) / 2) + clamp(620px, 58vw, 960px) + 24px)", top: 62, width: "clamp(340px, 28vw, 500px)", z: 74 },
       games: { left: "calc(50% - min(720px, 56vw) / 2)", top: 190, width: "min(720px, 56vw)", z: 72 },
       snake: { left: "calc(50% - min(560px, 48vw) / 2)", top: 112, width: "min(560px, 48vw)", z: 76 },
-      pong: { left: "calc(50% - min(620px, 52vw) / 2)", top: 136, width: "min(620px, 52vw)", z: 77 }
+      pong: { left: "calc(50% - min(620px, 52vw) / 2)", top: 136, width: "min(620px, 52vw)", z: 77 },
+      minesweeper: { left: "calc(50% - min(560px, 48vw) / 2)", top: 150, width: "min(560px, 48vw)", z: 78 }
     };
     const desktopStartupOrder = ["terminal", "profile"];
     const taskbarIcons = {
@@ -70,7 +71,8 @@
       terminal: "terminal",
       games: "gamepad-2",
       snake: "route",
-      pong: "columns-2"
+      pong: "columns-2",
+      minesweeper: "bomb"
     };
     const themeStorageKey = "kmx-theme";
     const themes = [
