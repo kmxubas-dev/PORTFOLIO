@@ -63,7 +63,8 @@
       games: { left: "calc(50% - min(720px, 56vw) / 2)", top: 190, width: "min(720px, 56vw)", z: 72 },
       snake: { left: "calc(50% - min(560px, 48vw) / 2)", top: 112, width: "min(560px, 48vw)", z: 76 },
       pong: { left: "calc(50% - min(620px, 52vw) / 2)", top: 136, width: "min(620px, 52vw)", z: 77 },
-      minesweeper: { left: "calc(50% - min(560px, 48vw) / 2)", top: 150, width: "min(560px, 48vw)", z: 78 }
+      minesweeper: { left: "calc(50% - min(560px, 48vw) / 2)", top: 150, width: "min(560px, 48vw)", z: 78 },
+      asteroids: { left: "calc(50% - min(680px, 56vw) / 2)", top: 128, width: "min(680px, 56vw)", z: 79 }
     };
     const desktopStartupOrder = ["terminal", "profile"];
     const taskbarIcons = {
@@ -72,7 +73,8 @@
       games: "gamepad-2",
       snake: "route",
       pong: "columns-2",
-      minesweeper: "bomb"
+      minesweeper: "bomb",
+      asteroids: "rocket"
     };
     const themeStorageKey = "kmx-theme";
     const themes = [
