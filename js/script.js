@@ -64,7 +64,8 @@
       snake: { left: "calc(50% - min(560px, 48vw) / 2)", top: 112, width: "min(560px, 48vw)", z: 76 },
       pong: { left: "calc(50% - min(620px, 52vw) / 2)", top: 136, width: "min(620px, 52vw)", z: 77 },
       minesweeper: { left: "calc(50% - min(560px, 48vw) / 2)", top: 150, width: "min(560px, 48vw)", z: 78 },
-      asteroids: { left: "calc(50% - min(680px, 56vw) / 2)", top: 128, width: "min(680px, 56vw)", z: 79 }
+      asteroids: { left: "calc(50% - min(680px, 56vw) / 2)", top: 128, width: "min(680px, 56vw)", z: 79 },
+      tetris: { left: "calc(50% - min(600px, 50vw) / 2)", top: 118, width: "min(600px, 50vw)", z: 80 }
     };
     const desktopStartupOrder = ["terminal", "profile"];
     const taskbarIcons = {
@@ -74,7 +75,8 @@
       snake: "route",
       pong: "columns-2",
       minesweeper: "bomb",
-      asteroids: "rocket"
+      asteroids: "rocket",
+      tetris: "blocks"
     };
     const themeStorageKey = "kmx-theme";
     const themes = [

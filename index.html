@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="css/game_pong.css" />
   <link rel="stylesheet" href="css/game_minesweeper.css" />
   <link rel="stylesheet" href="css/game_asteroids.css" />
+  <link rel="stylesheet" href="css/game_tetris.css" />
 </head>
 <body class="relative h-screen overflow-hidden font-sans font-normal text-[color:var(--text)] antialiased">
   <div class="grid-overlay"></div>
@@ -593,7 +594,7 @@
                         <span class="game-file-icon game-file-icon-blue"><i data-lucide="rocket" class="h-8 w-8"></i></span>
                         <span class="game-file-name">Asteroids</span>
                       </button>
-                      <button type="button" class="game-file-tile" aria-label="Tetris game placeholder">
+                      <button type="button" data-app-target="tetris" class="game-file-tile" aria-label="Open Tetris game">
                         <span class="game-file-icon game-file-icon-red"><i data-lucide="blocks" class="h-8 w-8"></i></span>
                         <span class="game-file-name">Tetris</span>
                       </button>
@@ -820,6 +821,68 @@
           </article>
 
           <article
+            id="app-tetris"
+            data-app-window
+            data-app-id="tetris"
+            data-app-title="Tetris"
+            data-state="closed"
+            data-focused="false"
+            class="window-shell md:absolute md:left-[25%] md:top-[15%] md:w-[min(600px,50vw)]"
+            style="z-index: 61;"
+          >
+            <div class="window-frame panel-shell relative overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(17,25,37,.995),rgba(11,17,26,.992))] shadow-window">
+              <div class="window-drag-handle flex items-center justify-between gap-2 border-b border-[color:var(--line)] bg-white/[0.03] px-4 py-2">
+                <div class="flex items-center gap-2.5">
+                  <div class="window-controls">
+                    <button type="button" data-window-close class="window-control window-control-close" aria-label="Close Tetris" title="Close"></button>
+                    <button type="button" data-window-minimize class="window-control window-control-minimize" aria-label="Minimize Tetris" title="Minimize"></button>
+                    <button type="button" data-window-maximize class="window-control window-control-maximize" aria-label="Expand Tetris" title="Expand"></button>
+                  </div>
+                  <div class="font-mono text-[0.82rem] uppercase tracking-[0.08em] text-[color:var(--soft)]">tetris</div>
+                </div>
+              </div>
+              <div class="window-content tetris-window-content relative z-[1]">
+                <div class="tetris-hud" aria-label="Tetris status">
+                  <div class="tetris-stat-card">
+                    <span>Score</span>
+                    <strong id="tetrisScore">0</strong>
+                  </div>
+                  <div class="tetris-stat-card">
+                    <span>Lines</span>
+                    <strong id="tetrisLines">0</strong>
+                  </div>
+                  <div class="tetris-stat-card">
+                    <span>Level</span>
+                    <strong id="tetrisLevel">1</strong>
+                  </div>
+                  <button type="button" id="tetrisRestart" class="tetris-restart-button">
+                    <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
+                    <span>Start</span>
+                  </button>
+                  <button type="button" id="tetrisPause" class="tetris-pause-button" disabled>
+                    <i data-lucide="pause" class="h-4 w-4"></i>
+                    <span>Pause</span>
+                  </button>
+                </div>
+                <div class="tetris-playfield">
+                  <div class="tetris-stage">
+                    <canvas id="tetrisCanvas" width="240" height="480" aria-label="Tetris game board"></canvas>
+                    <div id="tetrisOverlay" class="tetris-overlay" data-visible="false" aria-live="polite"></div>
+                  </div>
+                  <aside class="tetris-side-panel" aria-label="Next Tetris piece">
+                    <span>Next</span>
+                    <canvas id="tetrisNextCanvas" width="96" height="96" aria-label="Next Tetris piece preview"></canvas>
+                  </aside>
+                </div>
+                <div class="tetris-statusbar">
+                  <span id="tetrisStatus">Ready</span>
+                  <span>kmx://games/tetris</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article
             id="app-terminal"
             data-app-window
             data-app-id="terminal"
@@ -887,6 +950,7 @@
   <script defer src="js/game_pong.js"></script>
   <script defer src="js/game_minesweeper.js"></script>
   <script defer src="js/game_asteroids.js"></script>
+  <script defer src="js/game_tetris.js"></script>
   <script defer src="js/script.js"></script>
 </body>
 </html>
